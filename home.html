@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#111111" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#111111">
     <title>Apex Reverse Auctions</title>
     <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-    <link rel="stylesheet" href="site.css" />
+    <link rel="stylesheet" href="site.css">
     <script defer src="site.js"></script>
   </head>
   <body data-page="home">
@@ -30,7 +30,7 @@
         </nav>
 
         <div class="header-actions">
-          <button id="homeAuthButton" class="button button-dark button-small" type="button" data-i18n="home.authPrimary">Sign in</button>
+          <button id="homeAuthButton" class="button button-dark button-small" type="button" data-i18n="home.authPrimary" aria-haspopup="dialog" aria-controls="homeAuthModal" aria-expanded="false">Sign in</button>
           <button id="languageToggle" class="language-toggle" type="button" aria-label="Switch language">Español</button>
         </div>
       </header>
@@ -49,6 +49,21 @@
         </section>
       </main>
 
+    </div>
+
+    <div id="homeAuthModal" class="auth-modal-overlay" hidden>
+      <div class="auth-modal panel" role="dialog" aria-modal="true" aria-labelledby="homeAuthModalTitle">
+        <div class="auth-modal-head">
+          <div>
+            <p class="eyebrow" data-i18n="home.authPrimary">Sign in</p>
+            <h2 id="homeAuthModalTitle" data-i18n="home.authModalTitle">Continue with Google</h2>
+          </div>
+          <button id="homeAuthModalClose" class="auth-modal-close" type="button" aria-label="Close">×</button>
+        </div>
+
+        <p class="helper" data-i18n="home.authHint">Use Google to continue.</p>
+        <div id="homeAuthModalButton" class="auth-modal-actions"></div>
+      </div>
     </div>
 
     <div id="toast" class="toast" aria-live="polite"></div>

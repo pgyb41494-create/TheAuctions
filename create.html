@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#111111" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#111111">
     <title>Create room | Apex Reverse Auctions</title>
     <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-    <link rel="stylesheet" href="site.css" />
+    <link rel="stylesheet" href="site.css">
     <script defer src="site.js"></script>
   </head>
   <body data-page="create">
@@ -46,27 +46,27 @@
             <form id="createForm" class="form-grid">
               <div class="field full-span">
                 <label for="createTitle" data-i18n="create.fieldTitle">Auction title</label>
-                <input id="createTitle" name="title" type="text" placeholder="Office cleaning contract" data-i18n-placeholder="create.placeholderTitle" required />
+                <input id="createTitle" name="title" type="text" placeholder="Office cleaning contract" data-i18n-placeholder="create.placeholderTitle" required>
               </div>
 
               <div class="field">
                 <label for="createBuyer" data-i18n="create.fieldBuyer">Auction Maker</label>
-                <input id="createBuyer" name="buyer" type="text" placeholder="Northstar" data-i18n-placeholder="create.placeholderBuyer" required />
+                <input id="createBuyer" name="buyer" type="text" placeholder="Northstar" data-i18n-placeholder="create.placeholderBuyer" required>
               </div>
 
               <div class="field">
                 <label for="createCategory" data-i18n="create.fieldCategory">Category</label>
-                <input id="createCategory" name="category" type="text" placeholder="Facilities" data-i18n-placeholder="create.placeholderCategory" required />
+                <input id="createCategory" name="category" type="text" placeholder="Facilities" data-i18n-placeholder="create.placeholderCategory" required>
               </div>
 
               <div class="field">
                 <label for="createCeiling" data-i18n="create.fieldCeiling">Ceiling price</label>
-                <input id="createCeiling" name="ceiling" type="number" min="1" step="1" placeholder="125000" data-i18n-placeholder="create.placeholderCeiling" required />
+                <input id="createCeiling" name="ceiling" type="number" min="1" step="1" placeholder="125000" data-i18n-placeholder="create.placeholderCeiling" required>
               </div>
 
               <div class="field">
                 <label for="createDropAmount" data-i18n="create.fieldStep">Drop amount</label>
-                <input id="createDropAmount" name="dropAmount" type="number" min="1" step="1" placeholder="500" data-i18n-placeholder="create.placeholderStep" required />
+                <input id="createDropAmount" name="dropAmount" type="number" min="1" step="1" placeholder="500" data-i18n-placeholder="create.placeholderStep" required>
               </div>
 
               <div class="field full-span">
@@ -74,15 +74,15 @@
                 <div class="drop-interval-grid">
                   <div class="field">
                     <label for="createDropDays" data-i18n="create.dropDays">Days</label>
-                    <input id="createDropDays" name="dropDays" type="number" min="0" step="1" value="0" />
+                    <input id="createDropDays" name="dropDays" type="number" min="0" step="1" value="0">
                   </div>
                   <div class="field">
                     <label for="createDropHours" data-i18n="create.dropHours">Hours</label>
-                    <input id="createDropHours" name="dropHours" type="number" min="0" step="1" value="0" />
+                    <input id="createDropHours" name="dropHours" type="number" min="0" step="1" value="0">
                   </div>
                   <div class="field">
                     <label for="createDropMinutes" data-i18n="create.dropMinutes">Minutes</label>
-                    <input id="createDropMinutes" name="dropMinutes" type="number" min="0" step="1" value="0" />
+                    <input id="createDropMinutes" name="dropMinutes" type="number" min="0" step="1" value="0">
                   </div>
                 </div>
                 <p class="helper" data-i18n="create.dropHint">Set any mix above zero.</p>
@@ -90,7 +90,7 @@
 
               <div class="field">
                 <label for="createDuration" data-i18n="create.fieldDuration">Auction length</label>
-                <input id="createDuration" name="duration" type="number" min="15" step="15" value="60" data-i18n-placeholder="create.placeholderDuration" required />
+                <input id="createDuration" name="duration" type="number" min="15" step="15" value="60" data-i18n-placeholder="create.placeholderDuration" required>
               </div>
 
               <div class="field full-span">

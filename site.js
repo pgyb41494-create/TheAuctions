@@ -74,6 +74,8 @@ const TRANSLATIONS = {
     "home.lede": "Pick one button to start.",
     "home.authPrimary": "Sign in",
     "home.authHint": "Use Google to continue.",
+    "home.authModalTitle": "Continue with Google",
+    "home.authModalClose": "Close",
     "home.createCta": "Create room",
     "home.joinCta": "Enter room",
     "home.roomsCta": "Browse rooms",
@@ -329,6 +331,8 @@ const TRANSLATIONS = {
     "home.lede": "Pulsa un botón para empezar.",
     "home.authPrimary": "Iniciar sesión",
     "home.authHint": "Usa Google para continuar.",
+    "home.authModalTitle": "Continúa con Google",
+    "home.authModalClose": "Cerrar",
     "home.createCta": "Crear sala",
     "home.joinCta": "Entrar a una sala",
     "home.roomsCta": "Ver salas",
@@ -564,6 +568,7 @@ let firebaseAuthInstance = null;
 let firebaseAuthReady = false;
 let firebaseAuthReadyPromise = null;
 let firebaseAuthReadyResolve = null;
+let homeAuthModalLastFocus = null;
 
 async function initialize() {
   const [adminEmails, firebaseConfig] = await Promise.all([loadAdminEmails(), loadFirebaseConfig()]);
@@ -630,7 +635,21 @@ function bindPageEvents() {
 
   const homeAuthButton = byId("homeAuthButton");
   if (homeAuthButton) {
-    homeAuthButton.addEventListener("click", handleFirebaseSignIn);
+    homeAuthButton.addEventListener("click", openHomeAuthModal);
+  }
+
+  const homeAuthModal = byId("homeAuthModal");
+  if (homeAuthModal) {
+    homeAuthModal.addEventListener("click", (event) => {
+      if (event.target === homeAuthModal) {
+        closeHomeAuthModal();
+      }
+    });
+  }
+
+  const homeAuthModalClose = byId("homeAuthModalClose");
+  if (homeAuthModalClose) {
+    homeAuthModalClose.addEventListener("click", closeHomeAuthModal);
   }
 
   const auctionsSearch = byId("auctions-search");
@@ -706,6 +725,18 @@ function applyLanguage() {
   if (toggle) {
     toggle.textContent = state.language === "en" ? "ES" : "EN";
     toggle.setAttribute("aria-label", state.language === "en" ? t("lang.toSpanish") : t("lang.toEnglish"));
+  }
+
+  const homeAuthModalClose = byId("homeAuthModalClose");
+  if (homeAuthModalClose) {
+    homeAuthModalClose.setAttribute("aria-label", t("home.authModalClose"));
+  }
+
+  if (state.page === "home") {
+    const homeAuthModal = byId("homeAuthModal");
+    if (homeAuthModal && !homeAuthModal.hidden) {
+      renderHomeAuthModal();
+    }
   }
 
   updateDocumentTitle();
@@ -1983,6 +2014,57 @@ async function handleFirebaseSignIn() {
   } catch {
     setToast(t("toast.googleSignInFailed"));
   }
+}
+
+function openHomeAuthModal() {
+  const modal = byId("homeAuthModal");
+  const trigger = byId("homeAuthButton");
+  if (!modal) {
+    handleFirebaseSignIn();
+    return;
+  }
+
+  homeAuthModalLastFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+  modal.hidden = false;
+  if (trigger) {
+    trigger.setAttribute("aria-expanded", "true");
+  }
+  document.body.classList.add("auth-modal-open");
+  renderHomeAuthModal();
+
+  window.requestAnimationFrame(() => {
+    const closeButton = byId("homeAuthModalClose");
+    const googleButton = byId("homeAuthModalButton")?.querySelector("button");
+    if (closeButton) {
+      closeButton.focus();
+    } else if (googleButton) {
+      googleButton.focus();
+    }
+  });
+}
+
+function closeHomeAuthModal() {
+  const modal = byId("homeAuthModal");
+  const trigger = byId("homeAuthButton");
+  if (!modal) {
+    return;
+  }
+
+  modal.hidden = true;
+  if (trigger) {
+    trigger.setAttribute("aria-expanded", "false");
+  }
+  document.body.classList.remove("auth-modal-open");
+
+  if (homeAuthModalLastFocus && typeof homeAuthModalLastFocus.focus === "function") {
+    homeAuthModalLastFocus.focus();
+  }
+
+  homeAuthModalLastFocus = null;
+}
+
+function renderHomeAuthModal() {
+  renderFirebaseAuthButton("homeAuthModalButton", "toast.googleUnavailable");
 }
 
 async function handleFirebaseSignOut() {
