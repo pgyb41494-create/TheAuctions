@@ -60,7 +60,7 @@ const TRANSLATIONS = {
     "category.events": "Events",
     "category.other": "Other",
     "home.eyebrow": "Simple reverse auctions",
-    "home.title": "Create, join, or browse a room.",
+    "home.title": "Create or join a room.",
     "home.lede": "Pick one button to start.",
     "home.authPrimary": "Sign in",
     "home.authHint": "Use Google to continue.",
@@ -315,7 +315,7 @@ const TRANSLATIONS = {
     "category.events": "Eventos",
     "category.other": "Otro",
     "home.eyebrow": "Subastas simples",
-    "home.title": "Crea, entra o revisa una sala.",
+    "home.title": "Crea o entra a una sala.",
     "home.lede": "Pulsa un botón para empezar.",
     "home.authPrimary": "Iniciar sesión",
     "home.authHint": "Usa Google para continuar.",
@@ -659,7 +659,7 @@ function bindPageEvents() {
     adminClearAll.addEventListener("click", handleAdminClearAll);
   }
 
-  ["homeFeaturedAuctions", "createRecentRooms", "joinRecentRooms", "auctionsList", "roomEmptyOpenList", "roomActiveOpenList", "adminAuctionList"].forEach((containerId) => {
+  ["homeFeaturedAuctions", "auctionsList", "roomEmptyOpenList", "roomActiveOpenList", "adminAuctionList"].forEach((containerId) => {
     const container = byId(containerId);
     if (container) {
       container.addEventListener("click", handleAuctionCardAction);
@@ -759,11 +759,9 @@ function renderHomePage() {
 }
 
 function renderCreatePage() {
-  renderAuctionList("createRecentRooms", getOpenAuctions().slice(0, 4), { compact: true, emptyKey: "create.noRooms" });
 }
 
 function renderJoinPage() {
-  renderAuctionList("joinRecentRooms", getOpenAuctions().slice(0, 4), { compact: true, emptyKey: "join.noRooms" });
   applyPreferredNameDefaults();
 }
 
@@ -1327,12 +1325,12 @@ function openRoomByCode(rawCode, flash = "") {
   if (flash === "joined") {
     recordJoinedAuction(auction);
   }
-  const query = new URLSearchParams();
-  query.set("code", auction.code);
-  if (flash) {
-    query.set("flash", flash);
+  if (flash === "created") {
+    setToast(t("toast.roomCreated", { code: auction.code }));
+  } else if (flash === "joined") {
+    setToast(t("toast.roomEntered", { code: auction.code }));
   }
-  window.location.href = `auction.html?${query.toString()}`;
+  renderCurrentPage();
 }
 
 function flashMessageFromQuery() {
