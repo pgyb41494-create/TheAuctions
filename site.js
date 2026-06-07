@@ -52,6 +52,7 @@ const TRANSLATIONS = {
     "common.noResults": "No rooms match this filter.",
     "common.noBids": "No bids yet.",
     "common.noneYet": "None yet",
+    "auth.googleSignInButton": "Sign in with Google",
     "category.professional": "Professional Services",
     "category.facilities": "Facilities",
     "category.logistics": "Logistics",
@@ -61,6 +62,8 @@ const TRANSLATIONS = {
     "home.eyebrow": "Reverse auction workspace",
     "home.title": "Run reverse bids with a clean, professional workspace.",
     "home.lede": "Create a room, enter by code, and keep every bid in one place.",
+    "home.authPrimary": "Login / Sign up",
+    "home.authHint": "Sign in with Google first, then create or join a room.",
     "home.createCta": "Create room",
     "home.joinCta": "Enter room",
     "home.roomsCta": "Browse rooms",
@@ -187,7 +190,7 @@ const TRANSLATIONS = {
     "dashboard.lede": "Sign in with Google, set your display name, and keep the rooms you joined close at hand.",
     "dashboard.gateTitle": "Sign in to continue.",
     "dashboard.gateSubtitle": "Use Google to unlock your personal dashboard.",
-    "dashboard.gateHint": "If the Google button does not load, add GOOGLE_CLIENT_ID to .env.",
+    "dashboard.gateHint": "If the Google button does not load, add the Firebase keys to .env.",
     "dashboard.accountTitle": "Signed-in account",
     "dashboard.accountSubtitle": "Google identity and local display name.",
     "dashboard.emailLabel": "Google email",
@@ -214,10 +217,7 @@ const TRANSLATIONS = {
     "admin.statusPending": "Signed in as {{email}} but not approved.",
     "admin.gateTitle": "Admin access",
     "admin.gateSubtitle": "Use an approved account to open the dashboard.",
-    "admin.googleHint": "Add GOOGLE_CLIENT_ID to .env to show the Google button.",
-    "admin.emailLabel": "Admin email",
-    "admin.emailPlaceholder": "admin@company.com",
-    "admin.login": "Open dashboard",
+    "admin.googleHint": "If the Google button does not load, add the Firebase keys to .env.",
     "admin.signOut": "Sign out",
     "admin.configHint": "Only Google emails listed in .env can access maintenance tools.",
     "admin.noAdminsConfigured": "No admin emails are configured in .env yet.",
@@ -262,6 +262,8 @@ const TRANSLATIONS = {
     "toast.roomClosed": "This room is closed.",
     "toast.noRoomSelected": "Select a room first.",
     "toast.formIncomplete": "Fill in all required fields.",
+    "toast.googleSignInFailed": "Google sign-in failed. Please try again.",
+    "toast.googleSignOutFailed": "Could not sign out. Please try again.",
   },
   es: {
     "brand.kicker": "Plataforma de adquisiciones",
@@ -296,6 +298,7 @@ const TRANSLATIONS = {
     "common.noResults": "No hay salas que coincidan con este filtro.",
     "common.noBids": "Todavía no hay ofertas.",
     "common.noneYet": "Ninguno aún",
+    "auth.googleSignInButton": "Iniciar sesión con Google",
     "category.professional": "Servicios profesionales",
     "category.facilities": "Instalaciones",
     "category.logistics": "Logística",
@@ -305,6 +308,8 @@ const TRANSLATIONS = {
     "home.eyebrow": "Espacio de subastas inversas",
     "home.title": "Gestiona subastas inversas con un espacio limpio y profesional.",
     "home.lede": "Crea una sala, entra con código y guarda cada oferta en un solo lugar.",
+    "home.authPrimary": "Iniciar sesión / Registrarse",
+    "home.authHint": "Inicia sesión con Google primero y luego crea o entra a una sala.",
     "home.createCta": "Crear sala",
     "home.joinCta": "Entrar a una sala",
     "home.roomsCta": "Ver salas",
@@ -431,7 +436,7 @@ const TRANSLATIONS = {
     "dashboard.lede": "Inicia sesión con Google, define tu nombre visible y ten cerca las salas que uniste.",
     "dashboard.gateTitle": "Inicia sesión para continuar.",
     "dashboard.gateSubtitle": "Usa Google para desbloquear tu panel personal.",
-    "dashboard.gateHint": "Si el botón de Google no aparece, agrega GOOGLE_CLIENT_ID a .env.",
+    "dashboard.gateHint": "Si el botón de Google no aparece, agrega las claves de Firebase a .env.",
     "dashboard.accountTitle": "Cuenta iniciada",
     "dashboard.accountSubtitle": "Identidad de Google y nombre visible local.",
     "dashboard.emailLabel": "Correo de Google",
@@ -458,10 +463,7 @@ const TRANSLATIONS = {
     "admin.statusPending": "Sesión iniciada como {{email}} pero no aprobada.",
     "admin.gateTitle": "Acceso de administrador",
     "admin.gateSubtitle": "Usa una cuenta aprobada para abrir el panel.",
-    "admin.googleHint": "Agrega GOOGLE_CLIENT_ID a .env para mostrar el botón de Google.",
-    "admin.emailLabel": "Correo de administrador",
-    "admin.emailPlaceholder": "admin@empresa.com",
-    "admin.login": "Abrir panel",
+    "admin.googleHint": "Si el botón de Google no aparece, agrega las claves de Firebase a .env.",
     "admin.signOut": "Cerrar sesión",
     "admin.configHint": "Solo los correos de Google listados en .env pueden acceder a las herramientas de mantenimiento.",
     "admin.noAdminsConfigured": "Aún no hay correos de administrador configurados en .env.",
@@ -506,6 +508,8 @@ const TRANSLATIONS = {
     "toast.roomClosed": "Esta sala está cerrada.",
     "toast.noRoomSelected": "Selecciona una sala primero.",
     "toast.formIncomplete": "Completa todos los campos obligatorios.",
+    "toast.googleSignInFailed": "La sesión de Google falló. Inténtalo de nuevo.",
+    "toast.googleSignOutFailed": "No se pudo cerrar la sesión. Inténtalo de nuevo.",
   },
 };
 
@@ -515,23 +519,29 @@ const state = {
   auctions: loadAuctions(),
   activeCode: localStorage.getItem(STORAGE_KEYS.activeCode) || "",
   lastBidder: localStorage.getItem(STORAGE_KEYS.bidder) || "",
-  adminEmail: localStorage.getItem(STORAGE_KEYS.adminEmail) || "",
+  adminEmail: "",
   profile: loadProfile(),
   joinedAuctions: loadJoinedAuctions(),
   adminEmails: [],
-  googleClientId: "",
+  firebaseConfig: null,
+  firebaseUser: null,
+  firebaseConfigured: false,
   filters: { query: "", status: "all" },
 };
 
 document.addEventListener("DOMContentLoaded", initialize);
 
-let googleIdentityPromise = null;
-let googleIdentityInitialized = false;
+let runtimeEnvPromise = null;
+let firebaseAuthInstance = null;
+let firebaseAuthReady = false;
+let firebaseAuthReadyPromise = null;
+let firebaseAuthReadyResolve = null;
 
 async function initialize() {
-  const [adminEmails, googleClientId] = await Promise.all([loadAdminEmails(), loadGoogleClientId()]);
+  const [adminEmails, firebaseConfig] = await Promise.all([loadAdminEmails(), loadFirebaseConfig()]);
   state.adminEmails = adminEmails;
-  state.googleClientId = googleClientId;
+  state.firebaseConfig = firebaseConfig;
+  await initializeFirebaseAuth();
   syncAdminSession();
 
   normalizeExpiredAuctions();
@@ -601,19 +611,14 @@ function bindPageEvents() {
     });
   }
 
-  const adminLoginForm = byId("adminLoginForm");
-  if (adminLoginForm) {
-    adminLoginForm.addEventListener("submit", handleAdminLoginSubmit);
-  }
-
   const adminSignOut = byId("adminSignOut");
   if (adminSignOut) {
-    adminSignOut.addEventListener("click", handleAdminSignOut);
+    adminSignOut.addEventListener("click", handleFirebaseSignOut);
   }
 
   const dashboardSignOut = byId("dashboardSignOut");
   if (dashboardSignOut) {
-    dashboardSignOut.addEventListener("click", handleGoogleSignOut);
+    dashboardSignOut.addEventListener("click", handleFirebaseSignOut);
   }
 
   const adminExport = byId("adminExport");
@@ -763,7 +768,6 @@ function renderAdminPage() {
   const dashboard = byId("adminDashboard");
   const signOutButton = byId("adminSignOut");
   const statusNode = byId("adminStatus");
-  const emailField = byId("adminEmail");
   const hint = byId("adminAccessHint");
   const googleButton = byId("adminGoogleButton");
 
@@ -775,9 +779,6 @@ function renderAdminPage() {
   }
   if (signOutButton) {
     signOutButton.hidden = !signedIn;
-  }
-  if (emailField) {
-    emailField.value = state.adminEmail;
   }
   if (statusNode) {
     if (approved) {
@@ -792,7 +793,11 @@ function renderAdminPage() {
     hint.textContent = state.adminEmails.length ? t("admin.configHint") : t("admin.noAdminsConfigured");
   }
   if (googleButton && !approved) {
-    renderGoogleAuthButton("adminGoogleButton", "admin.googleHint");
+    if (!signedIn) {
+      renderFirebaseAuthButton("adminGoogleButton", "admin.googleHint");
+    } else {
+      googleButton.innerHTML = `<p class="helper">${escapeHtml(t("admin.statusPending", { email: state.adminEmail }))}</p>`;
+    }
   }
 
   setText("adminAllowedCount", String(state.adminEmails.length));
@@ -855,7 +860,7 @@ function renderDashboardPage() {
 
   if (!signedIn) {
     if (googleButton) {
-      renderGoogleAuthButton("dashboardGoogleButton", "dashboard.gateHint");
+      renderFirebaseAuthButton("dashboardGoogleButton", "dashboard.gateHint");
     }
     return;
   }
@@ -1051,46 +1056,6 @@ function renderAuctionCard(auction, options = {}) {
   `;
 }
 
-function handleAuctionCardAction(event) {
-  const action = event.target.closest("[data-action]");
-  if (!action) {
-    return;
-  }
-
-  const code = action.dataset.code || "";
-
-  if (action.dataset.action === "copy-code") {
-    copyText(code).then(() => setToast(t("toast.codeCopied")));
-    return;
-  }
-
-  if (action.dataset.action === "open-room") {
-    openRoomByCode(code);
-    return;
-  }
-
-  if (action.dataset.action === "admin-toggle-status") {
-    handleAdminToggleAuction(code);
-    return;
-  }
-
-  if (action.dataset.action === "admin-delete-auction") {
-    handleAdminDeleteAuction(code);
-  }
-}
-
-function handleCreateSubmit(event) {
-  event.preventDefault();
-
-  const title = valueOf("createTitle");
-  const buyer = valueOf("createBuyer");
-  const category = valueOf("createCategory");
-  const ceiling = toNumber(valueOf("createCeiling"));
-  const step = toNumber(valueOf("createStep"));
-  const duration = toNumber(valueOf("createDuration"));
-  const notes = valueOf("createNotes");
-
-  if (!title || !buyer || !category) {
     setToast(t("toast.formIncomplete"));
     return;
   }
@@ -1196,46 +1161,6 @@ function handleBidSubmit(event) {
   localStorage.setItem(STORAGE_KEYS.bidder, bidder);
   saveAuctions();
   setToast(t("toast.bidAccepted", { bidder, amount: formatMoney(amount) }));
-  renderCurrentPage();
-}
-
-function handleAdminLoginSubmit(event) {
-  event.preventDefault();
-
-  const email = normalizeEmail(valueOf("adminEmail"));
-  if (!email) {
-    setToast(t("toast.formIncomplete"));
-    return;
-  }
-
-  if (!state.adminEmails.includes(email)) {
-    setToast(t("toast.adminDenied"));
-    return;
-  }
-
-  state.adminEmail = email;
-  localStorage.setItem(STORAGE_KEYS.adminEmail, email);
-  setToast(t("toast.adminSignedIn"));
-  renderCurrentPage();
-}
-
-function handleAdminSignOut() {
-  const currentEmail = normalizeEmail(state.adminEmail);
-  state.adminEmail = "";
-  localStorage.removeItem(STORAGE_KEYS.adminEmail);
-
-  if (state.profile.google && normalizeEmail(state.profile.google.email) === currentEmail) {
-    state.profile.google = null;
-    saveProfile({ displayName: state.profile.displayName, google: null });
-  }
-
-  const field = byId("adminEmail");
-  if (field) {
-    field.value = "";
-  }
-
-  setToast(t("toast.adminSignedOut"));
-  updateNavVisibility();
   renderCurrentPage();
 }
 
@@ -1519,14 +1444,7 @@ function loadProfile() {
     const parsed = JSON.parse(stored);
     return {
       displayName: typeof parsed.displayName === "string" ? parsed.displayName : typeof parsed.bidderName === "string" ? parsed.bidderName : legacyBidderName,
-      google: parsed.google && typeof parsed.google === "object"
-        ? {
-            email: normalizeEmail(parsed.google.email),
-            name: typeof parsed.google.name === "string" ? parsed.google.name : "",
-            picture: typeof parsed.google.picture === "string" ? parsed.google.picture : "",
-            sub: typeof parsed.google.sub === "string" ? parsed.google.sub : "",
-          }
-        : null,
+      google: null,
     };
   } catch {
     return {
@@ -1706,60 +1624,29 @@ function updateNavVisibility() {
   });
 }
 
-async function loadGoogleClientId() {
-  if (typeof window.__GOOGLE_CLIENT_ID__ === "string" && window.__GOOGLE_CLIENT_ID__.trim()) {
-    return window.__GOOGLE_CLIENT_ID__.trim();
+async function loadRuntimeEnv() {
+  if (runtimeEnvPromise) {
+    return runtimeEnvPromise;
   }
 
-  try {
-    const response = await fetch(".env", { cache: "no-store" });
-    if (!response.ok) {
-      return "";
+  runtimeEnvPromise = (async () => {
+    try {
+      const response = await fetch(".env", { cache: "no-store" });
+      if (!response.ok) {
+        return {};
+      }
+
+      return parseEnvFile(await response.text());
+    } catch {
+      return {};
     }
+  })();
 
-    return parseGoogleClientId(await response.text());
-  } catch {
-    return "";
-  }
+  return runtimeEnvPromise;
 }
 
-function parseGoogleClientId(text) {
-  for (const line of text.split(/\r?\n/)) {
-    const trimmed = line.trim();
-    if (!trimmed || trimmed.startsWith("#")) {
-      continue;
-    }
-
-    const match = trimmed.match(/^GOOGLE_CLIENT_ID\s*=\s*(.*)$/i);
-    if (!match) {
-      continue;
-    }
-
-    return match[1].split("#")[0].trim().replace(/^['"]|['"]$/g, "");
-  }
-
-  return "";
-}
-
-async function loadAdminEmails() {
-  if (Array.isArray(window.__ADMIN_EMAILS__)) {
-    return [...new Set(window.__ADMIN_EMAILS__.map(normalizeEmail).filter(Boolean))];
-  }
-
-  try {
-    const response = await fetch(".env", { cache: "no-store" });
-    if (!response.ok) {
-      return [];
-    }
-
-    return parseAdminEmails(await response.text());
-  } catch {
-    return [];
-  }
-}
-
-function parseAdminEmails(text) {
-  const emails = new Set();
+function parseEnvFile(text) {
+  const env = {};
 
   text.split(/\r?\n/).forEach((line) => {
     const trimmed = line.trim();
@@ -1767,21 +1654,74 @@ function parseAdminEmails(text) {
       return;
     }
 
-    const match = trimmed.match(/^ADMIN_EMAILS\s*=\s*(.*)$/i);
-    if (!match) {
+    const equalsIndex = trimmed.indexOf("=");
+    if (equalsIndex === -1) {
       return;
     }
 
-    const value = match[1].split("#")[0].trim().replace(/^['"]|['"]$/g, "");
-    value.split(/[;,\s]+/).forEach((email) => {
+    const key = trimmed.slice(0, equalsIndex).trim();
+    if (!key) {
+      return;
+    }
+
+    const value = trimmed.slice(equalsIndex + 1).split("#")[0].trim().replace(/^['"]|['"]$/g, "");
+    env[key] = value;
+  });
+
+  return env;
+}
+
+function getEnvValue(env, keys) {
+  for (const key of keys) {
+    const value = env[key];
+    if (typeof value === "string" && value.trim()) {
+      return value.trim();
+    }
+  }
+
+  return "";
+}
+
+function parseEmailList(value) {
+  const emails = new Set();
+
+  String(value || "")
+    .split(/[;,\s]+/)
+    .forEach((email) => {
       const normalized = normalizeEmail(email);
       if (normalized) {
         emails.add(normalized);
       }
     });
-  });
 
   return [...emails];
+}
+
+async function loadAdminEmails() {
+  if (Array.isArray(window.__ADMIN_EMAILS__)) {
+    return [...new Set(window.__ADMIN_EMAILS__.map(normalizeEmail).filter(Boolean))];
+  }
+
+  const env = await loadRuntimeEnv();
+  return parseEmailList(getEnvValue(env, ["ADMIN_EMAILS"]));
+}
+
+async function loadFirebaseConfig() {
+  const env = await loadRuntimeEnv();
+  const config = {
+    apiKey: getEnvValue(env, ["FIREBASE_API_KEY", "NEXT_PUBLIC_FIREBASE_API_KEY"]),
+    authDomain: getEnvValue(env, ["FIREBASE_AUTH_DOMAIN", "NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN"]),
+    projectId: getEnvValue(env, ["FIREBASE_PROJECT_ID", "NEXT_PUBLIC_FIREBASE_PROJECT_ID"]),
+    storageBucket: getEnvValue(env, ["FIREBASE_STORAGE_BUCKET", "NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET"]),
+    messagingSenderId: getEnvValue(env, ["FIREBASE_MESSAGING_SENDER_ID", "NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID"]),
+    appId: getEnvValue(env, ["FIREBASE_APP_ID", "NEXT_PUBLIC_FIREBASE_APP_ID"]),
+  };
+
+  if (!config.apiKey || !config.authDomain || !config.projectId || !config.appId) {
+    return null;
+  }
+
+  return config;
 }
 
 function syncAdminSession() {
@@ -1789,12 +1729,96 @@ function syncAdminSession() {
 
   if (!state.adminEmail) {
     localStorage.removeItem(STORAGE_KEYS.adminEmail);
-    return;
   }
 }
 
 function isAdminSignedIn() {
   return Boolean(state.adminEmail) && state.adminEmails.includes(state.adminEmail);
+}
+
+function applyFirebaseUser(user) {
+  const email = normalizeEmail(user?.email);
+  const googleProfile = email
+    ? {
+        email,
+        name: typeof user?.displayName === "string" ? user.displayName : "",
+        picture: typeof user?.photoURL === "string" ? user.photoURL : "",
+        sub: typeof user?.uid === "string" ? user.uid : "",
+      }
+    : null;
+
+  state.firebaseUser = user || null;
+  state.adminEmail = email;
+
+  if (email) {
+    localStorage.setItem(STORAGE_KEYS.adminEmail, email);
+  } else {
+    localStorage.removeItem(STORAGE_KEYS.adminEmail);
+  }
+
+  if (googleProfile) {
+    state.profile.google = googleProfile;
+    if (!state.profile.displayName) {
+      state.profile.displayName = googleProfile.name || email.split("@")[0] || "";
+    }
+
+    saveProfile({ displayName: state.profile.displayName, google: googleProfile });
+    state.lastBidder = state.profile.displayName || state.lastBidder;
+    if (state.lastBidder) {
+      localStorage.setItem(STORAGE_KEYS.bidder, state.lastBidder);
+    }
+  } else if (state.profile.google) {
+    state.profile.google = null;
+    saveProfile({ displayName: state.profile.displayName, google: null });
+  }
+
+  updateNavVisibility();
+  renderCurrentPage();
+}
+
+async function initializeFirebaseAuth() {
+  state.firebaseConfigured = false;
+  state.firebaseUser = null;
+
+  if (!state.firebaseConfig || !window.firebase?.auth || !window.firebase?.initializeApp) {
+    applyFirebaseUser(null);
+    return;
+  }
+
+  if (!window.firebase.apps.length) {
+    window.firebase.initializeApp(state.firebaseConfig);
+  }
+
+  firebaseAuthInstance = window.firebase.auth();
+
+  try {
+    await firebaseAuthInstance.setPersistence(window.firebase.auth.Auth.Persistence.LOCAL);
+  } catch {
+    // Persistence failures are non-fatal for the site.
+  }
+
+  if (!firebaseAuthReadyPromise) {
+    firebaseAuthReadyPromise = new Promise((resolve) => {
+      firebaseAuthReadyResolve = resolve;
+    });
+
+    firebaseAuthInstance.onAuthStateChanged((user) => {
+      applyFirebaseUser(user);
+      if (!firebaseAuthReady) {
+        firebaseAuthReady = true;
+        if (firebaseAuthReadyResolve) {
+          firebaseAuthReadyResolve();
+          firebaseAuthReadyResolve = null;
+        }
+      }
+    });
+  }
+
+  state.firebaseConfigured = true;
+
+  if (firebaseAuthReadyPromise) {
+    await firebaseAuthReadyPromise;
+  }
 }
 
 function handleDashboardDisplayNameSubmit(event) {
@@ -1815,67 +1839,42 @@ function handleDashboardDisplayNameSubmit(event) {
   renderCurrentPage();
 }
 
-function handleGoogleCredentialResponse(response) {
-  const payload = decodeGoogleCredential(response?.credential || "");
-  const email = normalizeEmail(payload?.email);
-
-  if (!email) {
+async function handleFirebaseSignIn() {
+  if (!firebaseAuthInstance || !state.firebaseConfigured) {
     setToast(t("toast.googleUnavailable"));
     return;
   }
 
-  const googleProfile = {
-    email,
-    name: typeof payload?.name === "string" ? payload.name : "",
-    picture: typeof payload?.picture === "string" ? payload.picture : "",
-    sub: typeof payload?.sub === "string" ? payload.sub : "",
-  };
+  const provider = new window.firebase.auth.GoogleAuthProvider();
+  provider.setCustomParameters({ prompt: "select_account" });
 
-  state.profile.google = googleProfile;
-  state.adminEmail = email;
-
-  if (!state.profile.displayName) {
-    state.profile.displayName = googleProfile.name || email.split("@")[0] || "";
-  }
-
-  saveProfile({ displayName: state.profile.displayName, google: googleProfile });
-  localStorage.setItem(STORAGE_KEYS.adminEmail, email);
-  state.lastBidder = state.profile.displayName || state.lastBidder;
-  if (state.lastBidder) {
-    localStorage.setItem(STORAGE_KEYS.bidder, state.lastBidder);
-  }
-
-  setToast(t("toast.googleSignedIn", { email }));
-  updateNavVisibility();
-  renderCurrentPage();
-}
-
-function handleGoogleSignOut() {
-  const googleEmail = normalizeEmail(state.profile.google?.email);
-  if (state.profile.google) {
-    state.profile.google = null;
-    saveProfile({ displayName: state.profile.displayName, google: null });
-  }
-
-  if (!googleEmail || normalizeEmail(state.adminEmail) === googleEmail) {
-    state.adminEmail = "";
-    localStorage.removeItem(STORAGE_KEYS.adminEmail);
-  }
-
-  if (window.google?.accounts?.id?.disableAutoSelect) {
-    try {
-      window.google.accounts.id.disableAutoSelect();
-    } catch {
-      // Ignore GIS cleanup failures.
+  try {
+    const result = await firebaseAuthInstance.signInWithPopup(provider);
+    const email = normalizeEmail(result.user?.email);
+    if (email) {
+      setToast(t("toast.googleSignedIn", { email }));
     }
+  } catch {
+    setToast(t("toast.googleSignInFailed"));
   }
-
-  setToast(t("toast.googleSignedOut"));
-  updateNavVisibility();
-  renderCurrentPage();
 }
 
-async function renderGoogleAuthButton(containerId, fallbackKey = "dashboard.gateHint") {
+async function handleFirebaseSignOut() {
+  if (!firebaseAuthInstance || !state.firebaseConfigured) {
+    applyFirebaseUser(null);
+    setToast(t("toast.googleSignedOut"));
+    return;
+  }
+
+  try {
+    await firebaseAuthInstance.signOut();
+    setToast(t("toast.googleSignedOut"));
+  } catch {
+    setToast(t("toast.googleSignOutFailed"));
+  }
+}
+
+function renderFirebaseAuthButton(containerId, fallbackKey = "dashboard.gateHint") {
   const mount = byId(containerId);
   if (!mount) {
     return;
@@ -1883,90 +1882,21 @@ async function renderGoogleAuthButton(containerId, fallbackKey = "dashboard.gate
 
   mount.innerHTML = "";
 
-  if (!state.googleClientId) {
+  if (!state.firebaseConfigured || !firebaseAuthInstance) {
     mount.innerHTML = `<p class="helper">${escapeHtml(t(fallbackKey))}</p>`;
     return;
   }
 
-  try {
-    await ensureGoogleIdentityScript();
-  } catch {
-    mount.innerHTML = `<p class="helper">${escapeHtml(t(fallbackKey))}</p>`;
+  if (state.firebaseUser?.email) {
     return;
   }
 
-  if (!window.google?.accounts?.id) {
-    mount.innerHTML = `<p class="helper">${escapeHtml(t(fallbackKey))}</p>`;
-    return;
-  }
-
-  if (!googleIdentityInitialized) {
-    window.google.accounts.id.initialize({
-      client_id: state.googleClientId,
-      callback: handleGoogleCredentialResponse,
-      auto_select: false,
-      cancel_on_tap_outside: false,
-    });
-    googleIdentityInitialized = true;
-  }
-
-  window.google.accounts.id.renderButton(mount, {
-    theme: "outline",
-    size: "large",
-    text: "signin_with",
-    shape: "pill",
-    width: 320,
-    logo_alignment: "left",
-  });
-}
-
-function decodeGoogleCredential(credential) {
-  if (!credential) {
-    return null;
-  }
-
-  const parts = credential.split(".");
-  if (parts.length < 2) {
-    return null;
-  }
-
-  try {
-    const encoded = parts[1].replace(/-/g, "+").replace(/_/g, "/");
-    const padded = encoded.padEnd(Math.ceil(encoded.length / 4) * 4, "=");
-    return JSON.parse(atob(padded));
-  } catch {
-    return null;
-  }
-}
-
-function ensureGoogleIdentityScript() {
-  if (window.google?.accounts?.id) {
-    return Promise.resolve();
-  }
-
-  if (googleIdentityPromise) {
-    return googleIdentityPromise;
-  }
-
-  googleIdentityPromise = new Promise((resolve, reject) => {
-    const existing = document.querySelector('script[data-google-identity="true"]');
-    if (existing) {
-      existing.addEventListener("load", () => resolve(), { once: true });
-      existing.addEventListener("error", () => reject(new Error("Failed to load Google identity services.")), { once: true });
-      return;
-    }
-
-    const script = document.createElement("script");
-    script.src = "https://accounts.google.com/gsi/client";
-    script.async = true;
-    script.defer = true;
-    script.dataset.googleIdentity = "true";
-    script.onload = () => resolve();
-    script.onerror = () => reject(new Error("Failed to load Google identity services."));
-    document.head.appendChild(script);
-  });
-
-  return googleIdentityPromise;
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "button button-dark";
+  button.textContent = t("auth.googleSignInButton");
+  button.addEventListener("click", handleFirebaseSignIn);
+  mount.appendChild(button);
 }
 
 function loadAuctions() {

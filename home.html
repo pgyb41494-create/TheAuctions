@@ -5,11 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#111111" />
     <title>Apex Reverse Auctions</title>
+    <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
     <link rel="stylesheet" href="site.css" />
     <script defer src="site.js"></script>
   </head>
   <body data-page="home">
     <div class="site-shell">
+      <section class="panel hero-panel">
+        <div class="action-row">
+          <a class="button button-dark" href="dashboard.html" data-i18n="home.authPrimary">Login / Sign up</a>
+        </div>
+        <p class="lede" data-i18n="home.authHint">Sign in with Google first, then create or join a room.</p>
+      </section>
+
       <header class="site-header panel">
         <a class="brand" href="home.html" aria-label="Apex Reverse Auctions home">
           <span class="brand-mark">RA</span>
