@@ -73,8 +73,19 @@ const TRANSLATIONS = {
     "home.title": "Create or join a room.",
     "home.lede": "Pick one button to start.",
     "home.authPrimary": "Sign in",
-    "home.authHint": "Use Google to continue.",
-    "home.authModalTitle": "Continue with Google",
+    "home.authHint": "Enter your email to continue.",
+    "home.authModalTitle": "Sign in to Your Account",
+    "home.authPasswordTitle": "Enter your password",
+    "home.authPasswordHint": "Use the password for this account.",
+    "home.authEmailLabel": "Email Address",
+    "home.authEmailPlaceholder": "Enter Your Email",
+    "home.authPasswordLabel": "Password",
+    "home.authPasswordPlaceholder": "Enter your password",
+    "home.authNext": "Next",
+    "home.authSignIn": "Sign in",
+    "home.authResetPassword": "Reset Password",
+    "home.authDivider": "or",
+    "home.authUseAnotherEmail": "Use another email",
     "home.authModalClose": "Close",
     "home.createCta": "Create room",
     "home.joinCta": "Enter room",
@@ -274,6 +285,13 @@ const TRANSLATIONS = {
     "toast.googleSignedOut": "Signed out of Google account.",
     "toast.profileSaved": "Display name saved.",
     "toast.googleUnavailable": "Google sign-in is not available right now.",
+    "toast.authUnavailable": "Sign-in is not available right now.",
+    "toast.emailRequired": "Enter your email first.",
+    "toast.invalidEmail": "Enter a valid email address.",
+    "toast.passwordRequired": "Enter your password.",
+    "toast.emailSignInFailed": "Email sign-in failed. Please try again.",
+    "toast.passwordResetSent": "Password reset email sent.",
+    "toast.passwordResetFailed": "Could not send the reset email. Please try again.",
     "toast.bidAccepted": "{{bidder}} is leading at {{amount}}.",
     "toast.invalidCode": "Enter a valid room code.",
     "toast.roomNotFound": "No room matches that code.",
@@ -330,8 +348,19 @@ const TRANSLATIONS = {
     "home.title": "Crea o entra a una sala.",
     "home.lede": "Pulsa un botón para empezar.",
     "home.authPrimary": "Iniciar sesión",
-    "home.authHint": "Usa Google para continuar.",
-    "home.authModalTitle": "Continúa con Google",
+    "home.authHint": "Escribe tu correo para continuar.",
+    "home.authModalTitle": "Inicia sesión en tu cuenta",
+    "home.authPasswordTitle": "Escribe tu contraseña",
+    "home.authPasswordHint": "Usa la contraseña de esta cuenta.",
+    "home.authEmailLabel": "Correo electrónico",
+    "home.authEmailPlaceholder": "Escribe tu correo",
+    "home.authPasswordLabel": "Contraseña",
+    "home.authPasswordPlaceholder": "Escribe tu contraseña",
+    "home.authNext": "Siguiente",
+    "home.authSignIn": "Iniciar sesión",
+    "home.authResetPassword": "Restablecer contraseña",
+    "home.authDivider": "o",
+    "home.authUseAnotherEmail": "Usar otro correo",
     "home.authModalClose": "Cerrar",
     "home.createCta": "Crear sala",
     "home.joinCta": "Entrar a una sala",
@@ -531,6 +560,13 @@ const TRANSLATIONS = {
     "toast.googleSignedOut": "Sesión cerrada de la cuenta de Google.",
     "toast.profileSaved": "Nombre visible guardado.",
     "toast.googleUnavailable": "La sesión de Google no está disponible ahora mismo.",
+    "toast.authUnavailable": "La sesión no está disponible ahora mismo.",
+    "toast.emailRequired": "Escribe tu correo primero.",
+    "toast.invalidEmail": "Escribe un correo válido.",
+    "toast.passwordRequired": "Escribe tu contraseña.",
+    "toast.emailSignInFailed": "La sesión con correo falló. Inténtalo de nuevo.",
+    "toast.passwordResetSent": "Se envió el correo para restablecer la contraseña.",
+    "toast.passwordResetFailed": "No se pudo enviar el correo de restablecimiento. Inténtalo de nuevo.",
     "toast.bidAccepted": "{{bidder}} va ganando con {{amount}}.",
     "toast.invalidCode": "Ingresa un código de sala válido.",
     "toast.roomNotFound": "No existe una sala con ese código.",
@@ -570,6 +606,11 @@ let firebaseAuthReadyPromise = null;
 let firebaseAuthReadyResolve = null;
 let homeAuthModalLastFocus = null;
 let homeAuthRedirectPending = false;
+let homeAuthStep = "email";
+let homeAuthEmail = "";
+let homeAuthPassword = "";
+let homeAuthErrorKey = "";
+let homeAuthBusy = false;
 
 async function initialize() {
   const [adminEmails, firebaseConfig] = await Promise.all([loadAdminEmails(), loadFirebaseConfig()]);
@@ -651,6 +692,50 @@ function bindPageEvents() {
   const homeAuthModalClose = byId("homeAuthModalClose");
   if (homeAuthModalClose) {
     homeAuthModalClose.addEventListener("click", closeHomeAuthModal);
+  }
+
+  const homeAuthForm = byId("homeAuthForm");
+  if (homeAuthForm) {
+    homeAuthForm.addEventListener("submit", handleHomeAuthSubmit);
+  }
+
+  const homeAuthEmailInput = byId("homeAuthEmail");
+  if (homeAuthEmailInput) {
+    homeAuthEmailInput.addEventListener("input", (event) => {
+      homeAuthEmail = event.target.value;
+      homeAuthErrorKey = "";
+      const errorNode = byId("homeAuthError");
+      if (errorNode) {
+        errorNode.textContent = "";
+      }
+    });
+  }
+
+  const homeAuthPasswordInput = byId("homeAuthPassword");
+  if (homeAuthPasswordInput) {
+    homeAuthPasswordInput.addEventListener("input", (event) => {
+      homeAuthPassword = event.target.value;
+      homeAuthErrorKey = "";
+      const errorNode = byId("homeAuthError");
+      if (errorNode) {
+        errorNode.textContent = "";
+      }
+    });
+  }
+
+  const homeAuthResetButton = byId("homeAuthResetButton");
+  if (homeAuthResetButton) {
+    homeAuthResetButton.addEventListener("click", handleHomeAuthResetPassword);
+  }
+
+  const homeAuthBackButton = byId("homeAuthBackButton");
+  if (homeAuthBackButton) {
+    homeAuthBackButton.addEventListener("click", handleHomeAuthBack);
+  }
+
+  const homeAuthGoogleButton = byId("homeAuthGoogleButton");
+  if (homeAuthGoogleButton) {
+    homeAuthGoogleButton.addEventListener("click", handleFirebaseSignIn);
   }
 
   const auctionsSearch = byId("auctions-search");
@@ -1551,14 +1636,20 @@ function getLeadBid(auction) {
 
 function updateDocumentTitle() {
   const title = PAGE_TITLES[state.page]?.[state.language] || PAGE_TITLES.home.en;
+  const brandName = t("brand.name");
 
-  if (state.page === "room") {
-    const auction = resolveActiveAuction();
-    document.title = auction ? `${auction.title} · ${title} · ${t("brand.name")}` : `${title} · ${t("brand.name")}`;
+  if (state.page === "home") {
+    document.title = title === brandName ? brandName : `${title} · ${brandName}`;
     return;
   }
 
-  document.title = `${title} · ${t("brand.name")}`;
+  if (state.page === "room") {
+    const auction = resolveActiveAuction();
+    document.title = auction ? `${auction.title} · ${title} · ${brandName}` : `${title} · ${brandName}`;
+    return;
+  }
+
+  document.title = `${title} · ${brandName}`;
 }
 
 function setToast(message) {
@@ -2014,12 +2105,17 @@ async function handleFirebaseSignIn() {
   const provider = new window.firebase.auth.GoogleAuthProvider();
   provider.setCustomParameters({ prompt: "select_account" });
   homeAuthRedirectPending = true;
+  homeAuthBusy = true;
+  renderHomeAuthModal();
 
   try {
     await firebaseAuthInstance.signInWithPopup(provider);
   } catch {
     homeAuthRedirectPending = false;
     setToast(t("toast.googleSignInFailed"));
+  } finally {
+    homeAuthBusy = false;
+    renderHomeAuthModal();
   }
 }
 
@@ -2031,6 +2127,11 @@ function openHomeAuthModal() {
     return;
   }
 
+  homeAuthStep = "email";
+  homeAuthEmail = "";
+  homeAuthPassword = "";
+  homeAuthErrorKey = "";
+  homeAuthBusy = false;
   homeAuthModalLastFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
   modal.hidden = false;
   if (trigger) {
@@ -2040,10 +2141,10 @@ function openHomeAuthModal() {
   renderHomeAuthModal();
 
   window.requestAnimationFrame(() => {
-    const closeButton = byId("homeAuthModalClose");
-    const googleButton = byId("homeAuthModalButton")?.querySelector("button");
-    if (closeButton) {
-      closeButton.focus();
+    const emailInput = byId("homeAuthEmail");
+    const googleButton = byId("homeAuthGoogleButton");
+    if (emailInput) {
+      emailInput.focus();
     } else if (googleButton) {
       googleButton.focus();
     }
@@ -2061,6 +2162,11 @@ function closeHomeAuthModal() {
   if (trigger) {
     trigger.setAttribute("aria-expanded", "false");
   }
+  homeAuthStep = "email";
+  homeAuthEmail = "";
+  homeAuthPassword = "";
+  homeAuthErrorKey = "";
+  homeAuthBusy = false;
   homeAuthRedirectPending = false;
   document.body.classList.remove("auth-modal-open");
 
@@ -2072,7 +2178,201 @@ function closeHomeAuthModal() {
 }
 
 function renderHomeAuthModal() {
-  renderFirebaseAuthButton("homeAuthModalButton", "toast.googleUnavailable");
+  const title = byId("homeAuthModalTitle");
+  const hint = byId("homeAuthModalHint");
+  const emailLabel = byId("homeAuthEmailLabel");
+  const passwordLabel = byId("homeAuthPasswordLabel");
+  const emailInput = byId("homeAuthEmail");
+  const passwordField = byId("homeAuthPasswordField");
+  const passwordInput = byId("homeAuthPassword");
+  const primaryButton = byId("homeAuthPrimaryButton");
+  const resetButton = byId("homeAuthResetButton");
+  const dividerText = byId("homeAuthDividerText");
+  const googleButton = byId("homeAuthGoogleButton");
+  const googleLabel = byId("homeAuthGoogleButtonLabel");
+  const backButton = byId("homeAuthBackButton");
+  const errorNode = byId("homeAuthError");
+
+  const passwordStep = homeAuthStep === "password";
+
+  if (title) {
+    title.textContent = passwordStep ? t("home.authPasswordTitle") : t("home.authModalTitle");
+  }
+  if (hint) {
+    hint.hidden = !passwordStep;
+    hint.textContent = passwordStep ? t("home.authPasswordHint") : "";
+  }
+  if (emailLabel) {
+    emailLabel.textContent = t("home.authEmailLabel");
+  }
+  if (passwordLabel) {
+    passwordLabel.textContent = t("home.authPasswordLabel");
+  }
+  if (emailInput) {
+    emailInput.value = homeAuthEmail;
+    emailInput.setAttribute("placeholder", t("home.authEmailPlaceholder"));
+    emailInput.disabled = homeAuthBusy;
+  }
+  if (passwordField) {
+    passwordField.hidden = !passwordStep;
+  }
+  if (passwordInput) {
+    passwordInput.value = homeAuthPassword;
+    passwordInput.setAttribute("placeholder", t("home.authPasswordPlaceholder"));
+    passwordInput.disabled = homeAuthBusy;
+  }
+  if (primaryButton) {
+    primaryButton.textContent = passwordStep ? t("home.authSignIn") : t("home.authNext");
+    primaryButton.disabled = homeAuthBusy;
+  }
+  if (resetButton) {
+    resetButton.textContent = t("home.authResetPassword");
+    resetButton.disabled = homeAuthBusy;
+  }
+  if (dividerText) {
+    dividerText.textContent = t("home.authDivider");
+  }
+  if (googleButton) {
+    googleButton.disabled = homeAuthBusy || !state.firebaseConfigured || !firebaseAuthInstance;
+    googleButton.title = !state.firebaseConfigured || !firebaseAuthInstance ? t("toast.authUnavailable") : "";
+  }
+  if (googleLabel) {
+    googleLabel.textContent = t("auth.googleSignInButton");
+  }
+  if (backButton) {
+    backButton.textContent = t("home.authUseAnotherEmail");
+    backButton.hidden = !passwordStep;
+    backButton.disabled = homeAuthBusy;
+  }
+  if (errorNode) {
+    errorNode.textContent = homeAuthErrorKey ? t(homeAuthErrorKey) : "";
+    errorNode.hidden = !homeAuthErrorKey;
+  }
+}
+
+function handleHomeAuthBack() {
+  if (homeAuthBusy) {
+    return;
+  }
+
+  homeAuthStep = "email";
+  homeAuthPassword = "";
+  homeAuthErrorKey = "";
+  renderHomeAuthModal();
+
+  window.requestAnimationFrame(() => {
+    byId("homeAuthEmail")?.focus();
+  });
+}
+
+async function handleHomeAuthResetPassword() {
+  if (homeAuthBusy) {
+    return;
+  }
+
+  const emailInput = byId("homeAuthEmail");
+  const email = normalizeEmail(emailInput?.value || homeAuthEmail);
+
+  if (!email) {
+    homeAuthErrorKey = "toast.emailRequired";
+    renderHomeAuthModal();
+    emailInput?.focus();
+    return;
+  }
+
+  if (!firebaseAuthInstance || !state.firebaseConfigured) {
+    setToast(t("toast.authUnavailable"));
+    return;
+  }
+
+  homeAuthEmail = email;
+
+  try {
+    await firebaseAuthInstance.sendPasswordResetEmail(email);
+    homeAuthErrorKey = "";
+    renderHomeAuthModal();
+    setToast(t("toast.passwordResetSent"));
+  } catch {
+    setToast(t("toast.passwordResetFailed"));
+  }
+}
+
+async function handleHomeAuthSubmit(event) {
+  event.preventDefault();
+
+  if (homeAuthBusy) {
+    return;
+  }
+
+  const emailInput = byId("homeAuthEmail");
+  const passwordInput = byId("homeAuthPassword");
+  const email = normalizeEmail(emailInput?.value || homeAuthEmail);
+
+  if (!email) {
+    homeAuthErrorKey = "toast.emailRequired";
+    renderHomeAuthModal();
+    emailInput?.focus();
+    return;
+  }
+
+  if (!email.includes("@")) {
+    homeAuthErrorKey = "toast.invalidEmail";
+    renderHomeAuthModal();
+    emailInput?.focus();
+    return;
+  }
+
+  homeAuthEmail = email;
+
+  if (homeAuthStep === "email") {
+    if (!firebaseAuthInstance || !state.firebaseConfigured) {
+      setToast(t("toast.authUnavailable"));
+      return;
+    }
+
+    homeAuthStep = "password";
+    homeAuthPassword = "";
+    homeAuthErrorKey = "";
+    renderHomeAuthModal();
+
+    window.requestAnimationFrame(() => {
+      byId("homeAuthPassword")?.focus();
+    });
+    return;
+  }
+
+  const password = String(passwordInput?.value || homeAuthPassword || "");
+  if (!password) {
+    homeAuthErrorKey = "toast.passwordRequired";
+    renderHomeAuthModal();
+    passwordInput?.focus();
+    return;
+  }
+
+  if (!firebaseAuthInstance || !state.firebaseConfigured) {
+    setToast(t("toast.authUnavailable"));
+    return;
+  }
+
+  homeAuthBusy = true;
+  homeAuthRedirectPending = true;
+  homeAuthPassword = password;
+  homeAuthErrorKey = "";
+  renderHomeAuthModal();
+
+  try {
+    await firebaseAuthInstance.signInWithEmailAndPassword(email, password);
+  } catch {
+    homeAuthRedirectPending = false;
+    homeAuthErrorKey = "toast.emailSignInFailed";
+    homeAuthBusy = false;
+    renderHomeAuthModal();
+    passwordInput?.focus();
+    return;
+  }
+
+  homeAuthBusy = false;
+  renderHomeAuthModal();
 }
 
 async function handleFirebaseSignOut() {

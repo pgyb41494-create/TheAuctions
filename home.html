@@ -50,17 +50,40 @@
     </div>
 
     <div id="homeAuthModal" class="auth-modal-overlay" hidden>
-      <div class="auth-modal panel" role="dialog" aria-modal="true" aria-labelledby="homeAuthModalTitle">
-        <div class="auth-modal-head">
-          <div>
-            <p class="eyebrow" data-i18n="home.authPrimary">Sign in</p>
-            <h2 id="homeAuthModalTitle" data-i18n="home.authModalTitle">Continue with Google</h2>
-          </div>
-          <button id="homeAuthModalClose" class="auth-modal-close" type="button" aria-label="Close">×</button>
+      <div class="auth-modal panel" role="dialog" aria-modal="true" aria-labelledby="homeAuthModalTitle" aria-describedby="homeAuthModalHint">
+        <button id="homeAuthModalClose" class="auth-modal-close" type="button" aria-label="Close">×</button>
+
+        <div class="auth-modal-copy">
+          <h2 id="homeAuthModalTitle">Sign in to Your Account</h2>
+          <p id="homeAuthModalHint" class="auth-modal-subtitle">Enter your email to continue.</p>
         </div>
 
-        <p class="helper" data-i18n="home.authHint">Use Google to continue.</p>
-        <div id="homeAuthModalButton" class="auth-modal-actions"></div>
+        <form id="homeAuthForm" class="auth-modal-form">
+          <label class="auth-modal-field" for="homeAuthEmail">
+            <span id="homeAuthEmailLabel">Email Address</span>
+            <input id="homeAuthEmail" class="auth-modal-input" type="email" placeholder="Enter Your Email" autocomplete="email">
+          </label>
+
+          <label id="homeAuthPasswordField" class="auth-modal-field" for="homeAuthPassword" hidden>
+            <span id="homeAuthPasswordLabel">Password</span>
+            <input id="homeAuthPassword" class="auth-modal-input" type="password" placeholder="Enter your password" autocomplete="current-password">
+          </label>
+
+          <button id="homeAuthPrimaryButton" class="auth-modal-primary" type="submit">Next</button>
+          <button id="homeAuthResetButton" class="auth-modal-reset" type="button">Reset Password</button>
+
+          <div class="auth-modal-divider" aria-hidden="true">
+            <span id="homeAuthDividerText">or</span>
+          </div>
+
+          <button id="homeAuthGoogleButton" class="auth-modal-google-button" type="button">
+            <span class="auth-modal-google-icon" aria-hidden="true">G</span>
+            <span id="homeAuthGoogleButtonLabel">Sign in with Google</span>
+          </button>
+
+          <button id="homeAuthBackButton" class="auth-modal-back" type="button" hidden>Use another email</button>
+          <p id="homeAuthError" class="auth-modal-error" aria-live="polite"></p>
+        </form>
       </div>
     </div>
 
