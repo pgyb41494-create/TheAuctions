@@ -595,6 +595,11 @@ function bindPageEvents() {
     dashboardDisplayNameForm.addEventListener("submit", handleDashboardDisplayNameSubmit);
   }
 
+  const homeAuthButton = byId("homeAuthButton");
+  if (homeAuthButton) {
+    homeAuthButton.addEventListener("click", handleFirebaseSignIn);
+  }
+
   const auctionsSearch = byId("auctions-search");
   if (auctionsSearch) {
     auctionsSearch.addEventListener("input", (event) => {
@@ -1772,6 +1777,11 @@ function applyFirebaseUser(user) {
     saveProfile({ displayName: state.profile.displayName, google: null });
   }
 
+  if (email && state.page === "home") {
+    window.location.href = state.adminEmails.includes(email) ? "admin.html" : "dashboard.html";
+    return;
+  }
+
   updateNavVisibility();
   renderCurrentPage();
 }
@@ -1849,11 +1859,7 @@ async function handleFirebaseSignIn() {
   provider.setCustomParameters({ prompt: "select_account" });
 
   try {
-    const result = await firebaseAuthInstance.signInWithPopup(provider);
-    const email = normalizeEmail(result.user?.email);
-    if (email) {
-      setToast(t("toast.googleSignedIn", { email }));
-    }
+    await firebaseAuthInstance.signInWithPopup(provider);
   } catch {
     setToast(t("toast.googleSignInFailed"));
   }
