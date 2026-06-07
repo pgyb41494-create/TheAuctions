@@ -456,6 +456,21 @@ td,
   gap: 0.95rem;
 }
 
+.drop-interval-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.drop-interval-grid .field {
+  gap: 0.35rem;
+}
+
+.drop-interval-grid input {
+  min-height: 2.6rem;
+  padding: 0.7rem 0.85rem;
+}
+
 .full-span {
   grid-column: 1 / -1;
 }
@@ -753,6 +768,10 @@ th {
   }
 
   .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .drop-interval-grid {
     grid-template-columns: 1fr;
   }
 

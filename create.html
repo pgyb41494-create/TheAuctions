@@ -39,7 +39,7 @@
           <article class="panel hero-panel">
             <p class="eyebrow" data-i18n="create.eyebrow">Create room</p>
             <h1 data-i18n="create.title">Publish a new reverse auction.</h1>
-            <p class="lede" data-i18n="create.lede">Set the ceiling, step, and deadline before you publish.</p>
+            <p class="lede" data-i18n="create.lede">Set the price, drop schedule, and close time before you publish.</p>
             <div class="action-row">
               <a class="button button-secondary" href="auctions.html" data-i18n="common.backToRooms">Back to rooms</a>
               <a class="button" href="join.html" data-i18n="common.enterRoom">Enter room</a>
@@ -64,7 +64,7 @@
               </div>
 
               <div class="field">
-                <label for="createBuyer" data-i18n="create.fieldBuyer">Buyer</label>
+                <label for="createBuyer" data-i18n="create.fieldBuyer">Auction Maker</label>
                 <input id="createBuyer" name="buyer" type="text" placeholder="Northstar" data-i18n-placeholder="create.placeholderBuyer" required />
               </div>
 
@@ -79,12 +79,31 @@
               </div>
 
               <div class="field">
-                <label for="createStep" data-i18n="create.fieldStep">Minimum decrease</label>
-                <input id="createStep" name="step" type="number" min="1" step="1" placeholder="500" data-i18n-placeholder="create.placeholderStep" required />
+                <label for="createDropAmount" data-i18n="create.fieldStep">Drop amount</label>
+                <input id="createDropAmount" name="dropAmount" type="number" min="1" step="1" placeholder="500" data-i18n-placeholder="create.placeholderStep" required />
+              </div>
+
+              <div class="field full-span">
+                <label data-i18n="create.fieldDropEvery">Price drops every</label>
+                <div class="drop-interval-grid">
+                  <div class="field">
+                    <label for="createDropDays" data-i18n="create.dropDays">Days</label>
+                    <input id="createDropDays" name="dropDays" type="number" min="0" step="1" value="0" />
+                  </div>
+                  <div class="field">
+                    <label for="createDropHours" data-i18n="create.dropHours">Hours</label>
+                    <input id="createDropHours" name="dropHours" type="number" min="0" step="1" value="0" />
+                  </div>
+                  <div class="field">
+                    <label for="createDropMinutes" data-i18n="create.dropMinutes">Minutes</label>
+                    <input id="createDropMinutes" name="dropMinutes" type="number" min="0" step="1" value="0" />
+                  </div>
+                </div>
+                <p class="helper" data-i18n="create.dropHint">Set any mix above zero.</p>
               </div>
 
               <div class="field">
-                <label for="createDuration" data-i18n="create.fieldDuration">Duration in minutes</label>
+                <label for="createDuration" data-i18n="create.fieldDuration">Auction length</label>
                 <input id="createDuration" name="duration" type="number" min="15" step="15" value="60" data-i18n-placeholder="create.placeholderDuration" required />
               </div>
 

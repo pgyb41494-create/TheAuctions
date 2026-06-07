@@ -44,7 +44,7 @@ const TRANSLATIONS = {
     "common.leadBidder": "Lead bidder",
     "common.offers": "Offers",
     "common.ceiling": "Ceiling",
-    "common.minimumStep": "Minimum drop",
+    "common.minimumStep": "Drop amount",
     "common.closes": "Closes",
     "common.participants": "Participants",
     "common.statusOpen": "Open",
@@ -94,16 +94,16 @@ const TRANSLATIONS = {
     "home.rule3": "Keep the closing time visible so bidders can react.",
     "create.eyebrow": "Create room",
     "create.title": "Publish a new reverse auction.",
-    "create.lede": "Set the ceiling, step, and deadline before you publish.",
+    "create.lede": "Set the price, drop schedule, and close time before you publish.",
     "create.formTitle": "Create form",
     "create.formSubtitle": "Publish the room details.",
     "create.helper": "The room opens immediately after publish.",
     "create.fieldTitle": "Auction title",
-    "create.fieldBuyer": "Buyer",
+    "create.fieldBuyer": "Auction Maker",
     "create.fieldCategory": "Category",
     "create.fieldCeiling": "Ceiling price",
-    "create.fieldStep": "Minimum decrease",
-    "create.fieldDuration": "Duration in minutes",
+    "create.fieldStep": "Drop amount",
+    "create.fieldDuration": "Auction length",
     "create.fieldNotes": "Notes",
     "create.placeholderTitle": "Office cleaning contract",
     "create.placeholderBuyer": "Northstar",
@@ -112,6 +112,11 @@ const TRANSLATIONS = {
     "create.placeholderStep": "500",
     "create.placeholderDuration": "60",
     "create.placeholderNotes": "Add scope notes, service expectations, or compliance details.",
+    "create.fieldDropEvery": "Price drops every",
+    "create.dropDays": "Days",
+    "create.dropHours": "Hours",
+    "create.dropMinutes": "Minutes",
+    "create.dropHint": "Set any mix above zero.",
     "create.submit": "Publish room",
     "create.button": "Publish room",
     "create.previewTitle": "Recent rooms",
@@ -165,6 +170,9 @@ const TRANSLATIONS = {
     "room.lookupButton": "Open room",
     "room.activeRoomsTitle": "Open rooms",
     "room.activeRoomsSubtitle": "Rooms you can open now",
+    "room.schedule": "Drops every {{interval}} by {{amount}}. Closes in {{close}}.",
+    "room.scheduleClosed": "Closed",
+    "room.manualOnly": "Manual bids only",
     "room.summarySubtitle": "Room overview",
     "room.historyTitle": "Bid history",
     "room.historySubtitle": "Latest offers first",
@@ -185,6 +193,7 @@ const TRANSLATIONS = {
     "room.notesTitle": "Notes",
     "room.notesSubtitle": "Room description",
     "room.noNotes": "No notes were provided.",
+    "toast.dropIntervalRequired": "Set a drop interval using days, hours, or minutes.",
     "dashboard.eyebrow": "Google account",
     "dashboard.title": "Your joined auctions live in one dashboard.",
     "dashboard.lede": "Sign in with Google, set a display name, and keep joined rooms close at hand.",
@@ -290,7 +299,7 @@ const TRANSLATIONS = {
     "common.leadBidder": "Líder",
     "common.offers": "Ofertas",
     "common.ceiling": "Tope",
-    "common.minimumStep": "Bajada mínima",
+    "common.minimumStep": "Monto de bajada",
     "common.closes": "Cierra",
     "common.participants": "Participantes",
     "common.statusOpen": "Abierta",
@@ -340,16 +349,16 @@ const TRANSLATIONS = {
     "home.rule3": "Muestra la hora de cierre para que haya reacción.",
     "create.eyebrow": "Crear sala",
     "create.title": "Publica una nueva subasta inversa.",
-    "create.lede": "Establece el tope, la bajada y el cierre antes de invitar a los postores.",
+    "create.lede": "Define el precio, el intervalo de bajada y el cierre antes de publicar.",
     "create.formTitle": "Formulario",
     "create.formSubtitle": "Publica los detalles de la sala.",
     "create.helper": "La sala se abre inmediatamente después de publicar.",
     "create.fieldTitle": "Título de la subasta",
-    "create.fieldBuyer": "Comprador",
+    "create.fieldBuyer": "Creador de la subasta",
     "create.fieldCategory": "Categoría",
     "create.fieldCeiling": "Precio tope",
-    "create.fieldStep": "Bajada mínima",
-    "create.fieldDuration": "Duración en minutos",
+    "create.fieldStep": "Monto de bajada",
+    "create.fieldDuration": "Duración de la sala",
     "create.fieldNotes": "Notas",
     "create.placeholderTitle": "Contrato de limpieza de oficinas",
     "create.placeholderBuyer": "Northstar",
@@ -358,6 +367,11 @@ const TRANSLATIONS = {
     "create.placeholderStep": "500",
     "create.placeholderDuration": "60",
     "create.placeholderNotes": "Agrega alcance, expectativas de servicio o detalles de cumplimiento.",
+    "create.fieldDropEvery": "La sala baja cada",
+    "create.dropDays": "Días",
+    "create.dropHours": "Horas",
+    "create.dropMinutes": "Minutos",
+    "create.dropHint": "Usa cualquier combinación mayor que cero.",
     "create.submit": "Publicar sala",
     "create.button": "Publicar sala",
     "create.previewTitle": "Vista previa",
@@ -411,6 +425,9 @@ const TRANSLATIONS = {
     "room.lookupButton": "Abrir sala",
     "room.activeRoomsTitle": "Salas abiertas",
     "room.activeRoomsSubtitle": "Tableros que puedes abrir ahora",
+    "room.schedule": "Baja cada {{interval}} en {{amount}}. Cierra en {{close}}.",
+    "room.scheduleClosed": "Cerrada",
+    "room.manualOnly": "Solo pujas manuales",
     "room.summarySubtitle": "Resumen de la sala",
     "room.historyTitle": "Historial de ofertas",
     "room.historySubtitle": "Las ofertas más recientes primero",
@@ -431,6 +448,7 @@ const TRANSLATIONS = {
     "room.notesTitle": "Notas",
     "room.notesSubtitle": "Descripción de la sala",
     "room.noNotes": "No se agregaron notas.",
+    "toast.dropIntervalRequired": "Configura un intervalo de bajada usando días, horas o minutos.",
     "dashboard.eyebrow": "Cuenta de Google",
     "dashboard.title": "Tus subastas unidas viven en un solo panel.",
     "dashboard.lede": "Inicia sesión con Google, define tu nombre visible y ten cerca las salas que uniste.",
@@ -551,6 +569,11 @@ async function initialize() {
   applyLanguage();
   updateNavVisibility();
   renderCurrentPage();
+  window.setInterval(() => {
+    if (document.visibilityState === "visible") {
+      renderCurrentPage();
+    }
+  }, 60000);
   flashMessageFromQuery();
 }
 
@@ -911,6 +934,10 @@ function renderRoomPage() {
     renderAuctionList("roomActiveOpenList", [], { compact: true, emptyKey: "room.emptyBody" });
     setText("roomTitle", t("room.emptyTitle"));
     setText("roomLede", t("room.emptyBody"));
+    const scheduleNode = byId("roomSchedule");
+    if (scheduleNode) {
+      scheduleNode.textContent = "";
+    }
     const notes = byId("roomNotes");
     if (notes) {
       notes.textContent = t("room.noNotes");
@@ -929,6 +956,18 @@ function renderRoomPage() {
 
   setText("roomTitle", auction.title);
   setText("roomLede", `${auction.buyer} · ${auction.category}`);
+  const scheduleNode = byId("roomSchedule");
+  if (scheduleNode) {
+    if (auction.status === "open") {
+      scheduleNode.textContent = t("room.schedule", {
+        interval: formatDropInterval(getDropIntervalMinutes(auction)),
+        amount: formatMoney(auction.minimumStep),
+        close: formatTimeRemaining(auction.endAt),
+      });
+    } else {
+      scheduleNode.textContent = t("room.scheduleClosed");
+    }
+  }
 
   const statusNode = byId("roomStatus");
   if (statusNode) {
@@ -940,9 +979,7 @@ function renderRoomPage() {
   setText("roomCode", auction.code);
   setText("roomCeiling", formatMoney(auction.ceiling));
   setText("roomCurrent", formatMoney(getCurrentOffer(auction)));
-  setText("roomNext", auction.status === "open" ? formatMoney(getNextAllowedOffer(auction)) : t("common.statusClosed"));
   setText("roomStep", formatMoney(auction.minimumStep));
-  setText("roomCloses", auction.status === "open" ? formatTimeRemaining(auction.deadlineAt) : t("common.statusClosed"));
   setText("roomNotes", auction.notes || t("room.noNotes"));
 
   if (bidderField && !bidderField.value) {
@@ -1061,12 +1098,34 @@ function renderAuctionCard(auction, options = {}) {
   `;
 }
 
+function handleCreateSubmit(event) {
+  event.preventDefault();
+
+  const formData = new FormData(event.currentTarget);
+  const title = String(formData.get("title") || "").trim();
+  const buyer = String(formData.get("buyer") || "").trim();
+  const category = String(formData.get("category") || "").trim();
+  const ceiling = Number(formData.get("ceiling"));
+  const dropAmount = Number(formData.get("dropAmount"));
+  const dropDays = Math.max(0, Math.floor(toNumber(formData.get("dropDays"), 0)));
+  const dropHours = Math.max(0, Math.floor(toNumber(formData.get("dropHours"), 0)));
+  const dropMinutes = Math.max(0, Math.floor(toNumber(formData.get("dropMinutes"), 0)));
+  const dropIntervalMinutes = (dropDays * 1440) + (dropHours * 60) + dropMinutes;
+  const durationMinutes = Number(formData.get("duration"));
+  const notes = String(formData.get("notes") || "").trim();
+
+  if (!title || !buyer || !category) {
     setToast(t("toast.formIncomplete"));
     return;
   }
 
-  if (!Number.isFinite(ceiling) || ceiling <= 0 || !Number.isFinite(step) || step <= 0 || !Number.isFinite(duration) || duration < 15) {
+  if (!Number.isFinite(ceiling) || ceiling <= 0 || !Number.isFinite(dropAmount) || dropAmount <= 0 || !Number.isFinite(durationMinutes) || durationMinutes < 15) {
     setToast(t("toast.amountRequired"));
+    return;
+  }
+
+  if (dropIntervalMinutes <= 0) {
+    setToast(t("toast.dropIntervalRequired"));
     return;
   }
 
@@ -1078,10 +1137,11 @@ function renderAuctionCard(auction, options = {}) {
     buyer,
     category,
     ceiling,
-    minimumStep: step,
-    durationMinutes: duration,
+    minimumStep: dropAmount,
+    dropIntervalMinutes,
+    durationMinutes,
     createdAt,
-    endAt: createdAt + duration * 60000,
+    endAt: createdAt + durationMinutes * 60000,
     notes,
     bids: [],
     status: "open",
@@ -1091,6 +1151,7 @@ function renderAuctionCard(auction, options = {}) {
   state.activeCode = auction.code;
   localStorage.setItem(STORAGE_KEYS.activeCode, auction.code);
   saveAuctions();
+  event.currentTarget.reset();
   openRoomByCode(auction.code, "created");
 }
 
@@ -1378,12 +1439,62 @@ function getFeaturedAuctions(limit) {
     .slice(0, limit);
 }
 
+function getDropIntervalMinutes(auction) {
+  return Math.max(0, toNumber(auction.dropIntervalMinutes ?? auction.dropEveryMinutes ?? 0, 0));
+}
+
+function getAutomaticOffer(auction, atTime = Date.now()) {
+  const ceiling = Math.max(1, toNumber(auction.ceiling, 0));
+  const intervalMinutes = getDropIntervalMinutes(auction);
+  const dropAmount = Math.max(1, toNumber(auction.minimumStep, 1));
+
+  if (!intervalMinutes) {
+    return ceiling;
+  }
+
+  const createdAt = Number(auction.createdAt) || Date.now();
+  const endAt = Number(auction.endAt) || createdAt + Math.max(15, Number(auction.durationMinutes) || 60) * 60000;
+  const referenceTime = Math.min(atTime, endAt);
+  const elapsedMinutes = Math.max(0, Math.floor((referenceTime - createdAt) / 60000));
+  const drops = Math.floor(elapsedMinutes / intervalMinutes);
+
+  return Math.max(1, ceiling - drops * dropAmount);
+}
+
+function formatDropInterval(totalMinutes) {
+  const minutesTotal = Math.max(0, Math.floor(Number(totalMinutes) || 0));
+
+  if (!minutesTotal) {
+    return "0m";
+  }
+
+  const days = Math.floor(minutesTotal / 1440);
+  const hours = Math.floor((minutesTotal % 1440) / 60);
+  const minutes = minutesTotal % 60;
+  const parts = [];
+
+  if (days) {
+    parts.push(`${days}d`);
+  }
+  if (hours) {
+    parts.push(`${hours}h`);
+  }
+  if (minutes || !parts.length) {
+    parts.push(`${minutes}m`);
+  }
+
+  return parts.join(" ");
+}
+
 function getCurrentOffer(auction) {
-  return auction.bids.length ? Math.min(auction.ceiling, ...auction.bids.map((bid) => bid.amount)) : auction.ceiling;
+  const autoOffer = getAutomaticOffer(auction);
+  const lowestBid = auction.bids.length ? Math.min(...auction.bids.map((bid) => bid.amount)) : Infinity;
+
+  return Math.min(autoOffer, lowestBid);
 }
 
 function getNextAllowedOffer(auction) {
-  return Math.max(1, getCurrentOffer(auction) - auction.minimumStep);
+  return Math.max(1, getCurrentOffer(auction) - Math.max(1, toNumber(auction.minimumStep, 1)));
 }
 
 function getParticipantCount(auction) {
@@ -1928,7 +2039,8 @@ function normalizeAuction(rawAuction) {
   const durationMinutes = Math.max(15, Number(rawAuction.durationMinutes) || 60);
   const endAt = Number(rawAuction.endAt) || createdAt + durationMinutes * 60000;
   const ceiling = toNumber(rawAuction.ceiling, 0);
-  const minimumStep = Math.max(1, toNumber(rawAuction.minimumStep ?? rawAuction.step, 50));
+  const minimumStep = Math.max(1, toNumber(rawAuction.minimumStep ?? rawAuction.dropAmount ?? rawAuction.step, 50));
+  const dropIntervalMinutes = Math.max(0, toNumber(rawAuction.dropIntervalMinutes ?? rawAuction.dropEveryMinutes ?? rawAuction.dropInterval, 0));
   const bids = Array.isArray(rawAuction.bids)
     ? rawAuction.bids
         .map((bid) => normalizeBid(bid, createdAt, ceiling))
@@ -1944,6 +2056,7 @@ function normalizeAuction(rawAuction) {
     category: String(rawAuction.category || "General").trim(),
     ceiling,
     minimumStep,
+    dropIntervalMinutes,
     durationMinutes,
     createdAt,
     endAt,
@@ -1992,11 +2105,14 @@ function findAuctionByCode(rawCode) {
 }
 
 function getCurrentOffer(auction) {
-  return auction.bids.length ? Math.min(auction.ceiling, ...auction.bids.map((bid) => bid.amount)) : auction.ceiling;
+  const autoOffer = getAutomaticOffer(auction);
+  const lowestBid = auction.bids.length ? Math.min(...auction.bids.map((bid) => bid.amount)) : Infinity;
+
+  return Math.min(autoOffer, lowestBid);
 }
 
 function getNextAllowedOffer(auction) {
-  return Math.max(1, getCurrentOffer(auction) - auction.minimumStep);
+  return Math.max(1, getCurrentOffer(auction) - Math.max(1, toNumber(auction.minimumStep, 1)));
 }
 
 function getOpenAuctions() {
