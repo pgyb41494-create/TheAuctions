@@ -16,7 +16,7 @@
         <a class="brand" href="home.html" aria-label="Apex Reverse Auctions home">
           <span class="brand-mark">RA</span>
           <span class="brand-copy">
-            <span class="brand-kicker" data-i18n="brand.kicker">Procurement platform</span>
+            <span class="brand-kicker" data-i18n="brand.kicker">Auction workspace</span>
             <strong data-i18n="brand.name">Apex Reverse Auctions</strong>
           </span>
         </a>
@@ -39,38 +39,12 @@
           <article class="panel hero-panel">
             <p class="eyebrow" data-i18n="join.eyebrow">Join room</p>
             <h1 data-i18n="join.title">Enter a room code and begin bidding.</h1>
-            <p class="lede" data-i18n="join.lede">Use the code you received from the buyer or the procurement team.</p>
+            <p class="lede" data-i18n="join.lede">Use the code you received to enter the room.</p>
             <div class="action-row">
               <a class="button button-secondary" href="auctions.html" data-i18n="common.backToRooms">Back to rooms</a>
               <a class="button" href="create.html" data-i18n="common.publishRoom">Publish room</a>
             </div>
           </article>
-
-          <aside class="panel summary-panel">
-            <div class="section-head compact">
-              <div>
-                <p class="eyebrow" data-i18n="join.previewTitle">Join snapshot</p>
-                <h2 data-i18n="join.previewBody">Rooms available right now.</h2>
-              </div>
-            </div>
-            <div class="summary-grid three-up">
-              <article class="stat-box">
-                <span data-i18n="common.openRooms">Open rooms</span>
-                <strong id="joinOpenRooms">0</strong>
-                <p data-i18n="join.recentBody">Choose an active room from the list below.</p>
-              </article>
-              <article class="stat-box">
-                <span data-i18n="common.offers">Offers</span>
-                <strong id="joinOfferCount">0</strong>
-                <p data-i18n="join.recentBody">Past bids across all rooms.</p>
-              </article>
-              <article class="stat-box">
-                <span data-i18n="common.closes">Soonest close</span>
-                <strong id="joinSoonestClose">—</strong>
-                <p data-i18n="join.recentBody">Fastest closing room in the workspace.</p>
-              </article>
-            </div>
-          </aside>
         </section>
 
         <section class="split-grid">
@@ -90,8 +64,8 @@
               </div>
 
               <div class="field full-span">
-                <label for="joinName" data-i18n="join.fieldName">Your name or company</label>
-                <input id="joinName" name="name" type="text" placeholder="Cedar Supply Co." data-i18n-placeholder="join.placeholderName" required />
+                <label for="joinName" data-i18n="join.fieldName">Your name</label>
+                <input id="joinName" name="name" type="text" placeholder="Cedar Supply" data-i18n-placeholder="join.placeholderName" required />
               </div>
 
               <div class="form-actions full-span">
@@ -101,31 +75,15 @@
             </form>
           </article>
 
-          <aside class="panel stack-panel">
-            <article class="info-box">
-              <div class="section-head compact">
-                <div>
-                  <p class="eyebrow" data-i18n="join.recentTitle">How to join</p>
-                  <h3 data-i18n="join.recentSubtitle">Three quick checks.</h3>
-                </div>
+          <article class="panel">
+            <div class="section-head compact">
+              <div>
+                <p class="eyebrow" data-i18n="join.recentTitle">Recent rooms</p>
+                <h2 data-i18n="join.recentSubtitle">Open a room directly.</h2>
               </div>
-              <ul class="clean-list">
-                <li>Make sure the room code is exact, including the letters and numbers.</li>
-                <li>Use the same bidder name each time so the bid history stays clear.</li>
-                <li>Open the room page once you are in, then submit your offer.</li>
-              </ul>
-            </article>
-
-            <article class="info-box">
-              <div class="section-head compact">
-                <div>
-                  <p class="eyebrow" data-i18n="join.recentTitle">Recent rooms</p>
-                  <h3 data-i18n="join.recentSubtitle">Open a room directly.</h3>
-                </div>
-              </div>
-              <div id="joinRecentRooms" class="stack-list"></div>
-            </article>
-          </aside>
+            </div>
+            <div id="joinRecentRooms" class="stack-list"></div>
+          </article>
         </section>
       </main>
 

@@ -16,7 +16,7 @@
         <a class="brand" href="home.html" aria-label="Apex Reverse Auctions home">
           <span class="brand-mark">RA</span>
           <span class="brand-copy">
-            <span class="brand-kicker" data-i18n="brand.kicker">Procurement platform</span>
+            <span class="brand-kicker" data-i18n="brand.kicker">Auction workspace</span>
             <strong data-i18n="brand.name">Apex Reverse Auctions</strong>
           </span>
         </a>
@@ -39,43 +39,12 @@
           <article class="panel hero-panel">
             <p class="eyebrow" data-i18n="create.eyebrow">Create room</p>
             <h1 data-i18n="create.title">Publish a new reverse auction.</h1>
-            <p class="lede" data-i18n="create.lede">Set the ceiling, the step, and the deadline before you invite bidders.</p>
+            <p class="lede" data-i18n="create.lede">Set the ceiling, step, and deadline before you publish.</p>
             <div class="action-row">
               <a class="button button-secondary" href="auctions.html" data-i18n="common.backToRooms">Back to rooms</a>
               <a class="button" href="join.html" data-i18n="common.enterRoom">Enter room</a>
             </div>
           </article>
-
-          <aside class="panel summary-panel">
-            <div class="section-head compact">
-              <div>
-                <p class="eyebrow" data-i18n="create.previewTitle">Room snapshot</p>
-                <h2 data-i18n="create.previewBody">Quick overview before you publish.</h2>
-              </div>
-            </div>
-            <div class="summary-grid four-up">
-              <article class="stat-box">
-                <span data-i18n="common.openRooms">Open rooms</span>
-                <strong id="createOpenRooms">0</strong>
-                <p data-i18n="create.previewTip">Live rooms already stored in this browser.</p>
-              </article>
-              <article class="stat-box">
-                <span data-i18n="common.currentOffer">Best live offer</span>
-                <strong id="createBestOffer">—</strong>
-                <p data-i18n="create.previewTip">Lowest active bid across all rooms.</p>
-              </article>
-              <article class="stat-box">
-                <span data-i18n="common.closes">Soonest close</span>
-                <strong id="createSoonestClose">—</strong>
-                <p data-i18n="create.previewTip">Closest deadline in the workspace.</p>
-              </article>
-              <article class="stat-box">
-                <span data-i18n="common.code">Recent codes</span>
-                <strong id="createRecentCount">0</strong>
-                <p data-i18n="create.previewTip">Recent rooms you can open instantly.</p>
-              </article>
-            </div>
-          </aside>
         </section>
 
         <section class="split-grid">
@@ -95,8 +64,8 @@
               </div>
 
               <div class="field">
-                <label for="createBuyer" data-i18n="create.fieldBuyer">Buyer or company</label>
-                <input id="createBuyer" name="buyer" type="text" placeholder="Northstar Holdings" data-i18n-placeholder="create.placeholderBuyer" required />
+                <label for="createBuyer" data-i18n="create.fieldBuyer">Buyer</label>
+                <input id="createBuyer" name="buyer" type="text" placeholder="Northstar" data-i18n-placeholder="create.placeholderBuyer" required />
               </div>
 
               <div class="field">
@@ -131,31 +100,15 @@
             </form>
           </article>
 
-          <aside class="panel stack-panel">
-            <article class="info-box">
-              <div class="section-head compact">
-                <div>
-                  <p class="eyebrow" data-i18n="create.recentTitle">Before you publish</p>
-                  <h3 data-i18n="create.recentSubtitle">Keep the room focused.</h3>
-                </div>
+          <article class="panel">
+            <div class="section-head compact">
+              <div>
+                <p class="eyebrow" data-i18n="create.recentTitle">Recent rooms</p>
+                <h2 data-i18n="create.recentSubtitle">Open an existing room.</h2>
               </div>
-              <ul class="clean-list">
-                <li>Use a short title that vendors can understand at a glance.</li>
-                <li>Keep the minimum decrease realistic so the room does not stall.</li>
-                <li>Write notes only for details bidders actually need.</li>
-              </ul>
-            </article>
-
-            <article class="info-box">
-              <div class="section-head compact">
-                <div>
-                  <p class="eyebrow" data-i18n="create.recentTitle">Recent rooms</p>
-                  <h3 data-i18n="create.recentSubtitle">Open an existing room.</h3>
-                </div>
-              </div>
-              <div id="createRecentRooms" class="stack-list"></div>
-            </article>
-          </aside>
+            </div>
+            <div id="createRecentRooms" class="stack-list"></div>
+          </article>
         </section>
       </main>
 

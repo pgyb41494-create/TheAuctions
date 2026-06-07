@@ -16,7 +16,7 @@
         <a class="brand" href="home.html" aria-label="Apex Reverse Auctions home">
           <span class="brand-mark">RA</span>
           <span class="brand-copy">
-            <span class="brand-kicker" data-i18n="brand.kicker">Procurement platform</span>
+            <span class="brand-kicker" data-i18n="brand.kicker">Auction workspace</span>
             <strong data-i18n="brand.name">Apex Reverse Auctions</strong>
           </span>
         </a>
@@ -38,7 +38,7 @@
         <section id="roomEmpty" class="panel room-empty">
           <p class="eyebrow" data-i18n="room.eyebrow">Auction room</p>
           <h1 data-i18n="room.emptyTitle">No room selected.</h1>
-          <p class="lede" data-i18n="room.emptyBody">Pick a room from the list, enter a code, or jump back to the room directory.</p>
+          <p class="lede" data-i18n="room.emptyBody">Pick a room from the list or enter a code.</p>
 
           <div class="action-row">
             <a class="button button-dark" href="auctions.html" data-i18n="room.emptyCta">Back to rooms</a>
@@ -48,7 +48,7 @@
           <article class="info-box">
             <div class="section-head compact">
               <div>
-                <p class="eyebrow" data-i18n="room.lookupTitle">Open another room</p>
+                <p class="eyebrow" data-i18n="room.lookupTitle">Open a room</p>
                 <h2 data-i18n="room.lookupSubtitle">Use a room code</h2>
               </div>
             </div>
@@ -62,15 +62,6 @@
             </form>
           </article>
 
-          <article class="info-box">
-            <div class="section-head compact">
-              <div>
-                <p class="eyebrow" data-i18n="room.activeRoomsTitle">Open rooms</p>
-                <h2 data-i18n="room.activeRoomsSubtitle">Boards you can open now</h2>
-              </div>
-            </div>
-            <div id="roomEmptyOpenList" class="stack-list"></div>
-          </article>
         </section>
 
         <section id="roomShell" class="room-shell" hidden>
@@ -88,7 +79,7 @@
             </div>
           </section>
 
-          <section class="summary-grid six-up room-summary-grid">
+          <section class="summary-grid four-up room-summary-grid">
             <article class="stat-box">
               <span data-i18n="common.roomCode">Room code</span>
               <strong id="roomCode">-</strong>
@@ -110,14 +101,9 @@
               <p data-i18n="room.bidHelper">A lower offer is required.</p>
             </article>
             <article class="stat-box">
-              <span data-i18n="common.minimumStep">Minimum drop</span>
-              <strong id="roomStep">$0</strong>
-              <p data-i18n="home.metric.offersHint">Applied to each bid</p>
-            </article>
-            <article class="stat-box">
-              <span data-i18n="common.participants">Participants</span>
-              <strong id="roomParticipants">0</strong>
-              <p data-i18n="common.closes">Close time</p>
+              <span data-i18n="common.closes">Closes</span>
+              <strong id="roomCloses">—</strong>
+              <p data-i18n="room.summarySubtitle">Room overview</p>
             </article>
           </section>
 
@@ -156,7 +142,7 @@
               <form id="roomBidForm" class="form-grid">
                 <div class="field full-span">
                   <label for="roomBidBidder" data-i18n="room.labelBidder">Bidder name</label>
-                  <input id="roomBidBidder" type="text" placeholder="Cedar Supply Co." data-i18n-placeholder="join.placeholderName" required />
+                  <input id="roomBidBidder" type="text" placeholder="Cedar Supply" data-i18n-placeholder="join.placeholderName" required />
                 </div>
 
                 <div class="field full-span">
@@ -174,32 +160,7 @@
                   <p id="roomBidHelper" class="helper" data-i18n="room.bidHelper">A lower offer is required.</p>
                 </div>
               </form>
-            </article>
-          </section>
 
-          <section class="split-grid">
-            <article class="panel">
-              <div class="section-head compact">
-                <div>
-                  <p class="eyebrow" data-i18n="room.rulesTitle">Room rules</p>
-                  <h2 data-i18n="room.rulesSubtitle">Keep the room disciplined</h2>
-                </div>
-              </div>
-              <div class="rule-stack">
-                <div class="rule-card" data-i18n="home.rule1">Use clear scope notes and a realistic ceiling.</div>
-                <div class="rule-card" data-i18n="home.rule2">Pick a minimum decrement that matches the market.</div>
-                <div class="rule-card" data-i18n="home.rule3">Keep the closing time visible so bidders can react.</div>
-              </div>
-            </article>
-
-            <article class="panel">
-              <div class="section-head compact">
-                <div>
-                  <p class="eyebrow" data-i18n="room.activeRoomsTitle">Open rooms</p>
-                  <h2 data-i18n="room.activeRoomsSubtitle">Other boards to inspect</h2>
-                </div>
-              </div>
-              <div id="roomActiveOpenList" class="stack-list"></div>
               <div class="info-box room-notes-box">
                 <strong data-i18n="room.notesTitle">Notes</strong>
                 <p id="roomNotes"></p>

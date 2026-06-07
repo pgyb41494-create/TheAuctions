@@ -16,7 +16,7 @@
         <a class="brand" href="home.html" aria-label="Apex Reverse Auctions home">
           <span class="brand-mark">RA</span>
           <span class="brand-copy">
-            <span class="brand-kicker" data-i18n="brand.kicker">Procurement platform</span>
+            <span class="brand-kicker" data-i18n="brand.kicker">Auction workspace</span>
             <strong data-i18n="brand.name">Apex Reverse Auctions</strong>
           </span>
         </a>
@@ -45,38 +45,6 @@
               <button id="adminSignOut" class="button button-light" type="button" data-i18n="admin.signOut" hidden>Sign out</button>
             </div>
           </article>
-
-          <aside class="panel summary-panel">
-            <div class="section-head compact">
-              <div>
-                <p class="eyebrow" data-i18n="admin.statsTitle">Workspace stats</p>
-                <h2 data-i18n="admin.statsSubtitle">What the site is storing right now.</h2>
-              </div>
-            </div>
-
-            <div class="summary-grid four-up">
-              <article class="stat-box">
-                <span data-i18n="admin.totalRooms">Total rooms</span>
-                <strong id="adminTotalRooms">0</strong>
-                <p id="adminStatus" class="helper">Locked</p>
-              </article>
-              <article class="stat-box">
-                <span data-i18n="admin.openRooms">Open rooms</span>
-                <strong id="adminOpenRooms">0</strong>
-                <p data-i18n="admin.gateSubtitle">Use an approved email to open the dashboard.</p>
-              </article>
-              <article class="stat-box">
-                <span data-i18n="admin.closedRooms">Closed rooms</span>
-                <strong id="adminClosedRooms">0</strong>
-                <p data-i18n="admin.configHint">Only emails listed in .env can access maintenance tools.</p>
-              </article>
-              <article class="stat-box">
-                <span data-i18n="admin.totalBids">Total bids</span>
-                <strong id="adminTotalBids">0</strong>
-                <p><span id="adminAllowedCount">0</span> <span data-i18n="admin.allowedCount">Approved emails</span></p>
-              </article>
-            </div>
-          </aside>
         </section>
 
         <section id="adminGate" class="panel form-panel">
@@ -88,15 +56,7 @@
             <p id="adminAccessHint" class="section-note" data-i18n="admin.configHint">Only emails listed in .env can access maintenance tools.</p>
           </div>
 
-          <article class="info-box">
-            <div class="section-head compact">
-              <div>
-                <p class="eyebrow" data-i18n="dashboard.accountTitle">Signed-in account</p>
-                <h3 data-i18n="dashboard.gateSubtitle">Use Google to unlock your personal dashboard.</h3>
-              </div>
-            </div>
-            <div id="adminGoogleButton"></div>
-          </article>
+          <div id="adminGoogleButton"></div>
         </section>
 
         <section id="adminDashboard" class="page-grid" hidden>

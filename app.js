@@ -60,7 +60,7 @@ function handleCreateAuction(event) {
   const durationMinutes = Number(formData.get("duration"));
 
   if (!title || !buyer || !category) {
-    showToast("Fill in the title, company, and category.", "error");
+    showToast("Fill in the title and category.", "error");
     return;
   }
 
@@ -277,7 +277,7 @@ function renderActiveAuction() {
       <div class="offer-form-grid">
         <div class="field">
           <label for="offer-bidder">Bidder name</label>
-          <input id="offer-bidder" name="bidder" type="text" value="${escapeHtml(state.lastAlias)}" placeholder="Cedar Supply Co." required ${activeAuctionData.status === "open" ? "" : "disabled"} />
+          <input id="offer-bidder" name="bidder" type="text" value="${escapeHtml(state.lastAlias)}" placeholder="Cedar Supply" required ${activeAuctionData.status === "open" ? "" : "disabled"} />
         </div>
 
         <div class="field">

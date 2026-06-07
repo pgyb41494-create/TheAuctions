@@ -164,7 +164,7 @@ function seedAuctions() {
     normalizeAuction({
       id: makeId(),
       code: "RA-2C9M8V",
-      title: "Corporate event catering",
+      title: "Event catering",
       host: "Events office",
       category: "Events",
       startingPrice: 8400,

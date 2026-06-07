@@ -16,7 +16,7 @@
         <a class="brand" href="home.html" aria-label="Apex Reverse Auctions home">
           <span class="brand-mark">RA</span>
           <span class="brand-copy">
-            <span class="brand-kicker" data-i18n="brand.kicker">Procurement platform</span>
+            <span class="brand-kicker" data-i18n="brand.kicker">Auction workspace</span>
             <strong data-i18n="brand.name">Apex Reverse Auctions</strong>
           </span>
         </a>
@@ -38,22 +38,14 @@
         <section id="dashboardGate" class="panel hero-panel">
           <p class="eyebrow" data-i18n="dashboard.eyebrow">Google account</p>
           <h1 data-i18n="dashboard.gateTitle">Sign in to continue.</h1>
-          <p class="lede" data-i18n="dashboard.lede">Sign in with Google, set your display name, and keep the rooms you joined close at hand.</p>
+          <p class="lede" data-i18n="dashboard.lede">Sign in with Google, set a display name, and keep joined rooms close at hand.</p>
 
           <div class="action-row">
             <a class="button button-secondary" href="auctions.html" data-i18n="common.backToRooms">Back to rooms</a>
             <a class="button" href="create.html" data-i18n="common.publishRoom">Publish room</a>
           </div>
 
-          <article class="info-box">
-            <div class="section-head compact">
-              <div>
-                <p class="eyebrow" data-i18n="dashboard.accountTitle">Signed-in account</p>
-                <h3 data-i18n="dashboard.gateSubtitle">Use Google to unlock your personal dashboard.</h3>
-              </div>
-            </div>
-            <div id="dashboardGoogleButton"></div>
-          </article>
+          <div id="dashboardGoogleButton"></div>
         </section>
 
         <section id="dashboardShell" class="page-grid" hidden>
@@ -61,44 +53,12 @@
             <article class="panel hero-panel">
               <p class="eyebrow" data-i18n="dashboard.eyebrow">Google account</p>
               <h1 data-i18n="dashboard.title">Your joined auctions live in one dashboard.</h1>
-              <p class="lede" data-i18n="dashboard.lede">Sign in with Google, set your display name, and keep the rooms you joined close at hand.</p>
+              <p class="lede" data-i18n="dashboard.lede">Sign in with Google, set a display name, and keep joined rooms close at hand.</p>
               <div class="action-row">
                 <button id="dashboardSignOut" class="button button-light" type="button" data-i18n="dashboard.signOut">Sign out</button>
                 <a class="button button-secondary" href="auctions.html" data-i18n="common.backToRooms">Back to rooms</a>
               </div>
             </article>
-
-            <aside class="panel summary-panel">
-              <div class="section-head compact">
-                <div>
-                  <p class="eyebrow" data-i18n="dashboard.statsTitle">Account stats</p>
-                  <h2 data-i18n="dashboard.statsSubtitle">What this browser has joined.</h2>
-                </div>
-              </div>
-
-              <div class="summary-grid four-up">
-                <article class="stat-box">
-                  <span data-i18n="dashboard.joinedRooms">Joined rooms</span>
-                  <strong id="dashboardJoinedCount">0</strong>
-                  <p data-i18n="dashboard.joinedSubtitle">Rooms you opened from this browser.</p>
-                </article>
-                <article class="stat-box">
-                  <span data-i18n="dashboard.activeRooms">Active rooms</span>
-                  <strong id="dashboardActiveCount">0</strong>
-                  <p data-i18n="dashboard.statsSubtitle">What this browser has joined.</p>
-                </article>
-                <article class="stat-box">
-                  <span data-i18n="dashboard.closedRooms">Closed rooms</span>
-                  <strong id="dashboardClosedCount">0</strong>
-                  <p data-i18n="dashboard.joinedSubtitle">Rooms you opened from this browser.</p>
-                </article>
-                <article class="stat-box">
-                  <span data-i18n="dashboard.joinedAt">Joined</span>
-                  <strong id="dashboardLastJoined">—</strong>
-                  <p data-i18n="dashboard.joinedTitle">Joined auctions</p>
-                </article>
-              </div>
-            </aside>
           </section>
 
           <section class="split-grid">
@@ -106,7 +66,7 @@
               <div class="section-head">
                 <div>
                   <p class="eyebrow" data-i18n="dashboard.accountTitle">Signed-in account</p>
-                  <h2 data-i18n="dashboard.accountSubtitle">Google identity and local display name.</h2>
+                  <h2 data-i18n="dashboard.accountSubtitle">Google identity and display name.</h2>
                 </div>
               </div>
 
@@ -114,7 +74,7 @@
                 <article class="stat-box">
                   <span data-i18n="dashboard.emailLabel">Google email</span>
                   <strong id="dashboardEmailValue">—</strong>
-                  <p data-i18n="dashboard.accountSubtitle">Google identity and local display name.</p>
+                  <p data-i18n="dashboard.accountSubtitle">Google identity and display name.</p>
                 </article>
                 <article class="stat-box">
                   <span data-i18n="dashboard.displayNameLabel">Display name</span>
