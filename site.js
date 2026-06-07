@@ -2022,8 +2022,7 @@ function applyFirebaseUser(user) {
 
   if (email && state.page === "home") {
     if (homeAuthRedirectPending) {
-      homeAuthRedirectPending = false;
-      window.location.href = state.adminEmails.includes(email) ? "admin.html" : "dashboard.html";
+      redirectSignedInUser(email);
       return;
     }
     return;
@@ -2107,15 +2106,19 @@ async function handleFirebaseSignIn() {
   homeAuthRedirectPending = true;
   homeAuthBusy = true;
   renderHomeAuthModal();
+  let redirected = false;
 
   try {
-    await firebaseAuthInstance.signInWithPopup(provider);
+    const result = await firebaseAuthInstance.signInWithPopup(provider);
+    redirected = redirectSignedInUser(result?.user?.email);
   } catch {
     homeAuthRedirectPending = false;
     setToast(t("toast.googleSignInFailed"));
   } finally {
     homeAuthBusy = false;
-    renderHomeAuthModal();
+    if (!redirected) {
+      renderHomeAuthModal();
+    }
   }
 }
 
@@ -2359,9 +2362,11 @@ async function handleHomeAuthSubmit(event) {
   homeAuthPassword = password;
   homeAuthErrorKey = "";
   renderHomeAuthModal();
+  let redirected = false;
 
   try {
-    await firebaseAuthInstance.signInWithEmailAndPassword(email, password);
+    const result = await firebaseAuthInstance.signInWithEmailAndPassword(email, password);
+    redirected = redirectSignedInUser(result?.user?.email || email);
   } catch {
     homeAuthRedirectPending = false;
     homeAuthErrorKey = "toast.emailSignInFailed";
@@ -2372,7 +2377,20 @@ async function handleHomeAuthSubmit(event) {
   }
 
   homeAuthBusy = false;
-  renderHomeAuthModal();
+  if (!redirected) {
+    renderHomeAuthModal();
+  }
+}
+
+function redirectSignedInUser(email) {
+  const normalizedEmail = normalizeEmail(email);
+  if (!normalizedEmail || state.page !== "home") {
+    return false;
+  }
+
+  homeAuthRedirectPending = false;
+  window.location.href = state.adminEmails.includes(normalizedEmail) ? "admin.html" : "dashboard.html";
+  return true;
 }
 
 async function handleFirebaseSignOut() {
