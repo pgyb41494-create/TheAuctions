@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#111111" />
+    <title>Dashboard | Apex Reverse Auctions</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="site.css" />
+    <script defer src="site.js"></script>
+  </head>
+  <body data-page="dashboard">
+    <div class="site-shell">
+      <header class="site-header panel">
+        <a class="brand" href="home.html" aria-label="Apex Reverse Auctions home">
+          <span class="brand-mark">RA</span>
+          <span class="brand-copy">
+            <span class="brand-kicker" data-i18n="brand.kicker">Procurement platform</span>
+            <strong data-i18n="brand.name">Apex Reverse Auctions</strong>
+          </span>
+        </a>
+
+        <nav class="site-nav" aria-label="Primary">
+          <a href="home.html" data-i18n="nav.home">Home</a>
+          <a href="create.html" data-i18n="nav.create">Create</a>
+          <a href="join.html" data-i18n="nav.join">Join</a>
+          <a href="auctions.html" data-i18n="nav.auctions">Rooms</a>
+          <a href="auction.html" data-i18n="nav.room">Room</a>
+          <a href="dashboard.html" class="is-active" aria-current="page" data-i18n="nav.dashboard">Dashboard</a>
+          <a href="admin.html" data-nav="admin" data-i18n="nav.admin">Admin</a>
+        </nav>
+
+        <button id="languageToggle" class="language-toggle" type="button" aria-label="Switch language">Español</button>
+      </header>
+
+      <main class="page-grid dashboard-page-grid">
+        <section id="dashboardGate" class="panel hero-panel">
+          <p class="eyebrow" data-i18n="dashboard.eyebrow">Google account</p>
+          <h1 data-i18n="dashboard.gateTitle">Sign in to continue.</h1>
+          <p class="lede" data-i18n="dashboard.lede">Sign in with Google, set your display name, and keep the rooms you joined close at hand.</p>
+
+          <div class="action-row">
+            <a class="button button-secondary" href="auctions.html" data-i18n="common.backToRooms">Back to rooms</a>
+            <a class="button" href="create.html" data-i18n="common.publishRoom">Publish room</a>
+          </div>
+
+          <article class="info-box">
+            <div class="section-head compact">
+              <div>
+                <p class="eyebrow" data-i18n="dashboard.accountTitle">Signed-in account</p>
+                <h3 data-i18n="dashboard.gateSubtitle">Use Google to unlock your personal dashboard.</h3>
+              </div>
+            </div>
+            <div id="dashboardGoogleButton"></div>
+          </article>
+        </section>
+
+        <section id="dashboardShell" class="page-grid" hidden>
+          <section class="hero-grid">
+            <article class="panel hero-panel">
+              <p class="eyebrow" data-i18n="dashboard.eyebrow">Google account</p>
+              <h1 data-i18n="dashboard.title">Your joined auctions live in one dashboard.</h1>
+              <p class="lede" data-i18n="dashboard.lede">Sign in with Google, set your display name, and keep the rooms you joined close at hand.</p>
+              <div class="action-row">
+                <button id="dashboardSignOut" class="button button-light" type="button" data-i18n="dashboard.signOut">Sign out</button>
+                <a class="button button-secondary" href="auctions.html" data-i18n="common.backToRooms">Back to rooms</a>
+              </div>
+            </article>
+
+            <aside class="panel summary-panel">
+              <div class="section-head compact">
+                <div>
+                  <p class="eyebrow" data-i18n="dashboard.statsTitle">Account stats</p>
+                  <h2 data-i18n="dashboard.statsSubtitle">What this browser has joined.</h2>
+                </div>
+              </div>
+
+              <div class="summary-grid four-up">
+                <article class="stat-box">
+                  <span data-i18n="dashboard.joinedRooms">Joined rooms</span>
+                  <strong id="dashboardJoinedCount">0</strong>
+                  <p data-i18n="dashboard.joinedSubtitle">Rooms you opened from this browser.</p>
+                </article>
+                <article class="stat-box">
+                  <span data-i18n="dashboard.activeRooms">Active rooms</span>
+                  <strong id="dashboardActiveCount">0</strong>
+                  <p data-i18n="dashboard.statsSubtitle">What this browser has joined.</p>
+                </article>
+                <article class="stat-box">
+                  <span data-i18n="dashboard.closedRooms">Closed rooms</span>
+                  <strong id="dashboardClosedCount">0</strong>
+                  <p data-i18n="dashboard.joinedSubtitle">Rooms you opened from this browser.</p>
+                </article>
+                <article class="stat-box">
+                  <span data-i18n="dashboard.joinedAt">Joined</span>
+                  <strong id="dashboardLastJoined">—</strong>
+                  <p data-i18n="dashboard.joinedTitle">Joined auctions</p>
+                </article>
+              </div>
+            </aside>
+          </section>
+
+          <section class="split-grid">
+            <article class="panel form-panel">
+              <div class="section-head">
+                <div>
+                  <p class="eyebrow" data-i18n="dashboard.accountTitle">Signed-in account</p>
+                  <h2 data-i18n="dashboard.accountSubtitle">Google identity and local display name.</h2>
+                </div>
+              </div>
+
+              <div class="summary-grid two-up">
+                <article class="stat-box">
+                  <span data-i18n="dashboard.emailLabel">Google email</span>
+                  <strong id="dashboardEmailValue">—</strong>
+                  <p data-i18n="dashboard.accountSubtitle">Google identity and local display name.</p>
+                </article>
+                <article class="stat-box">
+                  <span data-i18n="dashboard.displayNameLabel">Display name</span>
+                  <strong id="dashboardNameValue">—</strong>
+                  <p data-i18n="dashboard.displayNameHelper">This name fills the join and bid forms.</p>
+                </article>
+              </div>
+
+              <form id="dashboardDisplayNameForm" class="form-grid">
+                <div class="field full-span">
+                  <label for="dashboardDisplayName" data-i18n="dashboard.displayNameLabel">Display name</label>
+                  <input id="dashboardDisplayName" type="text" placeholder="Preferred bidder name" data-i18n-placeholder="dashboard.displayNamePlaceholder" required />
+                </div>
+
+                <div class="form-actions full-span">
+                  <button class="button" type="submit" data-i18n="dashboard.saveDisplayName">Save display name</button>
+                  <p class="helper" data-i18n="dashboard.displayNameHelper">This name fills the join and bid forms.</p>
+                </div>
+              </form>
+            </article>
+
+            <article class="panel">
+              <div class="section-head compact">
+                <div>
+                  <p class="eyebrow" data-i18n="dashboard.joinedTitle">Joined auctions</p>
+                  <h2 data-i18n="dashboard.joinedSubtitle">Rooms you opened from this browser.</h2>
+                </div>
+              </div>
+
+              <div id="dashboardJoinedList" class="auction-grid"></div>
+            </article>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <div id="toast" class="toast" aria-live="polite"></div>
+  </body>
+</html>

@@ -28,7 +28,8 @@
           <a href="join.html" data-i18n="nav.join">Join</a>
           <a href="auctions.html" data-i18n="nav.auctions">Rooms</a>
           <a href="auction.html" data-i18n="nav.room">Room</a>
-          <a href="admin.html" class="is-active" aria-current="page" data-i18n="nav.admin">Admin</a>
+          <a href="dashboard.html" data-i18n="nav.dashboard">Dashboard</a>
+          <a href="admin.html" class="is-active" aria-current="page" data-nav="admin" data-i18n="nav.admin">Admin</a>
         </nav>
 
         <button id="languageToggle" class="language-toggle" type="button" aria-label="Switch language">Español</button>
@@ -87,6 +88,16 @@
             </div>
             <p id="adminAccessHint" class="section-note" data-i18n="admin.configHint">Only emails listed in .env can access maintenance tools.</p>
           </div>
+
+          <article class="info-box">
+            <div class="section-head compact">
+              <div>
+                <p class="eyebrow" data-i18n="dashboard.accountTitle">Signed-in account</p>
+                <h3 data-i18n="dashboard.gateSubtitle">Use Google to unlock your personal dashboard.</h3>
+              </div>
+            </div>
+            <div id="adminGoogleButton"></div>
+          </article>
 
           <form id="adminLoginForm" class="form-grid">
             <div class="field full-span">

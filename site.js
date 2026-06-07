@@ -4,6 +4,8 @@ const STORAGE_KEYS = {
   language: "apex-reverse-auctions.language.v2",
   bidder: "apex-reverse-auctions.bidder.v3",
   adminEmail: "apex-reverse-auctions.admin-email.v1",
+  profile: "apex-reverse-auctions.profile.v1",
+  joinedAuctions: "apex-reverse-auctions.joined-auctions.v1",
 };
 
 const PAGE_TITLES = {
@@ -12,6 +14,7 @@ const PAGE_TITLES = {
   join: { en: "Join room", es: "Entrar a una sala" },
   auctions: { en: "Open rooms", es: "Salas abiertas" },
   room: { en: "Auction room", es: "Sala de subasta" },
+  dashboard: { en: "Dashboard", es: "Panel" },
   admin: { en: "Admin", es: "Administración" },
 };
 
@@ -24,6 +27,7 @@ const TRANSLATIONS = {
     "nav.join": "Join",
     "nav.auctions": "Rooms",
     "nav.room": "Room",
+    "nav.dashboard": "Dashboard",
     "nav.admin": "Admin",
     "lang.toEnglish": "Switch to English",
     "lang.toSpanish": "Cambiar a español",
@@ -31,6 +35,7 @@ const TRANSLATIONS = {
     "common.enterRoom": "Enter room",
     "common.openRoom": "Open room",
     "common.backToRooms": "Back to rooms",
+    "common.publishRoom": "Publish room",
     "common.copyCode": "Copy code",
     "common.code": "Code",
     "common.roomCode": "Room code",
@@ -177,18 +182,44 @@ const TRANSLATIONS = {
     "room.notesTitle": "Notes",
     "room.notesSubtitle": "Room description",
     "room.noNotes": "No notes were provided.",
+    "dashboard.eyebrow": "Google account",
+    "dashboard.title": "Your joined auctions live in one dashboard.",
+    "dashboard.lede": "Sign in with Google, set your display name, and keep the rooms you joined close at hand.",
+    "dashboard.gateTitle": "Sign in to continue.",
+    "dashboard.gateSubtitle": "Use Google to unlock your personal dashboard.",
+    "dashboard.gateHint": "If the Google button does not load, add GOOGLE_CLIENT_ID to .env.",
+    "dashboard.accountTitle": "Signed-in account",
+    "dashboard.accountSubtitle": "Google identity and local display name.",
+    "dashboard.emailLabel": "Google email",
+    "dashboard.displayNameLabel": "Display name",
+    "dashboard.displayNamePlaceholder": "Preferred bidder name",
+    "dashboard.displayNameHelper": "This name fills the join and bid forms.",
+    "dashboard.saveDisplayName": "Save display name",
+    "dashboard.statsTitle": "Account stats",
+    "dashboard.statsSubtitle": "What this browser has joined.",
+    "dashboard.joinedRooms": "Joined rooms",
+    "dashboard.activeRooms": "Active rooms",
+    "dashboard.closedRooms": "Closed rooms",
+    "dashboard.signOut": "Sign out",
+    "dashboard.joinedTitle": "Joined auctions",
+    "dashboard.joinedSubtitle": "Rooms you opened from this browser.",
+    "dashboard.joinedEmpty": "No joined auctions yet.",
+    "dashboard.joinedAt": "Joined",
+    "dashboard.archived": "Archived",
     "admin.eyebrow": "Admin console",
     "admin.title": "Manage rooms with maintenance tools.",
-    "admin.lede": "Sign in with an approved email to delete, close, reopen, or export rooms.",
+    "admin.lede": "Sign in with an approved Google account to delete, close, reopen, or export rooms.",
     "admin.statusLocked": "Locked",
     "admin.statusSignedIn": "Signed in as {{email}}",
+    "admin.statusPending": "Signed in as {{email}} but not approved.",
     "admin.gateTitle": "Admin access",
-    "admin.gateSubtitle": "Use an approved email to open the dashboard.",
+    "admin.gateSubtitle": "Use an approved account to open the dashboard.",
+    "admin.googleHint": "Add GOOGLE_CLIENT_ID to .env to show the Google button.",
     "admin.emailLabel": "Admin email",
     "admin.emailPlaceholder": "admin@company.com",
     "admin.login": "Open dashboard",
     "admin.signOut": "Sign out",
-    "admin.configHint": "Only emails listed in .env can access maintenance tools.",
+    "admin.configHint": "Only Google emails listed in .env can access maintenance tools.",
     "admin.noAdminsConfigured": "No admin emails are configured in .env yet.",
     "admin.statsTitle": "Workspace stats",
     "admin.statsSubtitle": "What the site is storing right now.",
@@ -218,6 +249,10 @@ const TRANSLATIONS = {
     "toast.adminDenied": "That email is not approved.",
     "toast.adminSignedIn": "Admin dashboard unlocked.",
     "toast.adminSignedOut": "Signed out of admin dashboard.",
+    "toast.googleSignedIn": "Signed in as {{email}}.",
+    "toast.googleSignedOut": "Signed out of Google account.",
+    "toast.profileSaved": "Display name saved.",
+    "toast.googleUnavailable": "Google sign-in is not available right now.",
     "toast.bidAccepted": "{{bidder}} is leading at {{amount}}.",
     "toast.invalidCode": "Enter a valid room code.",
     "toast.roomNotFound": "No room matches that code.",
@@ -236,6 +271,7 @@ const TRANSLATIONS = {
     "nav.join": "Entrar",
     "nav.auctions": "Salas",
     "nav.room": "Sala",
+    "nav.dashboard": "Panel",
     "nav.admin": "Administración",
     "lang.toEnglish": "Switch to English",
     "lang.toSpanish": "Cambiar a español",
@@ -390,18 +426,44 @@ const TRANSLATIONS = {
     "room.notesTitle": "Notas",
     "room.notesSubtitle": "Descripción de la sala",
     "room.noNotes": "No se agregaron notas.",
+    "dashboard.eyebrow": "Cuenta de Google",
+    "dashboard.title": "Tus subastas unidas viven en un solo panel.",
+    "dashboard.lede": "Inicia sesión con Google, define tu nombre visible y ten cerca las salas que uniste.",
+    "dashboard.gateTitle": "Inicia sesión para continuar.",
+    "dashboard.gateSubtitle": "Usa Google para desbloquear tu panel personal.",
+    "dashboard.gateHint": "Si el botón de Google no aparece, agrega GOOGLE_CLIENT_ID a .env.",
+    "dashboard.accountTitle": "Cuenta iniciada",
+    "dashboard.accountSubtitle": "Identidad de Google y nombre visible local.",
+    "dashboard.emailLabel": "Correo de Google",
+    "dashboard.displayNameLabel": "Nombre visible",
+    "dashboard.displayNamePlaceholder": "Nombre de postor preferido",
+    "dashboard.displayNameHelper": "Este nombre se usa en los formularios de entrada y oferta.",
+    "dashboard.saveDisplayName": "Guardar nombre visible",
+    "dashboard.statsTitle": "Estadísticas de la cuenta",
+    "dashboard.statsSubtitle": "Lo que este navegador ha unido.",
+    "dashboard.joinedRooms": "Salas unidas",
+    "dashboard.activeRooms": "Salas activas",
+    "dashboard.closedRooms": "Salas cerradas",
+    "dashboard.signOut": "Cerrar sesión",
+    "dashboard.joinedTitle": "Subastas unidas",
+    "dashboard.joinedSubtitle": "Salas que abriste desde este navegador.",
+    "dashboard.joinedEmpty": "Todavía no hay subastas unidas.",
+    "dashboard.joinedAt": "Unida",
+    "dashboard.archived": "Archivada",
     "admin.eyebrow": "Consola de administración",
     "admin.title": "Administra las salas con herramientas de mantenimiento.",
-    "admin.lede": "Ingresa con un correo aprobado para eliminar, cerrar, reabrir o exportar salas.",
+    "admin.lede": "Ingresa con una cuenta aprobada de Google para eliminar, cerrar, reabrir o exportar salas.",
     "admin.statusLocked": "Bloqueado",
     "admin.statusSignedIn": "Sesión iniciada como {{email}}",
+    "admin.statusPending": "Sesión iniciada como {{email}} pero no aprobada.",
     "admin.gateTitle": "Acceso de administrador",
-    "admin.gateSubtitle": "Usa un correo aprobado para abrir el panel.",
+    "admin.gateSubtitle": "Usa una cuenta aprobada para abrir el panel.",
+    "admin.googleHint": "Agrega GOOGLE_CLIENT_ID a .env para mostrar el botón de Google.",
     "admin.emailLabel": "Correo de administrador",
     "admin.emailPlaceholder": "admin@empresa.com",
     "admin.login": "Abrir panel",
     "admin.signOut": "Cerrar sesión",
-    "admin.configHint": "Solo los correos listados en .env pueden acceder a las herramientas de mantenimiento.",
+    "admin.configHint": "Solo los correos de Google listados en .env pueden acceder a las herramientas de mantenimiento.",
     "admin.noAdminsConfigured": "Aún no hay correos de administrador configurados en .env.",
     "admin.statsTitle": "Estadísticas del espacio",
     "admin.statsSubtitle": "Lo que el sitio está guardando ahora.",
@@ -431,6 +493,10 @@ const TRANSLATIONS = {
     "toast.adminDenied": "Ese correo no está aprobado.",
     "toast.adminSignedIn": "Panel de administración desbloqueado.",
     "toast.adminSignedOut": "Sesión cerrada del panel de administración.",
+    "toast.googleSignedIn": "Sesión iniciada como {{email}}.",
+    "toast.googleSignedOut": "Sesión cerrada de la cuenta de Google.",
+    "toast.profileSaved": "Nombre visible guardado.",
+    "toast.googleUnavailable": "La sesión de Google no está disponible ahora mismo.",
     "toast.bidAccepted": "{{bidder}} va ganando con {{amount}}.",
     "toast.invalidCode": "Ingresa un código de sala válido.",
     "toast.roomNotFound": "No existe una sala con ese código.",
@@ -450,23 +516,30 @@ const state = {
   activeCode: localStorage.getItem(STORAGE_KEYS.activeCode) || "",
   lastBidder: localStorage.getItem(STORAGE_KEYS.bidder) || "",
   adminEmail: localStorage.getItem(STORAGE_KEYS.adminEmail) || "",
+  profile: loadProfile(),
+  joinedAuctions: loadJoinedAuctions(),
   adminEmails: [],
+  googleClientId: "",
   filters: { query: "", status: "all" },
 };
 
 document.addEventListener("DOMContentLoaded", initialize);
 
+let googleIdentityPromise = null;
+let googleIdentityInitialized = false;
+
 async function initialize() {
-  if (state.page === "admin") {
-    state.adminEmails = await loadAdminEmails();
-    syncAdminSession();
-  }
+  const [adminEmails, googleClientId] = await Promise.all([loadAdminEmails(), loadGoogleClientId()]);
+  state.adminEmails = adminEmails;
+  state.googleClientId = googleClientId;
+  syncAdminSession();
 
   normalizeExpiredAuctions();
   ensureActiveCode();
   bindLanguageToggle();
   bindPageEvents();
   applyLanguage();
+  updateNavVisibility();
   renderCurrentPage();
   flashMessageFromQuery();
 }
@@ -507,6 +580,11 @@ function bindPageEvents() {
     roomBidForm.addEventListener("submit", handleBidSubmit);
   }
 
+  const dashboardDisplayNameForm = byId("dashboardDisplayNameForm");
+  if (dashboardDisplayNameForm) {
+    dashboardDisplayNameForm.addEventListener("submit", handleDashboardDisplayNameSubmit);
+  }
+
   const auctionsSearch = byId("auctions-search");
   if (auctionsSearch) {
     auctionsSearch.addEventListener("input", (event) => {
@@ -531,6 +609,11 @@ function bindPageEvents() {
   const adminSignOut = byId("adminSignOut");
   if (adminSignOut) {
     adminSignOut.addEventListener("click", handleAdminSignOut);
+  }
+
+  const dashboardSignOut = byId("dashboardSignOut");
+  if (dashboardSignOut) {
+    dashboardSignOut.addEventListener("click", handleGoogleSignOut);
   }
 
   const adminExport = byId("adminExport");
@@ -589,6 +672,7 @@ function renderCurrentPage() {
   normalizeExpiredAuctions();
   ensureActiveCode();
   renderSharedStats();
+  updateNavVisibility();
 
   if (state.page === "home") {
     renderHomePage();
@@ -600,6 +684,8 @@ function renderCurrentPage() {
     renderAuctionsPage();
   } else if (state.page === "room") {
     renderRoomPage();
+  } else if (state.page === "dashboard") {
+    renderDashboardPage();
   } else if (state.page === "admin") {
     renderAdminPage();
   }
@@ -645,6 +731,7 @@ function renderCreatePage() {
 
 function renderJoinPage() {
   renderAuctionList("joinRecentRooms", getOpenAuctions().slice(0, 4), { compact: true, emptyKey: "join.noRooms" });
+  applyPreferredNameDefaults();
 }
 
 function renderAuctionsPage() {
@@ -670,31 +757,42 @@ function renderAuctionsPage() {
 }
 
 function renderAdminPage() {
-  const signedIn = isAdminSignedIn();
+  const signedIn = Boolean(state.adminEmail);
+  const approved = isAdminSignedIn();
   const gate = byId("adminGate");
   const dashboard = byId("adminDashboard");
   const signOutButton = byId("adminSignOut");
   const statusNode = byId("adminStatus");
   const emailField = byId("adminEmail");
   const hint = byId("adminAccessHint");
+  const googleButton = byId("adminGoogleButton");
 
   if (gate) {
-    gate.hidden = signedIn;
+    gate.hidden = approved;
   }
   if (dashboard) {
-    dashboard.hidden = !signedIn;
+    dashboard.hidden = !approved;
   }
   if (signOutButton) {
     signOutButton.hidden = !signedIn;
   }
-  if (emailField && signedIn) {
+  if (emailField) {
     emailField.value = state.adminEmail;
   }
   if (statusNode) {
-    statusNode.textContent = signedIn ? t("admin.statusSignedIn", { email: state.adminEmail }) : t("admin.statusLocked");
+    if (approved) {
+      statusNode.textContent = t("admin.statusSignedIn", { email: state.adminEmail });
+    } else if (signedIn) {
+      statusNode.textContent = t("admin.statusPending", { email: state.adminEmail });
+    } else {
+      statusNode.textContent = t("admin.statusLocked");
+    }
   }
   if (hint) {
     hint.textContent = state.adminEmails.length ? t("admin.configHint") : t("admin.noAdminsConfigured");
+  }
+  if (googleButton && !approved) {
+    renderGoogleAuthButton("adminGoogleButton", "admin.googleHint");
   }
 
   setText("adminAllowedCount", String(state.adminEmails.length));
@@ -703,7 +801,7 @@ function renderAdminPage() {
   setText("adminClosedRooms", String(state.auctions.length - getOpenAuctions().length));
   setText("adminTotalBids", String(state.auctions.reduce((total, auction) => total + auction.bids.length, 0)));
 
-  if (!signedIn) {
+  if (!approved) {
     const list = byId("adminAuctionList");
     if (list) {
       list.innerHTML = "";
@@ -729,6 +827,64 @@ function renderAdminPage() {
   });
 
   renderAuctionList("adminAuctionList", filtered, { compact: false, emptyKey: "admin.noRooms", admin: true });
+}
+
+function renderDashboardPage() {
+  const signedIn = Boolean(state.profile.google?.email);
+  const gate = byId("dashboardGate");
+  const shell = byId("dashboardShell");
+  const signOutButton = byId("dashboardSignOut");
+  const emailNode = byId("dashboardEmailValue");
+  const nameNode = byId("dashboardNameValue");
+  const displayNameField = byId("dashboardDisplayName");
+  const joinedCountNode = byId("dashboardJoinedCount");
+  const activeCountNode = byId("dashboardActiveCount");
+  const closedCountNode = byId("dashboardClosedCount");
+  const lastJoinedNode = byId("dashboardLastJoined");
+  const googleButton = byId("dashboardGoogleButton");
+
+  if (gate) {
+    gate.hidden = signedIn;
+  }
+  if (shell) {
+    shell.hidden = !signedIn;
+  }
+  if (signOutButton) {
+    signOutButton.hidden = !signedIn;
+  }
+
+  if (!signedIn) {
+    if (googleButton) {
+      renderGoogleAuthButton("dashboardGoogleButton", "dashboard.gateHint");
+    }
+    return;
+  }
+
+  const googleUser = state.profile.google;
+  if (emailNode) {
+    emailNode.textContent = googleUser?.email || state.adminEmail || "";
+  }
+  if (nameNode) {
+    nameNode.textContent = state.profile.displayName || googleUser?.name || "";
+  }
+  if (displayNameField) {
+    if (!displayNameField.value) {
+      displayNameField.value = getPreferredDisplayName();
+    }
+  }
+
+  const joinedAuctions = getDashboardJoinedAuctions();
+  const openJoined = joinedAuctions.filter((auction) => auction.status === "open").length;
+  const closedJoined = Math.max(0, joinedAuctions.length - openJoined);
+  const lastJoined = state.joinedAuctions.length ? [...state.joinedAuctions].sort((left, right) => right.lastJoinedAt - left.lastJoinedAt)[0] : null;
+
+  setText("dashboardJoinedCount", String(joinedAuctions.length));
+  setText("dashboardActiveCount", String(openJoined));
+  setText("dashboardClosedCount", String(closedJoined));
+  setText("dashboardLastJoined", lastJoined ? formatDateTime(lastJoined.lastJoinedAt) : t("common.noneYet"));
+
+  renderAuctionList("dashboardJoinedList", joinedAuctions, { compact: true, emptyKey: "dashboard.joinedEmpty" });
+  applyPreferredNameDefaults();
 }
 
 function renderRoomPage() {
@@ -780,7 +936,7 @@ function renderRoomPage() {
   setText("roomNotes", auction.notes || t("room.noNotes"));
 
   if (bidderField && !bidderField.value) {
-    bidderField.value = state.lastBidder || "";
+    bidderField.value = getPreferredDisplayName();
   }
 
   const amountField = byId("roomBidAmount");
@@ -804,6 +960,7 @@ function renderRoomPage() {
   renderHistory(auction);
   const otherRooms = getOpenAuctions().filter((entry) => entry.code !== auction.code).slice(0, 4);
   renderAuctionList("roomActiveOpenList", otherRooms, { compact: true, emptyKey: "common.noResults" });
+  applyPreferredNameDefaults();
 }
 
 function renderHistory(auction) {
@@ -1063,8 +1220,14 @@ function handleAdminLoginSubmit(event) {
 }
 
 function handleAdminSignOut() {
+  const currentEmail = normalizeEmail(state.adminEmail);
   state.adminEmail = "";
   localStorage.removeItem(STORAGE_KEYS.adminEmail);
+
+  if (state.profile.google && normalizeEmail(state.profile.google.email) === currentEmail) {
+    state.profile.google = null;
+    saveProfile({ displayName: state.profile.displayName, google: null });
+  }
 
   const field = byId("adminEmail");
   if (field) {
@@ -1072,6 +1235,7 @@ function handleAdminSignOut() {
   }
 
   setToast(t("toast.adminSignedOut"));
+  updateNavVisibility();
   renderCurrentPage();
 }
 
@@ -1169,6 +1333,9 @@ function openRoomByCode(rawCode, flash = "") {
 
   state.activeCode = auction.code;
   localStorage.setItem(STORAGE_KEYS.activeCode, auction.code);
+  if (flash === "joined") {
+    recordJoinedAuction(auction);
+  }
   const query = new URLSearchParams();
   query.set("code", auction.code);
   if (flash) {
@@ -1337,6 +1504,243 @@ function loadLanguage() {
   return navigator.language?.toLowerCase().startsWith("es") ? "es" : "en";
 }
 
+function loadProfile() {
+  const stored = localStorage.getItem(STORAGE_KEYS.profile);
+  const legacyBidderName = localStorage.getItem(STORAGE_KEYS.bidder) || "";
+
+  if (!stored) {
+    return {
+      displayName: legacyBidderName,
+      google: null,
+    };
+  }
+
+  try {
+    const parsed = JSON.parse(stored);
+    return {
+      displayName: typeof parsed.displayName === "string" ? parsed.displayName : typeof parsed.bidderName === "string" ? parsed.bidderName : legacyBidderName,
+      google: parsed.google && typeof parsed.google === "object"
+        ? {
+            email: normalizeEmail(parsed.google.email),
+            name: typeof parsed.google.name === "string" ? parsed.google.name : "",
+            picture: typeof parsed.google.picture === "string" ? parsed.google.picture : "",
+            sub: typeof parsed.google.sub === "string" ? parsed.google.sub : "",
+          }
+        : null,
+    };
+  } catch {
+    return {
+      displayName: legacyBidderName,
+      google: null,
+    };
+  }
+}
+
+function saveProfile(nextProfile = {}) {
+  state.profile = {
+    displayName: typeof nextProfile.displayName === "string" ? nextProfile.displayName.trim() : state.profile.displayName || "",
+    google: nextProfile.google === null
+      ? null
+      : nextProfile.google && typeof nextProfile.google === "object"
+        ? {
+            email: normalizeEmail(nextProfile.google.email),
+            name: typeof nextProfile.google.name === "string" ? nextProfile.google.name : "",
+            picture: typeof nextProfile.google.picture === "string" ? nextProfile.google.picture : "",
+            sub: typeof nextProfile.google.sub === "string" ? nextProfile.google.sub : "",
+          }
+        : state.profile.google || null,
+  };
+
+  localStorage.setItem(STORAGE_KEYS.profile, JSON.stringify(state.profile));
+}
+
+function loadJoinedAuctions() {
+  const stored = localStorage.getItem(STORAGE_KEYS.joinedAuctions);
+
+  if (!stored) {
+    return [];
+  }
+
+  try {
+    const parsed = JSON.parse(stored);
+    if (!Array.isArray(parsed)) {
+      return [];
+    }
+
+    return parsed.map(normalizeJoinedAuction).filter(Boolean);
+  } catch {
+    return [];
+  }
+}
+
+function saveJoinedAuctions() {
+  localStorage.setItem(STORAGE_KEYS.joinedAuctions, JSON.stringify(state.joinedAuctions));
+}
+
+function normalizeJoinedAuction(entry) {
+  if (!entry || typeof entry !== "object") {
+    return null;
+  }
+
+  const code = normalizeCode(entry.code);
+  if (!code) {
+    return null;
+  }
+
+  return {
+    code,
+    title: typeof entry.title === "string" ? entry.title : "",
+    buyer: typeof entry.buyer === "string" ? entry.buyer : "",
+    category: typeof entry.category === "string" ? entry.category : "",
+    currentOffer: toNumber(entry.currentOffer, 0),
+    minimumStep: toNumber(entry.minimumStep, 0),
+    ceiling: toNumber(entry.ceiling, 0),
+    status: entry.status === "closed" ? "closed" : "open",
+    joinedAt: toNumber(entry.joinedAt, Date.now()),
+    lastJoinedAt: toNumber(entry.lastJoinedAt, toNumber(entry.joinedAt, Date.now())),
+  };
+}
+
+function recordJoinedAuction(auction) {
+  if (!auction) {
+    return;
+  }
+
+  const now = Date.now();
+  const entry = {
+    code: auction.code,
+    title: auction.title,
+    buyer: auction.buyer,
+    category: auction.category,
+    currentOffer: getCurrentOffer(auction),
+    minimumStep: auction.minimumStep,
+    ceiling: auction.ceiling,
+    status: auction.status,
+    joinedAt: now,
+    lastJoinedAt: now,
+  };
+
+  const existingIndex = state.joinedAuctions.findIndex((item) => item.code === entry.code);
+  if (existingIndex >= 0) {
+    const existing = state.joinedAuctions[existingIndex];
+    state.joinedAuctions[existingIndex] = {
+      ...existing,
+      ...entry,
+      joinedAt: existing.joinedAt || entry.joinedAt,
+      lastJoinedAt: now,
+    };
+  } else {
+    state.joinedAuctions.unshift(entry);
+  }
+
+  saveJoinedAuctions();
+}
+
+function getDashboardJoinedAuctions() {
+  return [...state.joinedAuctions]
+    .sort((left, right) => right.lastJoinedAt - left.lastJoinedAt)
+    .map((entry) => {
+      const liveAuction = findAuctionByCode(entry.code);
+      if (liveAuction) {
+        return liveAuction;
+      }
+
+      const currentOffer = entry.currentOffer || entry.ceiling || 0;
+      return normalizeAuction({
+        id: entry.code,
+        code: entry.code,
+        title: entry.title || entry.code,
+        buyer: entry.buyer || t("common.noneYet"),
+        category: entry.category || t("category.other"),
+        ceiling: entry.ceiling || currentOffer,
+        minimumStep: entry.minimumStep || 1,
+        durationMinutes: 60,
+        createdAt: entry.joinedAt,
+        endAt: entry.joinedAt,
+        notes: "",
+        bids: currentOffer
+          ? [
+              {
+                id: `${entry.code}-snapshot`,
+                bidder: state.profile.displayName || state.profile.google?.name || t("common.noneYet"),
+                amount: currentOffer,
+                note: "",
+                time: entry.lastJoinedAt,
+              },
+            ]
+          : [],
+        status: "closed",
+      });
+    });
+}
+
+function getPreferredDisplayName() {
+  return state.profile.displayName || state.profile.google?.name || state.lastBidder || "";
+}
+
+function applyPreferredNameDefaults() {
+  const preferredName = getPreferredDisplayName();
+  if (!preferredName) {
+    return;
+  }
+
+  const joinName = byId("joinName");
+  if (joinName && !joinName.value) {
+    joinName.value = preferredName;
+  }
+
+  const roomBidBidder = byId("roomBidBidder");
+  if (roomBidBidder && !roomBidBidder.value) {
+    roomBidBidder.value = preferredName;
+  }
+
+  const displayName = byId("dashboardDisplayName");
+  if (displayName && !displayName.value) {
+    displayName.value = preferredName;
+  }
+}
+
+function updateNavVisibility() {
+  document.querySelectorAll('a[data-nav="admin"]').forEach((link) => {
+    link.hidden = !isAdminSignedIn();
+  });
+}
+
+async function loadGoogleClientId() {
+  if (typeof window.__GOOGLE_CLIENT_ID__ === "string" && window.__GOOGLE_CLIENT_ID__.trim()) {
+    return window.__GOOGLE_CLIENT_ID__.trim();
+  }
+
+  try {
+    const response = await fetch(".env", { cache: "no-store" });
+    if (!response.ok) {
+      return "";
+    }
+
+    return parseGoogleClientId(await response.text());
+  } catch {
+    return "";
+  }
+}
+
+function parseGoogleClientId(text) {
+  for (const line of text.split(/\r?\n/)) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("#")) {
+      continue;
+    }
+
+    const match = trimmed.match(/^GOOGLE_CLIENT_ID\s*=\s*(.*)$/i);
+    if (!match) {
+      continue;
+    }
+
+    return match[1].split("#")[0].trim().replace(/^['"]|['"]$/g, "");
+  }
+
+  return "";
+}
+
 async function loadAdminEmails() {
   if (Array.isArray(window.__ADMIN_EMAILS__)) {
     return [...new Set(window.__ADMIN_EMAILS__.map(normalizeEmail).filter(Boolean))];
@@ -1383,14 +1787,186 @@ function parseAdminEmails(text) {
 function syncAdminSession() {
   state.adminEmail = normalizeEmail(state.adminEmail);
 
-  if (!state.adminEmails.includes(state.adminEmail)) {
-    state.adminEmail = "";
+  if (!state.adminEmail) {
     localStorage.removeItem(STORAGE_KEYS.adminEmail);
+    return;
   }
 }
 
 function isAdminSignedIn() {
   return Boolean(state.adminEmail) && state.adminEmails.includes(state.adminEmail);
+}
+
+function handleDashboardDisplayNameSubmit(event) {
+  event.preventDefault();
+
+  const displayName = valueOf("dashboardDisplayName");
+  if (!displayName) {
+    setToast(t("toast.formIncomplete"));
+    return;
+  }
+
+  state.profile.displayName = displayName;
+  saveProfile({ displayName, google: state.profile.google });
+  state.lastBidder = displayName;
+  localStorage.setItem(STORAGE_KEYS.bidder, displayName);
+  applyPreferredNameDefaults();
+  setToast(t("toast.profileSaved"));
+  renderCurrentPage();
+}
+
+function handleGoogleCredentialResponse(response) {
+  const payload = decodeGoogleCredential(response?.credential || "");
+  const email = normalizeEmail(payload?.email);
+
+  if (!email) {
+    setToast(t("toast.googleUnavailable"));
+    return;
+  }
+
+  const googleProfile = {
+    email,
+    name: typeof payload?.name === "string" ? payload.name : "",
+    picture: typeof payload?.picture === "string" ? payload.picture : "",
+    sub: typeof payload?.sub === "string" ? payload.sub : "",
+  };
+
+  state.profile.google = googleProfile;
+  state.adminEmail = email;
+
+  if (!state.profile.displayName) {
+    state.profile.displayName = googleProfile.name || email.split("@")[0] || "";
+  }
+
+  saveProfile({ displayName: state.profile.displayName, google: googleProfile });
+  localStorage.setItem(STORAGE_KEYS.adminEmail, email);
+  state.lastBidder = state.profile.displayName || state.lastBidder;
+  if (state.lastBidder) {
+    localStorage.setItem(STORAGE_KEYS.bidder, state.lastBidder);
+  }
+
+  setToast(t("toast.googleSignedIn", { email }));
+  updateNavVisibility();
+  renderCurrentPage();
+}
+
+function handleGoogleSignOut() {
+  const googleEmail = normalizeEmail(state.profile.google?.email);
+  if (state.profile.google) {
+    state.profile.google = null;
+    saveProfile({ displayName: state.profile.displayName, google: null });
+  }
+
+  if (!googleEmail || normalizeEmail(state.adminEmail) === googleEmail) {
+    state.adminEmail = "";
+    localStorage.removeItem(STORAGE_KEYS.adminEmail);
+  }
+
+  if (window.google?.accounts?.id?.disableAutoSelect) {
+    try {
+      window.google.accounts.id.disableAutoSelect();
+    } catch {
+      // Ignore GIS cleanup failures.
+    }
+  }
+
+  setToast(t("toast.googleSignedOut"));
+  updateNavVisibility();
+  renderCurrentPage();
+}
+
+async function renderGoogleAuthButton(containerId, fallbackKey = "dashboard.gateHint") {
+  const mount = byId(containerId);
+  if (!mount) {
+    return;
+  }
+
+  mount.innerHTML = "";
+
+  if (!state.googleClientId) {
+    mount.innerHTML = `<p class="helper">${escapeHtml(t(fallbackKey))}</p>`;
+    return;
+  }
+
+  try {
+    await ensureGoogleIdentityScript();
+  } catch {
+    mount.innerHTML = `<p class="helper">${escapeHtml(t(fallbackKey))}</p>`;
+    return;
+  }
+
+  if (!window.google?.accounts?.id) {
+    mount.innerHTML = `<p class="helper">${escapeHtml(t(fallbackKey))}</p>`;
+    return;
+  }
+
+  if (!googleIdentityInitialized) {
+    window.google.accounts.id.initialize({
+      client_id: state.googleClientId,
+      callback: handleGoogleCredentialResponse,
+      auto_select: false,
+      cancel_on_tap_outside: false,
+    });
+    googleIdentityInitialized = true;
+  }
+
+  window.google.accounts.id.renderButton(mount, {
+    theme: "outline",
+    size: "large",
+    text: "signin_with",
+    shape: "pill",
+    width: 320,
+    logo_alignment: "left",
+  });
+}
+
+function decodeGoogleCredential(credential) {
+  if (!credential) {
+    return null;
+  }
+
+  const parts = credential.split(".");
+  if (parts.length < 2) {
+    return null;
+  }
+
+  try {
+    const encoded = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+    const padded = encoded.padEnd(Math.ceil(encoded.length / 4) * 4, "=");
+    return JSON.parse(atob(padded));
+  } catch {
+    return null;
+  }
+}
+
+function ensureGoogleIdentityScript() {
+  if (window.google?.accounts?.id) {
+    return Promise.resolve();
+  }
+
+  if (googleIdentityPromise) {
+    return googleIdentityPromise;
+  }
+
+  googleIdentityPromise = new Promise((resolve, reject) => {
+    const existing = document.querySelector('script[data-google-identity="true"]');
+    if (existing) {
+      existing.addEventListener("load", () => resolve(), { once: true });
+      existing.addEventListener("error", () => reject(new Error("Failed to load Google identity services.")), { once: true });
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.src = "https://accounts.google.com/gsi/client";
+    script.async = true;
+    script.defer = true;
+    script.dataset.googleIdentity = "true";
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error("Failed to load Google identity services."));
+    document.head.appendChild(script);
+  });
+
+  return googleIdentityPromise;
 }
 
 function loadAuctions() {
