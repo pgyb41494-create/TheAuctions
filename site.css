@@ -84,6 +84,13 @@ textarea {
   margin-bottom: 1.5rem;
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.65rem;
+}
+
 .brand {
   display: inline-flex;
   align-items: center;

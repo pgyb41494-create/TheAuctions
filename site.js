@@ -8,6 +8,16 @@ const STORAGE_KEYS = {
   joinedAuctions: "apex-reverse-auctions.joined-auctions.v1",
 };
 
+const FALLBACK_RUNTIME_ENV = {
+  ADMIN_EMAILS: "pgyb41494@gmail.com",
+  FIREBASE_API_KEY: "AIzaSyCVVomRm98h_B0gHmQ-Z8S8z9YY5eeiey4",
+  FIREBASE_AUTH_DOMAIN: "thereverseauctions.firebaseapp.com",
+  FIREBASE_PROJECT_ID: "thereverseauctions",
+  FIREBASE_STORAGE_BUCKET: "thereverseauctions.firebasestorage.app",
+  FIREBASE_MESSAGING_SENDER_ID: "1061100659594",
+  FIREBASE_APP_ID: "1:1061100659594:web:67b3e60ad32f21da2b1e73",
+};
+
 const PAGE_TITLES = {
   home: { en: "Apex Reverse Auctions", es: "Subastas Reversas Apex" },
   create: { en: "Create room", es: "Crear sala" },
@@ -1744,16 +1754,17 @@ async function loadRuntimeEnv() {
   }
 
   runtimeEnvPromise = (async () => {
+    let env = {};
+
     try {
       const response = await fetch(".env", { cache: "no-store" });
-      if (!response.ok) {
-        return {};
+      if (response.ok) {
+        env = parseEnvFile(await response.text());
       }
-
-      return parseEnvFile(await response.text());
     } catch {
-      return {};
     }
+
+    return { ...FALLBACK_RUNTIME_ENV, ...env };
   })();
 
   return runtimeEnvPromise;

@@ -12,13 +12,6 @@
   </head>
   <body data-page="home">
     <div class="site-shell">
-      <section class="panel hero-panel">
-        <div class="action-row">
-          <button id="homeAuthButton" class="button button-dark" type="button" data-i18n="home.authPrimary">Sign in</button>
-        </div>
-        <p class="lede" data-i18n="home.authHint">Use Google to continue.</p>
-      </section>
-
       <header class="site-header panel">
         <a class="brand" href="home.html" aria-label="Apex Reverse Auctions home">
           <span class="brand-mark">RA</span>
@@ -36,7 +29,10 @@
           <a href="admin.html" data-nav="admin" data-i18n="nav.admin">Admin</a>
         </nav>
 
-        <button id="languageToggle" class="language-toggle" type="button" aria-label="Switch language">Español</button>
+        <div class="header-actions">
+          <button id="homeAuthButton" class="button button-dark button-small" type="button" data-i18n="home.authPrimary">Sign in</button>
+          <button id="languageToggle" class="language-toggle" type="button" aria-label="Switch language">Español</button>
+        </div>
       </header>
 
       <main class="page-grid home-page-grid">
