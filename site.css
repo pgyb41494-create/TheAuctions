@@ -256,6 +256,11 @@ td,
   max-width: 12ch;
 }
 
+.home-page-grid .hero-panel h1 {
+  font-size: clamp(2rem, 3vw, 2.8rem);
+  max-width: 16ch;
+}
+
 .hero-panel .lede,
 .room-empty .lede {
   max-width: 60ch;
