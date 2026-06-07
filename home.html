@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#111111" />
+    <title>Apex Reverse Auctions</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="site.css" />
+    <script defer src="site.js"></script>
+  </head>
+  <body data-page="home">
+    <div class="site-shell">
+      <header class="site-header panel">
+        <a class="brand" href="home.html" aria-label="Apex Reverse Auctions home">
+          <span class="brand-mark">RA</span>
+          <span class="brand-copy">
+            <span class="brand-kicker" data-i18n="brand.kicker">Procurement platform</span>
+            <strong data-i18n="brand.name">Apex Reverse Auctions</strong>
+          </span>
+        </a>
+
+        <nav class="site-nav" aria-label="Primary">
+          <a href="home.html" class="is-active" aria-current="page" data-i18n="nav.home">Home</a>
+          <a href="create.html" data-i18n="nav.create">Create</a>
+          <a href="join.html" data-i18n="nav.join">Join</a>
+          <a href="auctions.html" data-i18n="nav.auctions">Rooms</a>
+          <a href="auction.html" data-i18n="nav.room">Room</a>
+          <a href="admin.html" data-i18n="nav.admin">Admin</a>
+        </nav>
+
+        <button id="languageToggle" class="language-toggle" type="button" aria-label="Switch language">Español</button>
+      </header>
+
+      <main class="page-grid home-page-grid">
+        <section class="hero-grid">
+          <article class="panel hero-panel">
+            <p class="eyebrow" data-i18n="home.eyebrow">Reverse auction workspace</p>
+            <h1 data-i18n="home.title">Run reverse bids with a clean, professional workspace.</h1>
+            <p class="lede" data-i18n="home.lede">Create a room, enter by code, and keep every bid in one place.</p>
+            <div class="action-row">
+              <a class="button button-dark" href="create.html" data-i18n="home.createCta">Create room</a>
+              <a class="button button-light" href="join.html" data-i18n="home.joinCta">Enter room</a>
+              <a class="button button-ghost" href="auctions.html" data-i18n="home.roomsCta">Browse rooms</a>
+            </div>
+          </article>
+
+          <aside class="panel summary-panel">
+            <div class="section-head compact">
+              <div>
+                <p class="eyebrow" data-i18n="home.statsTitle">Market overview</p>
+                <h2 data-i18n="home.statsSubtitle">At a glance</h2>
+              </div>
+            </div>
+
+            <div class="summary-grid four-up">
+              <article class="stat-box">
+                <span data-i18n="home.metric.openRooms">Open rooms</span>
+                <strong id="homeOpenRooms">0</strong>
+                <p data-i18n="home.metric.openRoomsHint">Ready for bidding</p>
+              </article>
+              <article class="stat-box">
+                <span data-i18n="home.metric.offers">Live offers</span>
+                <strong id="homeLiveOffers">0</strong>
+                <p data-i18n="home.metric.offersHint">Across all rooms</p>
+              </article>
+              <article class="stat-box">
+                <span data-i18n="home.metric.bestOffer">Best active offer</span>
+                <strong id="homeBestOffer">$0</strong>
+                <p data-i18n="home.metric.bestOfferHint">Lowest current price</p>
+              </article>
+              <article class="stat-box">
+                <span data-i18n="home.metric.nextClose">Next close</span>
+                <strong id="homeNextClose">—</strong>
+                <p data-i18n="home.metric.nextCloseHint">Nearest deadline</p>
+              </article>
+            </div>
+          </aside>
+        </section>
+
+        <section class="split-grid">
+          <article class="panel">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow" data-i18n="home.processTitle">How it works</p>
+                <h2 data-i18n="home.processSubtitle">Three simple steps</h2>
+              </div>
+            </div>
+
+            <div class="step-grid">
+              <div class="step-card">
+                <span>01</span>
+                <h3 data-i18n="home.step1Title">Create</h3>
+                <p data-i18n="home.step1Body">Set the ceiling price, the minimum drop, and the closing time.</p>
+              </div>
+              <div class="step-card">
+                <span>02</span>
+                <h3 data-i18n="home.step2Title">Invite</h3>
+                <p data-i18n="home.step2Body">Share the room code with bidders and let them open the room.</p>
+              </div>
+              <div class="step-card">
+                <span>03</span>
+                <h3 data-i18n="home.step3Title">Award</h3>
+                <p data-i18n="home.step3Body">The lowest acceptable bid stays in front until the room closes.</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="panel">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow" data-i18n="home.rulesTitle">Publishing notes</p>
+                <h2 data-i18n="home.rulesSubtitle">Keep it professional</h2>
+              </div>
+            </div>
+
+            <div class="rule-stack">
+              <div class="rule-card" data-i18n="home.rule1">Use clear scope notes and a realistic ceiling.</div>
+              <div class="rule-card" data-i18n="home.rule2">Pick a minimum decrement that matches the market.</div>
+              <div class="rule-card" data-i18n="home.rule3">Keep the closing time visible so bidders can react.</div>
+            </div>
+          </article>
+        </section>
+
+        <section class="panel">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow" data-i18n="home.featuredTitle">Featured rooms</p>
+              <h2 data-i18n="home.featuredSubtitle">Live boards ready to open</h2>
+            </div>
+          </div>
+          <div id="homeFeaturedAuctions" class="auction-grid"></div>
+        </section>
+      </main>
+
+    </div>
+
+    <div id="toast" class="toast" aria-live="polite"></div>
+  </body>
+</html>
