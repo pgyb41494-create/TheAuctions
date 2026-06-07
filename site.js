@@ -19,7 +19,7 @@ const FALLBACK_RUNTIME_ENV = {
 };
 
 const PAGE_TITLES = {
-  home: { en: "Apex Reverse Auctions", es: "Subastas Reversas Apex" },
+  home: { en: "Yoselins Auctions", es: "Yoselins Auctions" },
   create: { en: "Create room", es: "Crear sala" },
   join: { en: "Join room", es: "Entrar a una sala" },
   auctions: { en: "Open rooms", es: "Salas abiertas" },
@@ -31,7 +31,7 @@ const PAGE_TITLES = {
 const TRANSLATIONS = {
   en: {
     "brand.kicker": "Auction workspace",
-    "brand.name": "Apex Reverse Auctions",
+    "brand.name": "Yoselins Auctions",
     "nav.home": "Home",
     "nav.create": "Create",
     "nav.join": "Join",
@@ -288,7 +288,7 @@ const TRANSLATIONS = {
   },
   es: {
     "brand.kicker": "Espacio de subastas",
-    "brand.name": "Subastas Reversas Apex",
+    "brand.name": "Yoselins Auctions",
     "nav.home": "Inicio",
     "nav.create": "Crear",
     "nav.join": "Entrar",
@@ -569,6 +569,7 @@ let firebaseAuthReady = false;
 let firebaseAuthReadyPromise = null;
 let firebaseAuthReadyResolve = null;
 let homeAuthModalLastFocus = null;
+let homeAuthRedirectPending = false;
 
 async function initialize() {
   const [adminEmails, firebaseConfig] = await Promise.all([loadAdminEmails(), loadFirebaseConfig()]);
@@ -1775,7 +1776,7 @@ function applyPreferredNameDefaults() {
 
 function updateNavVisibility() {
   document.querySelectorAll('a[data-nav="admin"]').forEach((link) => {
-    link.hidden = !isAdminSignedIn();
+    link.hidden = true;
   });
 }
 
@@ -1929,7 +1930,11 @@ function applyFirebaseUser(user) {
   }
 
   if (email && state.page === "home") {
-    window.location.href = state.adminEmails.includes(email) ? "admin.html" : "dashboard.html";
+    if (homeAuthRedirectPending) {
+      homeAuthRedirectPending = false;
+      window.location.href = state.adminEmails.includes(email) ? "admin.html" : "dashboard.html";
+      return;
+    }
     return;
   }
 
@@ -2008,10 +2013,12 @@ async function handleFirebaseSignIn() {
 
   const provider = new window.firebase.auth.GoogleAuthProvider();
   provider.setCustomParameters({ prompt: "select_account" });
+  homeAuthRedirectPending = true;
 
   try {
     await firebaseAuthInstance.signInWithPopup(provider);
   } catch {
+    homeAuthRedirectPending = false;
     setToast(t("toast.googleSignInFailed"));
   }
 }
@@ -2054,6 +2061,7 @@ function closeHomeAuthModal() {
   if (trigger) {
     trigger.setAttribute("aria-expanded", "false");
   }
+  homeAuthRedirectPending = false;
   document.body.classList.remove("auth-modal-open");
 
   if (homeAuthModalLastFocus && typeof homeAuthModalLastFocus.focus === "function") {
