@@ -865,6 +865,100 @@ th {
   gap: 1.4rem;
 }
 
+.room-stage {
+  display: grid;
+  gap: 1rem;
+  padding: 1.35rem;
+  border-color: #20222b;
+  background: linear-gradient(180deg, #16171d 0%, #0f1116 100%);
+  color: #ffffff;
+}
+
+.room-stage-banner {
+  padding: 1.35rem;
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.room-stage-banner .eyebrow,
+.room-stage-banner .lede,
+.room-stage-banner .helper,
+.room-stage-banner .section-note,
+.room-stage-banner .room-hero-actions .badge {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.room-stage-banner h1,
+.room-stage-banner .lede {
+  color: #ffffff;
+}
+
+.room-stage-banner .room-hero-actions {
+  align-items: flex-end;
+}
+
+.room-stage-banner .badge.open,
+.room-stage-banner .badge.closed {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.room-stage-banner .button-light {
+  background: #ffffff;
+  color: #111111;
+  border-color: #ffffff;
+}
+
+.room-stage-live {
+  display: grid;
+  gap: 1rem;
+}
+
+.room-stage-price {
+  padding: 1.15rem 1.2rem;
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.room-stage-price span {
+  display: block;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.room-stage-price strong {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: clamp(2.4rem, 5vw, 4rem);
+  line-height: 0.95;
+  color: #ffffff;
+}
+
+.room-stage-stats .stat-card {
+  background: #ffffff;
+}
+
+.room-stage .room-notes-box {
+  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.room-stage .room-notes-box .eyebrow,
+.room-stage .room-notes-box p {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.room-stage .room-notes-box p {
+  overflow-wrap: anywhere;
+}
+
+.room-page-grid {
+  gap: 1.35rem;
+}
+
 .room-hero {
   display: flex;
   justify-content: space-between;

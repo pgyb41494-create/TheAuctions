@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#111111">
+    <title>Auction room | Yoselins Auctions</title>
+    <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <link rel="stylesheet" href="site.css">
+    <script defer src="site.js"></script>
+  </head>
+  <body data-page="room">
+    <div class="site-shell">
+      <header class="site-header panel">
+        <a class="brand" href="home.html" aria-label="Yoselins Auctions home">
+          <span class="brand-copy">
+            <span class="brand-kicker" data-i18n="brand.kicker">Auction workspace</span>
+            <strong data-i18n="brand.name">Yoselins Auctions</strong>
+          </span>
+        </a>
+
+        <nav class="site-nav" aria-label="Primary">
+          <a href="home.html" data-i18n="nav.home">Home</a>
+          <a href="create.html" data-i18n="nav.create">Create</a>
+          <a href="join.html" data-i18n="nav.join">Join</a>
+          <a href="dashboard.html" data-i18n="nav.dashboard">Dashboard</a>
+        </nav>
+
+        <button id="languageToggle" class="language-toggle" type="button" aria-label="Switch language">Español</button>
+      </header>
+
+      <main class="page-grid room-page-grid">
+        <article class="panel room-stage">
+          <div class="room-hero room-stage-banner">
+            <div>
+              <p class="eyebrow" data-i18n="room.eyebrow">Auction room</p>
+              <h1 id="roomTitle" data-i18n="room.emptyTitle">No room selected.</h1>
+              <p id="roomLede" class="lede" data-i18n="room.emptyBody">Pick a room from the list or enter a code.</p>
+              <p id="roomSchedule" class="helper"></p>
+            </div>
+
+            <div class="room-hero-actions">
+              <span id="roomStatus" class="badge closed">Closed</span>
+              <button id="roomCopyCode" class="button button-light button-small" type="button" data-i18n="common.copyCode">Copy code</button>
+            </div>
+          </div>
+
+          <div class="room-stage-live">
+            <div class="room-stage-price">
+              <span data-i18n="common.currentOffer">Current offer</span>
+              <strong id="roomCurrent">—</strong>
+            </div>
+
+            <div class="summary-grid four-up room-stage-stats">
+              <article class="stat-card">
+                <span data-i18n="common.roomCode">Room code</span>
+                <strong id="roomCode">—</strong>
+                <p data-i18n="room.lookupSubtitle">Use a room code</p>
+              </article>
+              <article class="stat-card">
+                <span data-i18n="common.ceiling">Ceiling</span>
+                <strong id="roomCeiling">—</strong>
+                <p data-i18n="room.summarySubtitle">Room overview</p>
+              </article>
+              <article class="stat-card">
+                <span data-i18n="common.minimumStep">Drop amount</span>
+                <strong id="roomStep">—</strong>
+                <p data-i18n="room.bidSubtitle">Lower the current price</p>
+              </article>
+              <article class="stat-card">
+                <span data-i18n="common.participants">Participants</span>
+                <strong id="roomParticipants">0</strong>
+                <p data-i18n="room.rulesSubtitle">Keep the room disciplined</p>
+              </article>
+            </div>
+
+            <div class="room-notes-box">
+              <p class="eyebrow" data-i18n="room.notesTitle">Notes</p>
+              <p id="roomNotes" data-i18n="room.noNotes">No notes were provided.</p>
+            </div>
+          </div>
+        </article>
+
+        <section id="roomEmpty" class="panel room-empty">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow" data-i18n="room.lookupTitle">Open a room</p>
+              <h2 data-i18n="room.lookupSubtitle">Use a room code</h2>
+            </div>
+            <p class="section-note" data-i18n="room.emptyBody">Pick a room from the list or enter a code.</p>
+          </div>
+
+          <form id="roomLookupForm" class="form-grid">
+            <div class="field full-span">
+              <label for="roomLookupCode" data-i18n="common.roomCode">Room code</label>
+              <input id="roomLookupCode" name="code" type="text" placeholder="RA-4F7K2P" data-i18n-placeholder="join.placeholderCode">
+            </div>
+
+            <div class="form-actions full-span">
+              <button class="button" type="submit" data-i18n="room.lookupButton">Open room</button>
+            </div>
+          </form>
+
+          <div class="section-head compact">
+            <div>
+              <p class="eyebrow" data-i18n="room.activeRoomsTitle">Open rooms</p>
+              <h3 data-i18n="room.activeRoomsSubtitle">Rooms you can open now</h3>
+            </div>
+          </div>
+
+          <div id="roomEmptyOpenList" class="auction-grid compact-grid"></div>
+        </section>
+
+        <section id="roomShell" class="room-shell" hidden>
+          <div class="split-grid">
+            <article class="panel form-panel">
+              <div class="section-head compact">
+                <div>
+                  <p class="eyebrow" data-i18n="room.bidTitle">Submit a bid</p>
+                  <h2 data-i18n="room.bidSubtitle">Lower the current price</h2>
+                </div>
+              </div>
+
+              <form id="roomBidForm" class="form-grid">
+                <div class="field">
+                  <label for="roomBidBidder" data-i18n="room.labelBidder">Bidder name</label>
+                  <input id="roomBidBidder" name="bidder" type="text" placeholder="Your name">
+                </div>
+
+                <div class="field">
+                  <label for="roomBidAmount" data-i18n="room.labelAmount">Bid amount</label>
+                  <input id="roomBidAmount" name="amount" type="number" min="1" step="1" placeholder="0">
+                </div>
+
+                <div class="field full-span">
+                  <label for="roomBidNote" data-i18n="room.labelNote">Note</label>
+                  <textarea id="roomBidNote" name="note" placeholder="Add a note"></textarea>
+                </div>
+
+                <div class="form-actions full-span">
+                  <button class="button" type="submit" data-i18n="room.bidButton">Submit bid</button>
+                  <p id="roomBidHelper" class="helper" data-i18n="room.bidHelper">A lower offer is required.</p>
+                </div>
+              </form>
+            </article>
+
+            <article class="panel form-panel">
+              <div class="section-head compact">
+                <div>
+                  <p class="eyebrow" data-i18n="room.historyTitle">Bid history</p>
+                  <h2 data-i18n="room.historySubtitle">Latest offers first</h2>
+                </div>
+              </div>
+
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th data-i18n="room.historyTime">Time</th>
+                      <th data-i18n="room.historyBidder">Bidder</th>
+                      <th data-i18n="room.historyOffer">Offer</th>
+                      <th data-i18n="room.historyNote">Note</th>
+                    </tr>
+                  </thead>
+                  <tbody id="roomHistoryBody"></tbody>
+                </table>
+              </div>
+
+              <div class="section-head compact">
+                <div>
+                  <p class="eyebrow" data-i18n="room.activeRoomsTitle">Open rooms</p>
+                  <h2 data-i18n="room.activeRoomsSubtitle">Rooms you can open now</h2>
+                </div>
+              </div>
+
+              <div id="roomActiveOpenList" class="auction-grid compact-grid"></div>
+            </article>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div id="toast" class="toast" aria-live="polite"></div>
+  </body>
+</html>

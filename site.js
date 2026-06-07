@@ -1051,6 +1051,7 @@ function renderRoomPage() {
   const roomShell = byId("roomShell");
   const lookupCode = byId("roomLookupCode");
   const bidderField = byId("roomBidBidder");
+  const participantsNode = byId("roomParticipants");
 
   if (!auction) {
     if (emptyState) emptyState.hidden = false;
@@ -1059,9 +1060,20 @@ function renderRoomPage() {
     renderAuctionList("roomActiveOpenList", [], { compact: true, emptyKey: "room.emptyBody" });
     setText("roomTitle", t("room.emptyTitle"));
     setText("roomLede", t("room.emptyBody"));
+    setText("roomCode", "—");
+    setText("roomCeiling", "—");
+    setText("roomCurrent", "—");
+    setText("roomStep", "—");
+    setText("roomParticipants", "0");
     const scheduleNode = byId("roomSchedule");
     if (scheduleNode) {
       scheduleNode.textContent = "";
+    }
+    const statusNode = byId("roomStatus");
+    if (statusNode) {
+      statusNode.textContent = t("common.statusClosed");
+      statusNode.classList.remove("open");
+      statusNode.classList.add("closed");
     }
     const notes = byId("roomNotes");
     if (notes) {
@@ -1105,6 +1117,9 @@ function renderRoomPage() {
   setText("roomCeiling", formatMoney(auction.ceiling));
   setText("roomCurrent", formatMoney(getCurrentOffer(auction)));
   setText("roomStep", formatMoney(auction.minimumStep));
+  if (participantsNode) {
+    participantsNode.textContent = String(getParticipantCount(auction));
+  }
   setText("roomNotes", auction.notes || t("room.noNotes"));
 
   if (bidderField && !bidderField.value) {
@@ -1438,6 +1453,38 @@ function handleAdminDeleteAuction(rawCode) {
   setToast(t("admin.deleted", { code: auction.code }));
 }
 
+async function handleAuctionCardAction(event) {
+  const actionButton = event.target.closest("button[data-action]");
+  if (!actionButton) {
+    return;
+  }
+
+  const { action, code } = actionButton.dataset;
+  if (!action || !code) {
+    return;
+  }
+
+  if (action === "copy-code") {
+    await copyText(code);
+    setToast(t("toast.codeCopied"));
+    return;
+  }
+
+  if (action === "open-room") {
+    openRoomByCode(code);
+    return;
+  }
+
+  if (action === "admin-toggle-status") {
+    handleAdminToggleAuction(code);
+    return;
+  }
+
+  if (action === "admin-delete-auction") {
+    handleAdminDeleteAuction(code);
+  }
+}
+
 function openRoomByCode(rawCode, flash = "") {
   const code = normalizeCode(rawCode);
   const auction = findAuctionByCode(code);
@@ -1449,7 +1496,7 @@ function openRoomByCode(rawCode, flash = "") {
 
   state.activeCode = auction.code;
   localStorage.setItem(STORAGE_KEYS.activeCode, auction.code);
-  if (flash === "joined") {
+  if (flash === "joined" || flash === "created") {
     recordJoinedAuction(auction);
   }
   if (flash === "created") {
@@ -1457,6 +1504,25 @@ function openRoomByCode(rawCode, flash = "") {
   } else if (flash === "joined") {
     setToast(t("toast.roomEntered", { code: auction.code }));
   }
+
+  if (state.page !== "room") {
+    const params = new URLSearchParams();
+    params.set("code", auction.code);
+    if (flash) {
+      params.set("flash", flash);
+    }
+    window.location.href = `room.html?${params.toString()}`;
+    return;
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  params.set("code", auction.code);
+  if (flash) {
+    params.set("flash", flash);
+  } else {
+    params.delete("flash");
+  }
+  window.history.replaceState({}, "", `${window.location.pathname}?${params.toString()}`);
   renderCurrentPage();
 }
 
