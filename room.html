@@ -44,7 +44,7 @@
 
             <div class="room-hero-actions">
               <span id="roomStatus" class="badge closed">Closed</span>
-              <button id="roomCopyCode" class="button button-light button-small" type="button" data-i18n="common.copyCode">Copy code</button>
+              <button id="roomCopyCode" class="button button-light button-small" type="button" data-i18n="common.copyCode" hidden>Copy code</button>
             </div>
           </div>
 
@@ -55,7 +55,7 @@
             </div>
 
             <div class="summary-grid four-up room-stage-stats">
-              <article class="stat-card">
+              <article id="roomCodeCard" class="stat-card" hidden>
                 <span data-i18n="common.roomCode">Room code</span>
                 <strong id="roomCode">—</strong>
                 <p data-i18n="room.lookupSubtitle">Use a room code</p>
@@ -173,6 +173,7 @@
                     <tr>
                       <th data-i18n="room.historyTime">Time</th>
                       <th data-i18n="room.historyBidder">Bidder</th>
+                      <th data-i18n="room.historyPhone">Phone</th>
                       <th data-i18n="room.historyOffer">Offer</th>
                       <th data-i18n="room.historyNote">Note</th>
                     </tr>
@@ -180,15 +181,6 @@
                   <tbody id="roomHistoryBody"></tbody>
                 </table>
               </div>
-
-              <div class="section-head compact">
-                <div>
-                  <p class="eyebrow" data-i18n="room.activeRoomsTitle">Open rooms</p>
-                  <h2 data-i18n="room.activeRoomsSubtitle">Rooms you can open now</h2>
-                </div>
-              </div>
-
-              <div id="roomActiveOpenList" class="auction-grid compact-grid"></div>
             </article>
           </div>
         </section>

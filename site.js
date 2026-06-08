@@ -230,6 +230,7 @@ const TRANSLATIONS = {
     "room.historySubtitle": "Latest offers first",
     "room.historyTime": "Time",
     "room.historyBidder": "Bidder",
+    "room.historyPhone": "Phone",
     "room.historyOffer": "Offer",
     "room.historyNote": "Note",
     "room.bidTitle": "Submit a bid",
@@ -244,11 +245,12 @@ const TRANSLATIONS = {
     "room.photosSubtitle": "Photos shared by the creator.",
     "room.photoLabel": "Room photo",
     "room.creatorToolsTitle": "Creator tools",
-    "room.creatorOpenTitle": "Close the room when you are ready.",
-    "room.creatorOpenHint": "Only the creator or admin can close the room.",
+    "room.creatorOpenTitle": "Close the room when bidding ends",
+    "room.creatorOpenHint": "When you are ready, close the room. Then pick the winning bid below.",
     "room.closeRoom": "Close room",
     "room.creatorWinnerTitle": "Choose a winner",
-    "room.creatorWinnerHint": "Pick the bid that should win the room.",
+    "room.creatorWinnerHint": "Tap the bid that should win this room.",
+    "room.creatorWinnerStep": "Step 2: Select the winning bid.",
     "room.creatorWinnerSelected": "{{bidder}} at {{amount}} is selected.",
     "room.creatorWinnerSelectedTag": "Selected",
     "room.creatorNoBids": "No bids have been placed yet.",
@@ -263,8 +265,8 @@ const TRANSLATIONS = {
     "room.noNotes": "No notes were provided.",
     "toast.dropIntervalRequired": "Set a drop interval using days, hours, or minutes.",
     "dashboard.eyebrow": "Google account",
-    "dashboard.title": "Your joined auctions live in one dashboard.",
-    "dashboard.lede": "Sign in with Google, set a display name, and keep joined rooms close at hand.",
+    "dashboard.title": "Your created auctions and profile.",
+    "dashboard.lede": "Sign in with Google, save your display name and phone, and manage rooms you created.",
     "dashboard.gateTitle": "Sign in to continue.",
     "dashboard.gateSubtitle": "Use Google to unlock your personal dashboard.",
     "dashboard.gateHint": "If the Google button does not load, add the Firebase keys to .env.",
@@ -352,7 +354,8 @@ const TRANSLATIONS = {
     "toast.emailSignInFailed": "Email sign-in failed. Please try again.",
     "toast.passwordResetSent": "Password reset email sent.",
     "toast.passwordResetFailed": "Could not send the reset email. Please try again.",
-    "toast.phoneRequired": "Enter your phone number.",
+    "toast.phoneRequired": "Enter your phone number on the Dashboard before bidding.",
+    "toast.copyCodeDenied": "Only the room creator can copy the room code.",
     "toast.bidAccepted": "{{bidder}} is leading at {{amount}}.",
     "toast.invalidCode": "Enter a valid room code.",
     "toast.roomNotFound": "No room matches that code.",
@@ -556,6 +559,7 @@ const TRANSLATIONS = {
     "room.historySubtitle": "Las ofertas más recientes primero",
     "room.historyTime": "Hora",
     "room.historyBidder": "Postor",
+    "room.historyPhone": "Teléfono",
     "room.historyOffer": "Oferta",
     "room.historyNote": "Nota",
     "room.bidTitle": "Enviar oferta",
@@ -570,11 +574,12 @@ const TRANSLATIONS = {
     "room.photosSubtitle": "Fotos compartidas por el creador.",
     "room.photoLabel": "Foto de la sala",
     "room.creatorToolsTitle": "Herramientas del creador",
-    "room.creatorOpenTitle": "Cierra la sala cuando estés listo.",
-    "room.creatorOpenHint": "Solo el creador o un administrador puede cerrar la sala.",
+    "room.creatorOpenTitle": "Cierra la sala cuando termine la puja",
+    "room.creatorOpenHint": "Cuando estés listo, cierra la sala. Luego elige la oferta ganadora abajo.",
     "room.closeRoom": "Cerrar sala",
     "room.creatorWinnerTitle": "Elige un ganador",
-    "room.creatorWinnerHint": "Selecciona la oferta que debe ganar la sala.",
+    "room.creatorWinnerHint": "Toca la oferta que debe ganar esta sala.",
+    "room.creatorWinnerStep": "Paso 2: Selecciona la oferta ganadora.",
     "room.creatorWinnerSelected": "{{bidder}} con {{amount}} está seleccionado.",
     "room.creatorWinnerSelectedTag": "Seleccionado",
     "room.creatorNoBids": "Aún no se ha enviado ninguna oferta.",
@@ -589,8 +594,8 @@ const TRANSLATIONS = {
     "room.noNotes": "No se agregaron notas.",
     "toast.dropIntervalRequired": "Configura un intervalo de bajada usando días, horas o minutos.",
     "dashboard.eyebrow": "Cuenta de Google",
-    "dashboard.title": "Tus subastas unidas viven en un solo panel.",
-    "dashboard.lede": "Inicia sesión con Google, define tu nombre visible y ten cerca las salas que uniste.",
+    "dashboard.title": "Tus subastas creadas y tu perfil.",
+    "dashboard.lede": "Inicia sesión con Google, guarda tu nombre y teléfono, y administra las salas que creaste.",
     "dashboard.gateTitle": "Inicia sesión para continuar.",
     "dashboard.gateSubtitle": "Usa Google para desbloquear tu panel personal.",
     "dashboard.gateHint": "Si el botón de Google no aparece, agrega las claves de Firebase a .env.",
@@ -678,7 +683,8 @@ const TRANSLATIONS = {
     "toast.emailSignInFailed": "La sesión con correo falló. Inténtalo de nuevo.",
     "toast.passwordResetSent": "Se envió el correo para restablecer la contraseña.",
     "toast.passwordResetFailed": "No se pudo enviar el correo de restablecimiento. Inténtalo de nuevo.",
-    "toast.phoneRequired": "Escribe tu número de teléfono.",
+    "toast.phoneRequired": "Enter your phone number on the Dashboard before bidding.",
+    "toast.copyCodeDenied": "Only the room creator can copy the room code.",
     "toast.bidAccepted": "{{bidder}} va ganando con {{amount}}.",
     "toast.invalidCode": "Ingresa un código de sala válido.",
     "toast.roomNotFound": "No existe una sala con ese código.",
@@ -1043,7 +1049,7 @@ function handleHomeAuthButtonClick() {
     adminCloseAllOpen.addEventListener("click", handleAdminCloseAllOpen);
   }
 
-  ["homeFeaturedAuctions", "auctionsList", "roomEmptyOpenList", "roomActiveOpenList", "dashboardCreatedList", "roomCreatorPanel", "adminAuctionList"].forEach((containerId) => {
+  ["homeFeaturedAuctions", "auctionsList", "roomEmptyOpenList", "dashboardCreatedList", "roomCreatorPanel", "adminAuctionList"].forEach((containerId) => {
     const container = byId(containerId);
     if (container) {
       container.addEventListener("click", handleAuctionCardAction);
@@ -1056,6 +1062,11 @@ function handleHomeAuthButtonClick() {
       const auction = getSelectedAuction();
       if (!auction) {
         setToast(t("toast.noRoomSelected"));
+        return;
+      }
+
+      if (!canViewRoomCode(auction)) {
+        setToast(t("toast.copyCodeDenied"));
         return;
       }
 
@@ -1318,10 +1329,6 @@ function renderDashboardPage() {
   const emailNode = byId("dashboardEmailValue");
   const nameNode = byId("dashboardNameValue");
   const displayNameField = byId("dashboardDisplayName");
-  const joinedCountNode = byId("dashboardJoinedCount");
-  const activeCountNode = byId("dashboardActiveCount");
-  const closedCountNode = byId("dashboardClosedCount");
-  const lastJoinedNode = byId("dashboardLastJoined");
   const googleButton = byId("dashboardGoogleButton");
   const createdList = byId("dashboardCreatedList");
 
@@ -1355,17 +1362,6 @@ function renderDashboardPage() {
     }
   }
 
-  const joinedAuctions = getDashboardJoinedAuctions();
-  const openJoined = joinedAuctions.filter((auction) => auction.status === "open").length;
-  const closedJoined = Math.max(0, joinedAuctions.length - openJoined);
-  const lastJoined = state.joinedAuctions.length ? [...state.joinedAuctions].sort((left, right) => right.lastJoinedAt - left.lastJoinedAt)[0] : null;
-
-  setText("dashboardJoinedCount", String(joinedAuctions.length));
-  setText("dashboardActiveCount", String(openJoined));
-  setText("dashboardClosedCount", String(closedJoined));
-  setText("dashboardLastJoined", lastJoined ? formatDateTime(lastJoined.lastJoinedAt) : t("common.noneYet"));
-
-  renderAuctionList("dashboardJoinedList", joinedAuctions, { compact: true, emptyKey: "dashboard.joinedEmpty" });
   if (createdList) {
     renderAuctionList("dashboardCreatedList", getDashboardCreatedAuctions(), { compact: true, emptyKey: "dashboard.createdEmpty", creatorView: true });
   }
@@ -1385,7 +1381,6 @@ function renderRoomPage() {
     if (emptyState) emptyState.hidden = false;
     if (roomShell) roomShell.hidden = true;
     renderAuctionList("roomEmptyOpenList", getPublicOpenAuctions().slice(0, 4), { compact: true, emptyKey: "room.emptyBody" });
-    renderAuctionList("roomActiveOpenList", [], { compact: true, emptyKey: "room.emptyBody" });
     setText("roomTitle", t("room.emptyTitle"));
     setText("roomLede", t("room.emptyBody"));
     setText("roomMeta", "");
@@ -1410,6 +1405,14 @@ function renderRoomPage() {
     }
     renderRoomPhotos([]);
     renderRoomCreatorPanel(null);
+    const roomCodeCard = byId("roomCodeCard");
+    const roomCopyButton = byId("roomCopyCode");
+    if (roomCodeCard) {
+      roomCodeCard.hidden = true;
+    }
+    if (roomCopyButton) {
+      roomCopyButton.hidden = true;
+    }
     if (lookupCode && !lookupCode.value) {
       lookupCode.value = state.activeCode || "";
     }
@@ -1454,6 +1457,18 @@ function renderRoomPage() {
   setText("roomCeiling", formatMoney(auction.ceiling));
   setText("roomCurrent", formatMoney(getCurrentOffer(auction)));
   setText("roomStep", formatMoney(auction.minimumStep));
+  const showRoomCode = canViewRoomCode(auction);
+  const roomCodeCard = byId("roomCodeCard");
+  const roomCopyButton = byId("roomCopyCode");
+  if (roomCodeCard) {
+    roomCodeCard.hidden = !showRoomCode;
+  }
+  if (roomCopyButton) {
+    roomCopyButton.hidden = !showRoomCode;
+  }
+  if (!showRoomCode) {
+    setText("roomCode", "—");
+  }
   if (participantsNode) {
     participantsNode.textContent = String(getParticipantCount(auction));
   }
@@ -1472,7 +1487,14 @@ function renderRoomPage() {
 
   const helper = byId("roomBidHelper");
   if (helper) {
-    helper.textContent = auction.status === "open" ? t("room.bidHelper") : t("toast.roomClosed");
+    const phone = normalizePhoneNumber(state.profile.phoneNumber || "");
+    if (auction.status !== "open") {
+      helper.textContent = t("toast.roomClosed");
+    } else if (!phone) {
+      helper.textContent = t("toast.phoneRequired");
+    } else {
+      helper.textContent = t("room.bidHelper");
+    }
   }
 
   const form = byId("roomBidForm");
@@ -1483,8 +1505,6 @@ function renderRoomPage() {
   }
 
   renderHistory(auction);
-  const otherRooms = getPublicOpenAuctions().filter((entry) => entry.code !== auction.code).slice(0, 4);
-  renderAuctionList("roomActiveOpenList", otherRooms, { compact: true, emptyKey: "common.noResults" });
   renderRoomCreatorPanel(auction);
   applyPreferredNameDefaults();
 }
@@ -1496,7 +1516,7 @@ function renderHistory(auction) {
   }
 
   if (!auction.bids.length) {
-    tbody.innerHTML = `<tr><td colspan="4"><div class="empty-row">${escapeHtml(t("common.noBids"))}</div></td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="5"><div class="empty-row">${escapeHtml(t("common.noBids"))}</div></td></tr>`;
     return;
   }
 
@@ -1506,6 +1526,7 @@ function renderHistory(auction) {
       return `<tr>
         <td>${escapeHtml(formatClock(bid.time))}</td>
         <td>${escapeHtml(bid.bidder)}</td>
+        <td>${escapeHtml(bid.phone || "—")}</td>
         <td>${escapeHtml(formatMoney(bid.amount))}</td>
         <td>${escapeHtml(bid.note || "-")}</td>
       </tr>`;
@@ -1534,6 +1555,7 @@ function renderAuctionCard(auction, options = {}) {
   const compactClass = options.compact ? "compact" : "";
   const isAdminCard = Boolean(options.admin);
   const showCreatorInfo = Boolean(options.creatorView || options.showCreatorInfo);
+  const showRoomCode = canViewRoomCode(auction, { admin: isAdminCard, creatorView: options.creatorView });
   const accessBadge = showCreatorInfo || auction.visibility === "code-only"
     ? `<span class="badge ${auction.visibility === "code-only" ? "code-only" : "public"}">${escapeHtml(auction.visibility === "code-only" ? t("room.visibilityCodeOnly") : t("room.visibilityPublic"))}</span>`
     : "";
@@ -1555,10 +1577,10 @@ function renderAuctionCard(auction, options = {}) {
           <h3>${escapeHtml(auction.title)}</h3>
           <p>${escapeHtml(auction.buyer)} · ${escapeHtml(auction.category)}${creatorLine ? ` · ${creatorDetails.join(" · ")}` : ""}</p>
         </div>
-        <div class="card-code">
+        ${showRoomCode ? `<div class="card-code">
           <span>${escapeHtml(t("common.roomCode"))}</span>
           <strong>${escapeHtml(auction.code)}</strong>
-        </div>
+        </div>` : ""}
       </div>
 
       <div class="card-grid">
@@ -1581,7 +1603,7 @@ function renderAuctionCard(auction, options = {}) {
       </div>
 
       <div class="card-actions">
-        <button class="button button-ghost button-small" type="button" data-action="copy-code" data-code="${escapeHtml(auction.code)}">${escapeHtml(t("common.copyCode"))}</button>
+        ${showRoomCode ? `<button class="button button-ghost button-small" type="button" data-action="copy-code" data-code="${escapeHtml(auction.code)}">${escapeHtml(t("common.copyCode"))}</button>` : ""}
         <button class="button button-dark button-small" type="button" data-action="open-room" data-code="${escapeHtml(auction.code)}">${escapeHtml(t("common.openRoom"))}</button>
         ${isAdminCard && auction.status === "open" ? `<button class="button button-dark button-small" type="button" data-action="admin-close-auction" data-code="${escapeHtml(auction.code)}">${escapeHtml(t("admin.closeRoom"))}</button>` : ""}
         ${isAdminCard && auction.status === "closed" ? `<button class="button button-light button-small" type="button" data-action="admin-reopen-auction" data-code="${escapeHtml(auction.code)}">${escapeHtml(t("admin.reopenRoom"))}</button>` : ""}
@@ -1717,9 +1739,15 @@ function handleBidSubmit(event) {
   const bidder = valueOf("roomBidBidder");
   const amount = toNumber(valueOf("roomBidAmount"));
   const note = valueOf("roomBidNote");
+  const phone = normalizePhoneNumber(state.profile.phoneNumber || "");
 
   if (!bidder) {
     setToast(t("toast.bidderRequired"));
+    return;
+  }
+
+  if (!phone) {
+    setToast(t("toast.phoneRequired"));
     return;
   }
 
@@ -1737,6 +1765,7 @@ function handleBidSubmit(event) {
   auction.bids.push({
     id: makeId(),
     bidder,
+    phone,
     amount,
     note,
     time: Date.now(),
@@ -1911,6 +1940,12 @@ async function handleAuctionCardAction(event) {
   }
 
   if (action === "copy-code") {
+    const auction = findAuctionByCode(code);
+    if (!auction || !canViewRoomCode(auction, { admin: isAdminSignedIn() })) {
+      setToast(t("toast.copyCodeDenied"));
+      return;
+    }
+
     await copyText(code);
     setToast(t("toast.codeCopied"));
     return;
@@ -2115,14 +2150,14 @@ function renderRoomCreatorPanel(auction) {
         <h2>${escapeHtml(t("room.creatorWinnerTitle"))}</h2>
       </div>
     </div>
-    <p class="helper">${escapeHtml(winningBid ? t("room.creatorWinnerSelected", { bidder: winningBid.bidder, amount: formatMoney(winningBid.amount) }) : t("room.creatorWinnerHint"))}</p>
+    <p class="helper">${escapeHtml(winningBid ? t("room.creatorWinnerSelected", { bidder: winningBid.bidder, amount: formatMoney(winningBid.amount) }) : t("room.creatorWinnerStep"))}</p>
     <div id="roomCreatorActions" class="winner-choice-grid">
       ${bids.map((bid) => {
         const selected = winningBid && winningBid.id === bid.id;
         return `<button class="winner-choice ${selected ? "selected" : ""}" type="button" data-action="award-bid" data-code="${escapeHtml(auction.code)}" data-bid-id="${escapeHtml(bid.id)}">
           <strong>${escapeHtml(bid.bidder)}</strong>
           <span>${escapeHtml(formatMoney(bid.amount))}</span>
-          <small>${escapeHtml(bid.note || t("common.noneYet"))}</small>
+          <small>${escapeHtml(bid.phone || "—")}${bid.note ? ` · ${escapeHtml(bid.note)}` : ""}</small>
           ${selected ? `<em>${escapeHtml(t("room.creatorWinnerSelectedTag"))}</em>` : ""}
         </button>`;
       }).join("")}
@@ -3358,6 +3393,7 @@ function normalizeBid(bid, fallbackTime, fallbackCeiling) {
   return {
     id: String(bid.id || makeId()),
     bidder: String(bid.bidder || "Anonymous bidder").trim() || "Anonymous bidder",
+    phone: normalizePhoneNumber(bid.phone || bid.phoneNumber || ""),
     amount,
     note: String(bid.note || "").trim(),
     time: Number(bid.time) || fallbackTime,
@@ -3471,6 +3507,31 @@ function getPreferredCreatorEmail() {
 
 function getPreferredCreatorPhone() {
   return normalizePhoneNumber(state.profile.phoneNumber || localStorage.getItem(STORAGE_KEYS.creatorPhone) || "");
+}
+
+function isAuctionCreator(auction) {
+  const creatorEmail = normalizeEmail(auction?.creatorEmail);
+  if (!creatorEmail) {
+    return false;
+  }
+
+  return creatorEmail === getSignedInEmail() || creatorEmail === getPreferredCreatorEmail();
+}
+
+function canViewRoomCode(auction, options = {}) {
+  if (!auction) {
+    return false;
+  }
+
+  if (options.admin) {
+    return true;
+  }
+
+  if (options.creatorView && isAuctionCreator(auction)) {
+    return true;
+  }
+
+  return isAuctionCreator(auction);
 }
 
 function isAuctionManager(auction) {

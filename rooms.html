@@ -45,63 +45,29 @@
           </article>
         </section>
 
-        <section class="split-grid">
-          <article class="summary-panel">
-            <div class="section-head">
-              <div>
-                <p class="eyebrow" data-i18n="auctions.metricsTitle">Room summary</p>
-                <h2 data-i18n="auctions.metricsSubtitle">A quick read on the board.</h2>
-              </div>
+        <section class="panel form-panel filter-panel">
+          <div class="section-head compact">
+            <div>
+              <p class="eyebrow" data-i18n="auctions.filterTitle">Filters</p>
+              <h2 data-i18n="auctions.listSubtitle">Find the room you want to inspect.</h2>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="field full-span">
+              <label for="auctions-search" data-i18n="auctions.searchLabel">Search rooms</label>
+              <input id="auctions-search" type="search" placeholder="Title, buyer, category, or code" data-i18n-placeholder="auctions.searchPlaceholder">
             </div>
 
-            <div class="summary-grid four-up">
-              <article class="stat-card">
-                <span data-i18n="common.openRooms">Open rooms</span>
-                <strong id="auctionsOpenRooms">0</strong>
-                <p data-i18n="auctions.statusOpen">Open rooms</p>
-              </article>
-              <article class="stat-card">
-                <span data-i18n="common.offers">Live offers</span>
-                <strong id="auctionsOfferCount">0</strong>
-                <p data-i18n="common.offers">Offers</p>
-              </article>
-              <article class="stat-card">
-                <span data-i18n="common.currentOffer">Best active offer</span>
-                <strong id="auctionsBestOffer">—</strong>
-                <p data-i18n="home.metric.bestOfferHint">Lowest current price</p>
-              </article>
-              <article class="stat-card">
-                <span data-i18n="common.closes">Next close</span>
-                <strong id="auctionsNextClose">—</strong>
-                <p data-i18n="home.metric.nextCloseHint">Nearest deadline</p>
-              </article>
+            <div class="field full-span">
+              <label for="auctions-status" data-i18n="auctions.statusLabel">Status</label>
+              <select id="auctions-status">
+                <option value="all" data-i18n="auctions.statusAll">All rooms</option>
+                <option value="open" data-i18n="auctions.statusOpen">Open rooms</option>
+                <option value="closed" data-i18n="auctions.statusClosed">Closed rooms</option>
+              </select>
             </div>
-          </article>
-
-          <article class="panel form-panel filter-panel">
-            <div class="section-head compact">
-              <div>
-                <p class="eyebrow" data-i18n="auctions.filterTitle">Filters</p>
-                <h2 data-i18n="auctions.listSubtitle">Find the room you want to inspect.</h2>
-              </div>
-            </div>
-
-            <div class="form-grid">
-              <div class="field full-span">
-                <label for="auctions-search" data-i18n="auctions.searchLabel">Search rooms</label>
-                <input id="auctions-search" type="search" placeholder="Title, seller, category, or code" data-i18n-placeholder="auctions.searchPlaceholder">
-              </div>
-
-              <div class="field full-span">
-                <label for="auctions-status" data-i18n="auctions.statusLabel">Status</label>
-                <select id="auctions-status">
-                  <option value="all" data-i18n="auctions.statusAll">All rooms</option>
-                  <option value="open" data-i18n="auctions.statusOpen">Open rooms</option>
-                  <option value="closed" data-i18n="auctions.statusClosed">Closed rooms</option>
-                </select>
-              </div>
-            </div>
-          </article>
+          </div>
         </section>
 
         <section class="panel">
