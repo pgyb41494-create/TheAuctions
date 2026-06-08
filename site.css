@@ -1433,6 +1433,12 @@ th {
   color: #f8fafc;
 }
 
+:root[data-theme="dark"] .language-toggle {
+  background: var(--surface-soft);
+  color: var(--ink);
+  border-color: var(--line);
+}
+
 .theme-toggle-button {
   position: fixed;
   right: 1rem;
