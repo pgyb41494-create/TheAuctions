@@ -24,6 +24,7 @@
           <a href="home.html" data-i18n="nav.home">Home</a>
           <a href="create.html" class="is-active" aria-current="page" data-i18n="nav.create">Create</a>
           <a href="join.html" data-i18n="nav.join">Join</a>
+          <a href="rooms.html" data-i18n="nav.auctions">Rooms</a>
           <a href="dashboard.html" data-i18n="nav.dashboard">Dashboard</a>
         </nav>
 
@@ -55,6 +56,19 @@
               <div class="field">
                 <label for="createCategory" data-i18n="create.fieldCategory">Category</label>
                 <input id="createCategory" name="category" type="text" placeholder="Facilities" data-i18n-placeholder="create.placeholderCategory" required>
+              </div>
+
+              <div class="field full-span">
+                <label for="createCreatorEmail" data-i18n="create.fieldCreatorEmail">Creator email</label>
+                <input id="createCreatorEmail" name="creatorEmail" type="email" placeholder="creator@example.com" data-i18n-placeholder="create.placeholderCreatorEmail" required>
+              </div>
+
+              <div class="field">
+                <label for="createVisibility" data-i18n="create.fieldVisibility">Room visibility</label>
+                <select id="createVisibility" name="visibility">
+                  <option value="public" data-i18n="create.visibilityPublic">Public room</option>
+                  <option value="code-only" data-i18n="create.visibilityCodeOnly">Code only</option>
+                </select>
               </div>
 
               <div class="field">
@@ -94,6 +108,13 @@
               <div class="field full-span">
                 <label for="createNotes" data-i18n="create.fieldNotes">Notes</label>
                 <textarea id="createNotes" name="notes" placeholder="Add scope notes, service expectations, or compliance details." data-i18n-placeholder="create.placeholderNotes"></textarea>
+              </div>
+
+              <div class="field full-span">
+                <label for="createPhotos" data-i18n="create.fieldPhotos">Room photos</label>
+                <input id="createPhotos" name="photos" type="file" accept="image/*" multiple>
+                <p class="helper" data-i18n="create.photosHint">Add photos that will show in the room.</p>
+                <div id="createPhotoPreview" class="photo-gallery photo-preview"></div>
               </div>
 
               <div class="form-actions full-span">

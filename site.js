@@ -3,6 +3,7 @@ const STORAGE_KEYS = {
   activeCode: "apex-reverse-auctions.active-code.v3",
   language: "apex-reverse-auctions.language.v2",
   bidder: "apex-reverse-auctions.bidder.v3",
+  creatorEmail: "apex-reverse-auctions.creator-email.v1",
   adminEmail: "apex-reverse-auctions.admin-email.v1",
   profile: "apex-reverse-auctions.profile.v1",
   joinedAuctions: "apex-reverse-auctions.joined-auctions.v1",
@@ -124,22 +125,31 @@ const TRANSLATIONS = {
     "create.fieldTitle": "Auction title",
     "create.fieldBuyer": "Auction Maker",
     "create.fieldCategory": "Category",
+    "create.fieldCreatorEmail": "Creator email",
+    "create.fieldVisibility": "Room visibility",
     "create.fieldCeiling": "Ceiling price",
     "create.fieldStep": "Drop amount",
     "create.fieldDuration": "Auction length",
     "create.fieldNotes": "Notes",
+    "create.fieldPhotos": "Room photos",
     "create.placeholderTitle": "Office cleaning contract",
     "create.placeholderBuyer": "Northstar",
     "create.placeholderCategory": "Facilities",
+    "create.placeholderCreatorEmail": "creator@example.com",
     "create.placeholderCeiling": "125000",
     "create.placeholderStep": "500",
     "create.placeholderDuration": "60",
     "create.placeholderNotes": "Add scope notes, service expectations, or compliance details.",
+    "create.visibilityPublic": "Public room",
+    "create.visibilityCodeOnly": "Code only",
     "create.fieldDropEvery": "Price drops every",
     "create.dropDays": "Days",
     "create.dropHours": "Hours",
     "create.dropMinutes": "Minutes",
     "create.dropHint": "Set any mix above zero.",
+    "create.photosHint": "Add photos that will show in the room.",
+    "create.photosPreviewEmpty": "Photos will appear here after you choose them.",
+    "create.photoLabel": "Photo",
     "create.submit": "Publish room",
     "create.button": "Publish room",
     "create.previewTitle": "Recent rooms",
@@ -182,6 +192,7 @@ const TRANSLATIONS = {
     "auctions.statusClosed": "Closed rooms",
     "auctions.listTitle": "Auction rooms",
     "auctions.listSubtitle": "Find the room you want to inspect.",
+    "auctions.listHint": "Only public rooms appear here.",
     "auctions.noResults": "No rooms match this filter.",
     "room.eyebrow": "Auction room",
     "room.emptyTitle": "No room selected.",
@@ -196,6 +207,9 @@ const TRANSLATIONS = {
     "room.schedule": "Drops every {{interval}} by {{amount}}. Closes in {{close}}.",
     "room.scheduleClosed": "Closed",
     "room.manualOnly": "Manual bids only",
+    "room.createdBy": "Created by {{email}}",
+    "room.visibilityPublic": "Public room",
+    "room.visibilityCodeOnly": "Code only",
     "room.summarySubtitle": "Room overview",
     "room.historyTitle": "Bid history",
     "room.historySubtitle": "Latest offers first",
@@ -211,6 +225,20 @@ const TRANSLATIONS = {
     "room.bidButton": "Submit bid",
     "room.bidHelper": "A lower offer is required.",
     "room.copyCode": "Copy code",
+    "room.photosTitle": "Photos",
+    "room.photosSubtitle": "Photos shared by the creator.",
+    "room.photoLabel": "Room photo",
+    "room.creatorToolsTitle": "Creator tools",
+    "room.creatorOpenTitle": "Close the room when you are ready.",
+    "room.creatorOpenHint": "Only the creator or admin can close the room.",
+    "room.closeRoom": "Close room",
+    "room.creatorWinnerTitle": "Choose a winner",
+    "room.creatorWinnerHint": "Pick the bid that should win the room.",
+    "room.creatorWinnerSelected": "{{bidder}} at {{amount}} is selected.",
+    "room.creatorWinnerSelectedTag": "Selected",
+    "room.creatorNoBids": "No bids have been placed yet.",
+    "room.closedNow": "The room is closed.",
+    "room.winnerSelected": "{{bidder}} at {{amount}} has been selected.",
     "room.rulesTitle": "Room rules",
     "room.rulesSubtitle": "Keep the room disciplined",
     "room.notesTitle": "Notes",
@@ -240,6 +268,9 @@ const TRANSLATIONS = {
     "dashboard.joinedSubtitle": "Rooms you opened from this browser.",
     "dashboard.joinedEmpty": "No joined auctions yet.",
     "dashboard.joinedAt": "Joined",
+    "dashboard.createdTitle": "Created auctions",
+    "dashboard.createdSubtitle": "Rooms you created from this browser.",
+    "dashboard.createdEmpty": "No created auctions yet.",
     "dashboard.archived": "Archived",
     "admin.eyebrow": "Admin console",
     "admin.title": "Manage rooms with maintenance tools.",
@@ -399,22 +430,31 @@ const TRANSLATIONS = {
     "create.fieldTitle": "Título de la subasta",
     "create.fieldBuyer": "Creador de la subasta",
     "create.fieldCategory": "Categoría",
+    "create.fieldCreatorEmail": "Correo del creador",
+    "create.fieldVisibility": "Visibilidad de la sala",
     "create.fieldCeiling": "Precio tope",
     "create.fieldStep": "Monto de bajada",
     "create.fieldDuration": "Duración de la sala",
     "create.fieldNotes": "Notas",
+    "create.fieldPhotos": "Fotos de la sala",
     "create.placeholderTitle": "Contrato de limpieza de oficinas",
     "create.placeholderBuyer": "Northstar",
     "create.placeholderCategory": "Instalaciones",
+    "create.placeholderCreatorEmail": "creador@ejemplo.com",
     "create.placeholderCeiling": "125000",
     "create.placeholderStep": "500",
     "create.placeholderDuration": "60",
     "create.placeholderNotes": "Agrega alcance, expectativas de servicio o detalles de cumplimiento.",
+    "create.visibilityPublic": "Sala pública",
+    "create.visibilityCodeOnly": "Solo con código",
     "create.fieldDropEvery": "La sala baja cada",
     "create.dropDays": "Días",
     "create.dropHours": "Horas",
     "create.dropMinutes": "Minutos",
     "create.dropHint": "Usa cualquier combinación mayor que cero.",
+    "create.photosHint": "Agrega fotos que se mostrarán en la sala.",
+    "create.photosPreviewEmpty": "Las fotos aparecerán aquí cuando las elijas.",
+    "create.photoLabel": "Foto",
     "create.submit": "Publicar sala",
     "create.button": "Publicar sala",
     "create.previewTitle": "Vista previa",
@@ -457,6 +497,7 @@ const TRANSLATIONS = {
     "auctions.statusClosed": "Salas cerradas",
     "auctions.listTitle": "Salas de subasta",
     "auctions.listSubtitle": "Encuentra la sala que quieres revisar.",
+    "auctions.listHint": "Aquí solo aparecen las salas públicas.",
     "auctions.noResults": "No hay salas que coincidan con este filtro.",
     "room.eyebrow": "Sala de subasta",
     "room.emptyTitle": "No hay ninguna sala seleccionada.",
@@ -471,6 +512,9 @@ const TRANSLATIONS = {
     "room.schedule": "Baja cada {{interval}} en {{amount}}. Cierra en {{close}}.",
     "room.scheduleClosed": "Cerrada",
     "room.manualOnly": "Solo pujas manuales",
+    "room.createdBy": "Creada por {{email}}",
+    "room.visibilityPublic": "Sala pública",
+    "room.visibilityCodeOnly": "Solo con código",
     "room.summarySubtitle": "Resumen de la sala",
     "room.historyTitle": "Historial de ofertas",
     "room.historySubtitle": "Las ofertas más recientes primero",
@@ -486,6 +530,20 @@ const TRANSLATIONS = {
     "room.bidButton": "Enviar oferta",
     "room.bidHelper": "Se requiere una oferta más baja.",
     "room.copyCode": "Copiar código",
+    "room.photosTitle": "Fotos",
+    "room.photosSubtitle": "Fotos compartidas por el creador.",
+    "room.photoLabel": "Foto de la sala",
+    "room.creatorToolsTitle": "Herramientas del creador",
+    "room.creatorOpenTitle": "Cierra la sala cuando estés listo.",
+    "room.creatorOpenHint": "Solo el creador o un administrador puede cerrar la sala.",
+    "room.closeRoom": "Cerrar sala",
+    "room.creatorWinnerTitle": "Elige un ganador",
+    "room.creatorWinnerHint": "Selecciona la oferta que debe ganar la sala.",
+    "room.creatorWinnerSelected": "{{bidder}} con {{amount}} está seleccionado.",
+    "room.creatorWinnerSelectedTag": "Seleccionado",
+    "room.creatorNoBids": "Aún no se ha enviado ninguna oferta.",
+    "room.closedNow": "La sala está cerrada.",
+    "room.winnerSelected": "Se ha seleccionado a {{bidder}} con {{amount}}.",
     "room.rulesTitle": "Reglas de la sala",
     "room.rulesSubtitle": "Mantén la disciplina del tablero",
     "room.notesTitle": "Notas",
@@ -515,6 +573,9 @@ const TRANSLATIONS = {
     "dashboard.joinedSubtitle": "Salas que abriste desde este navegador.",
     "dashboard.joinedEmpty": "Todavía no hay subastas unidas.",
     "dashboard.joinedAt": "Unida",
+    "dashboard.createdTitle": "Subastas creadas",
+    "dashboard.createdSubtitle": "Salas que creaste desde este navegador.",
+    "dashboard.createdEmpty": "Todavía no has creado subastas.",
     "dashboard.archived": "Archivada",
     "admin.eyebrow": "Consola de administración",
     "admin.title": "Administra las salas con herramientas de mantenimiento.",
@@ -611,6 +672,8 @@ let homeAuthEmail = "";
 let homeAuthPassword = "";
 let homeAuthErrorKey = "";
 let homeAuthBusy = false;
+let createPhotoPreviews = [];
+let createPhotoPreviewToken = 0;
 
 async function initialize() {
   const [adminEmails, firebaseConfig] = await Promise.all([loadAdminEmails(), loadFirebaseConfig()]);
@@ -653,6 +716,25 @@ function bindPageEvents() {
   const createForm = byId("createForm");
   if (createForm) {
     createForm.addEventListener("submit", handleCreateSubmit);
+  }
+
+  const createCreatorEmail = byId("createCreatorEmail");
+  if (createCreatorEmail) {
+    createCreatorEmail.addEventListener("input", (event) => {
+      localStorage.setItem(STORAGE_KEYS.creatorEmail, normalizeEmail(event.target.value));
+    });
+  }
+
+  const createVisibility = byId("createVisibility");
+  if (createVisibility) {
+    createVisibility.addEventListener("change", (event) => {
+      localStorage.setItem("apex-reverse-auctions.room-visibility.v1", String(event.target.value || "public"));
+    });
+  }
+
+  const createPhotos = byId("createPhotos");
+  if (createPhotos) {
+    createPhotos.addEventListener("change", handleCreatePhotosChange);
   }
 
   const joinForm = byId("joinForm");
@@ -774,7 +856,7 @@ function bindPageEvents() {
     adminClearAll.addEventListener("click", handleAdminClearAll);
   }
 
-  ["homeFeaturedAuctions", "auctionsList", "roomEmptyOpenList", "roomActiveOpenList", "adminAuctionList"].forEach((containerId) => {
+  ["homeFeaturedAuctions", "auctionsList", "roomEmptyOpenList", "roomActiveOpenList", "dashboardCreatedList", "roomCreatorPanel", "adminAuctionList"].forEach((containerId) => {
     const container = byId(containerId);
     if (container) {
       container.addEventListener("click", handleAuctionCardAction);
@@ -854,7 +936,7 @@ function renderCurrentPage() {
 }
 
 function renderSharedStats() {
-  const openAuctions = getOpenAuctions();
+  const openAuctions = getPublicOpenAuctions();
   const offerCount = state.auctions.reduce((total, auction) => total + auction.bids.length, 0);
   const bestOffer = openAuctions.length ? Math.min(...openAuctions.map((auction) => getCurrentOffer(auction))) : null;
   const nextClose = openAuctions.length
@@ -886,6 +968,18 @@ function renderHomePage() {
 }
 
 function renderCreatePage() {
+  const creatorEmailField = byId("createCreatorEmail");
+  const visibilityField = byId("createVisibility");
+
+  if (creatorEmailField && !creatorEmailField.value) {
+    creatorEmailField.value = getPreferredCreatorEmail();
+  }
+
+  if (visibilityField && !visibilityField.value) {
+    visibilityField.value = localStorage.getItem("apex-reverse-auctions.room-visibility.v1") || "public";
+  }
+
+  renderCreatePhotoPreview();
 }
 
 function renderJoinPage() {
@@ -904,7 +998,7 @@ function renderAuctionsPage() {
   }
 
   const query = state.filters.query.trim().toLowerCase();
-  const filtered = state.auctions.filter((auction) => {
+  const filtered = getPublicAuctions().filter((auction) => {
     const matchesStatus = state.filters.status === "all" ? true : auction.status === state.filters.status;
     const haystack = [auction.title, auction.buyer, auction.category, auction.code].join(" ").toLowerCase();
     const matchesQuery = !query || haystack.includes(query);
@@ -1000,6 +1094,7 @@ function renderDashboardPage() {
   const closedCountNode = byId("dashboardClosedCount");
   const lastJoinedNode = byId("dashboardLastJoined");
   const googleButton = byId("dashboardGoogleButton");
+  const createdList = byId("dashboardCreatedList");
 
   if (gate) {
     gate.hidden = signedIn;
@@ -1042,6 +1137,9 @@ function renderDashboardPage() {
   setText("dashboardLastJoined", lastJoined ? formatDateTime(lastJoined.lastJoinedAt) : t("common.noneYet"));
 
   renderAuctionList("dashboardJoinedList", joinedAuctions, { compact: true, emptyKey: "dashboard.joinedEmpty" });
+  if (createdList) {
+    renderAuctionList("dashboardCreatedList", getDashboardCreatedAuctions(), { compact: true, emptyKey: "dashboard.createdEmpty", creatorView: true });
+  }
   applyPreferredNameDefaults();
 }
 
@@ -1052,14 +1150,16 @@ function renderRoomPage() {
   const lookupCode = byId("roomLookupCode");
   const bidderField = byId("roomBidBidder");
   const participantsNode = byId("roomParticipants");
+  const roomMeta = byId("roomMeta");
 
   if (!auction) {
     if (emptyState) emptyState.hidden = false;
     if (roomShell) roomShell.hidden = true;
-    renderAuctionList("roomEmptyOpenList", getOpenAuctions().slice(0, 4), { compact: true, emptyKey: "room.emptyBody" });
+    renderAuctionList("roomEmptyOpenList", getPublicOpenAuctions().slice(0, 4), { compact: true, emptyKey: "room.emptyBody" });
     renderAuctionList("roomActiveOpenList", [], { compact: true, emptyKey: "room.emptyBody" });
     setText("roomTitle", t("room.emptyTitle"));
     setText("roomLede", t("room.emptyBody"));
+    setText("roomMeta", "");
     setText("roomCode", "—");
     setText("roomCeiling", "—");
     setText("roomCurrent", "—");
@@ -1079,6 +1179,8 @@ function renderRoomPage() {
     if (notes) {
       notes.textContent = t("room.noNotes");
     }
+    renderRoomPhotos([]);
+    renderRoomCreatorPanel(null);
     if (lookupCode && !lookupCode.value) {
       lookupCode.value = state.activeCode || "";
     }
@@ -1093,6 +1195,11 @@ function renderRoomPage() {
 
   setText("roomTitle", auction.title);
   setText("roomLede", `${auction.buyer} · ${auction.category}`);
+  if (roomMeta) {
+    const creatorEmail = auction.creatorEmail || t("common.noneYet");
+    const accessMode = auction.visibility === "code-only" ? t("room.visibilityCodeOnly") : t("room.visibilityPublic");
+    roomMeta.textContent = `${t("room.createdBy", { email: creatorEmail })} · ${accessMode}`;
+  }
   const scheduleNode = byId("roomSchedule");
   if (scheduleNode) {
     if (auction.status === "open") {
@@ -1121,6 +1228,7 @@ function renderRoomPage() {
     participantsNode.textContent = String(getParticipantCount(auction));
   }
   setText("roomNotes", auction.notes || t("room.noNotes"));
+  renderRoomPhotos(auction.photos || []);
 
   if (bidderField && !bidderField.value) {
     bidderField.value = getPreferredDisplayName();
@@ -1145,8 +1253,9 @@ function renderRoomPage() {
   }
 
   renderHistory(auction);
-  const otherRooms = getOpenAuctions().filter((entry) => entry.code !== auction.code).slice(0, 4);
+  const otherRooms = getPublicOpenAuctions().filter((entry) => entry.code !== auction.code).slice(0, 4);
   renderAuctionList("roomActiveOpenList", otherRooms, { compact: true, emptyKey: "common.noResults" });
+  renderRoomCreatorPanel(auction);
   applyPreferredNameDefaults();
 }
 
@@ -1194,14 +1303,22 @@ function renderAuctionCard(auction, options = {}) {
   const leadBid = getLeadBid(auction);
   const compactClass = options.compact ? "compact" : "";
   const isAdminCard = Boolean(options.admin);
+  const showCreatorInfo = Boolean(options.creatorView || options.showCreatorInfo);
+  const accessBadge = showCreatorInfo || auction.visibility === "code-only"
+    ? `<span class="badge ${auction.visibility === "code-only" ? "code-only" : "public"}">${escapeHtml(auction.visibility === "code-only" ? t("room.visibilityCodeOnly") : t("room.visibilityPublic"))}</span>`
+    : "";
+  const creatorLine = showCreatorInfo && auction.creatorEmail
+    ? `<p>${escapeHtml(auction.creatorEmail)}</p>`
+    : "";
 
   return `
     <article class="auction-card ${compactClass}" data-code="${escapeHtml(auction.code)}">
       <div class="card-head">
         <div>
           <span class="badge ${auction.status === "open" ? "open" : "closed"}">${auction.status === "open" ? t("common.statusOpen") : t("common.statusClosed")}</span>
+          ${accessBadge}
           <h3>${escapeHtml(auction.title)}</h3>
-          <p>${escapeHtml(auction.buyer)} · ${escapeHtml(auction.category)}</p>
+          <p>${escapeHtml(auction.buyer)} · ${escapeHtml(auction.category)}${creatorLine ? ` · ${escapeHtml(auction.creatorEmail)}` : ""}</p>
         </div>
         <div class="card-code">
           <span>${escapeHtml(t("common.roomCode"))}</span>
@@ -1238,13 +1355,16 @@ function renderAuctionCard(auction, options = {}) {
   `;
 }
 
-function handleCreateSubmit(event) {
+async function handleCreateSubmit(event) {
   event.preventDefault();
 
-  const formData = new FormData(event.currentTarget);
+  const form = event.currentTarget;
+  const formData = new FormData(form);
   const title = String(formData.get("title") || "").trim();
   const buyer = String(formData.get("buyer") || "").trim();
   const category = String(formData.get("category") || "").trim();
+  const creatorEmail = normalizeEmail(String(formData.get("creatorEmail") || getPreferredCreatorEmail() || "").trim());
+  const visibility = String(formData.get("visibility") || "public").trim() === "code-only" ? "code-only" : "public";
   const ceiling = Number(formData.get("ceiling"));
   const dropAmount = Number(formData.get("dropAmount"));
   const dropDays = Math.max(0, Math.floor(toNumber(formData.get("dropDays"), 0)));
@@ -1253,9 +1373,15 @@ function handleCreateSubmit(event) {
   const dropIntervalMinutes = (dropDays * 1440) + (dropHours * 60) + dropMinutes;
   const durationMinutes = Number(formData.get("duration"));
   const notes = String(formData.get("notes") || "").trim();
+  const photos = await collectCreatePhotos(byId("createPhotos")?.files);
 
   if (!title || !buyer || !category) {
     setToast(t("toast.formIncomplete"));
+    return;
+  }
+
+  if (!creatorEmail || !creatorEmail.includes("@")) {
+    setToast(t("toast.invalidEmail"));
     return;
   }
 
@@ -1276,6 +1402,8 @@ function handleCreateSubmit(event) {
     title,
     buyer,
     category,
+    creatorEmail,
+    visibility,
     ceiling,
     minimumStep: dropAmount,
     dropIntervalMinutes,
@@ -1283,6 +1411,7 @@ function handleCreateSubmit(event) {
     createdAt,
     endAt: createdAt + durationMinutes * 60000,
     notes,
+    photos,
     bids: [],
     status: "open",
   });
@@ -1290,8 +1419,12 @@ function handleCreateSubmit(event) {
   state.auctions.unshift(auction);
   state.activeCode = auction.code;
   localStorage.setItem(STORAGE_KEYS.activeCode, auction.code);
+  localStorage.setItem(STORAGE_KEYS.creatorEmail, creatorEmail);
+  localStorage.setItem("apex-reverse-auctions.room-visibility.v1", visibility);
   saveAuctions();
-  event.currentTarget.reset();
+  form.reset();
+  createPhotoPreviews = [];
+  renderCreatePhotoPreview();
   openRoomByCode(auction.code, "created");
 }
 
@@ -1475,6 +1608,16 @@ async function handleAuctionCardAction(event) {
     return;
   }
 
+  if (action === "close-room") {
+    handleCloseRoom(code);
+    return;
+  }
+
+  if (action === "award-bid") {
+    handleAwardBid(code, actionButton.dataset.bidId || "");
+    return;
+  }
+
   if (action === "admin-toggle-status") {
     handleAdminToggleAuction(code);
     return;
@@ -1483,6 +1626,221 @@ async function handleAuctionCardAction(event) {
   if (action === "admin-delete-auction") {
     handleAdminDeleteAuction(code);
   }
+}
+
+async function handleCreatePhotosChange(event) {
+  const files = event.target.files;
+  createPhotoPreviews = await collectCreatePhotos(files);
+  createPhotoPreviewToken += 1;
+  renderCreatePhotoPreview();
+}
+
+async function collectCreatePhotos(fileList) {
+  const files = Array.from(fileList || []).filter((file) => file && typeof file.type === "string" && file.type.startsWith("image/"));
+  const photos = [];
+
+  for (const file of files.slice(0, 4)) {
+    try {
+      const src = await shrinkImageFile(file);
+      photos.push({ src, name: file.name || "Photo" });
+    } catch {
+      // Skip files that cannot be processed.
+    }
+  }
+
+  return photos;
+}
+
+async function shrinkImageFile(file) {
+  const dataUrl = await readFileAsDataUrl(file);
+  const image = await loadImageFromDataUrl(dataUrl);
+  const maxSize = 1280;
+  const scale = Math.min(1, maxSize / Math.max(image.width || 1, image.height || 1));
+
+  if (scale >= 1) {
+    return dataUrl;
+  }
+
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.max(1, Math.round(image.width * scale));
+  canvas.height = Math.max(1, Math.round(image.height * scale));
+  const context = canvas.getContext("2d");
+  if (!context) {
+    return dataUrl;
+  }
+
+  context.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+  try {
+    return canvas.toDataURL("image/jpeg", 0.84);
+  } catch {
+    return dataUrl;
+  }
+}
+
+function readFileAsDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result || ""));
+    reader.onerror = () => reject(new Error("Unable to read file"));
+    reader.readAsDataURL(file);
+  });
+}
+
+function loadImageFromDataUrl(dataUrl) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.onerror = () => reject(new Error("Unable to load image"));
+    image.src = dataUrl;
+  });
+}
+
+function renderCreatePhotoPreview() {
+  const preview = byId("createPhotoPreview");
+  if (!preview) {
+    return;
+  }
+
+  if (!createPhotoPreviews.length) {
+    preview.innerHTML = `<p class="helper">${escapeHtml(t("create.photosPreviewEmpty"))}</p>`;
+    return;
+  }
+
+  preview.innerHTML = createPhotoPreviews.map((photo, index) => {
+    const label = photo.name || `${t("create.photoLabel")} ${index + 1}`;
+    return `<figure class="photo-tile">
+      <img src="${escapeHtml(photo.src)}" alt="${escapeHtml(label)}">
+      <figcaption>${escapeHtml(label)}</figcaption>
+    </figure>`;
+  }).join("");
+}
+
+function renderRoomPhotos(photos) {
+  const panel = byId("roomPhotosPanel");
+  const container = byId("roomPhotos");
+  if (!panel || !container) {
+    return;
+  }
+
+  const list = Array.isArray(photos) ? photos.filter((photo) => photo && typeof photo.src === "string") : [];
+  if (!list.length) {
+    panel.hidden = true;
+    container.innerHTML = "";
+    return;
+  }
+
+  panel.hidden = false;
+  container.innerHTML = list.map((photo, index) => {
+    const label = photo.name || `${t("room.photoLabel")} ${index + 1}`;
+    return `<figure class="photo-tile">
+      <img src="${escapeHtml(photo.src)}" alt="${escapeHtml(label)}">
+      <figcaption>${escapeHtml(label)}</figcaption>
+    </figure>`;
+  }).join("");
+}
+
+function renderRoomCreatorPanel(auction) {
+  const panel = byId("roomCreatorPanel");
+  if (!panel) {
+    return;
+  }
+
+  if (!auction || !isAuctionManager(auction)) {
+    panel.hidden = true;
+    panel.innerHTML = "";
+    return;
+  }
+
+  panel.hidden = false;
+  const winningBid = getWinningBid(auction);
+
+  if (auction.status === "open") {
+    panel.innerHTML = `
+      <div class="section-head compact">
+        <div>
+          <p class="eyebrow">${escapeHtml(t("room.creatorToolsTitle"))}</p>
+          <h2>${escapeHtml(t("room.creatorOpenTitle"))}</h2>
+        </div>
+      </div>
+      <p class="helper">${escapeHtml(t("room.creatorOpenHint"))}</p>
+      <div class="form-actions">
+        <button class="button button-dark" type="button" data-action="close-room" data-code="${escapeHtml(auction.code)}">${escapeHtml(t("room.closeRoom"))}</button>
+      </div>
+    `;
+    return;
+  }
+
+  const bids = [...auction.bids].sort((left, right) => left.amount - right.amount || left.time - right.time);
+  if (!bids.length) {
+    panel.innerHTML = `
+      <div class="section-head compact">
+        <div>
+          <p class="eyebrow">${escapeHtml(t("room.creatorToolsTitle"))}</p>
+          <h2>${escapeHtml(t("room.creatorWinnerTitle"))}</h2>
+        </div>
+      </div>
+      <p class="helper">${escapeHtml(t("room.creatorNoBids"))}</p>
+    `;
+    return;
+  }
+
+  panel.innerHTML = `
+    <div class="section-head compact">
+      <div>
+        <p class="eyebrow">${escapeHtml(t("room.creatorToolsTitle"))}</p>
+        <h2>${escapeHtml(t("room.creatorWinnerTitle"))}</h2>
+      </div>
+    </div>
+    <p class="helper">${escapeHtml(winningBid ? t("room.creatorWinnerSelected", { bidder: winningBid.bidder, amount: formatMoney(winningBid.amount) }) : t("room.creatorWinnerHint"))}</p>
+    <div id="roomCreatorActions" class="winner-choice-grid">
+      ${bids.map((bid) => {
+        const selected = winningBid && winningBid.id === bid.id;
+        return `<button class="winner-choice ${selected ? "selected" : ""}" type="button" data-action="award-bid" data-code="${escapeHtml(auction.code)}" data-bid-id="${escapeHtml(bid.id)}">
+          <strong>${escapeHtml(bid.bidder)}</strong>
+          <span>${escapeHtml(formatMoney(bid.amount))}</span>
+          <small>${escapeHtml(bid.note || t("common.noneYet"))}</small>
+          ${selected ? `<em>${escapeHtml(t("room.creatorWinnerSelectedTag"))}</em>` : ""}
+        </button>`;
+      }).join("")}
+    </div>
+  `;
+}
+
+function handleCloseRoom(rawCode) {
+  const auction = findAuctionByCode(rawCode);
+  if (!auction || !isAuctionManager(auction)) {
+    setToast(t("toast.adminDenied"));
+    return;
+  }
+
+  auction.status = "closed";
+  auction.closedAt = Date.now();
+  saveAuctions();
+  renderCurrentPage();
+  setToast(t("room.closedNow"));
+}
+
+function handleAwardBid(rawCode, bidId) {
+  const auction = findAuctionByCode(rawCode);
+  if (!auction || !isAuctionManager(auction)) {
+    setToast(t("toast.adminDenied"));
+    return;
+  }
+
+  const winningBid = auction.bids.find((bid) => bid.id === bidId);
+  if (!winningBid) {
+    return;
+  }
+
+  auction.status = "closed";
+  auction.closedAt = auction.closedAt || Date.now();
+  auction.winnerBidId = winningBid.id;
+  auction.winnerSelectedAt = Date.now();
+  auction.winnerSelectedBy = getSignedInEmail();
+  saveAuctions();
+  renderCurrentPage();
+  setToast(t("room.winnerSelected", { bidder: winningBid.bidder, amount: formatMoney(winningBid.amount) }));
 }
 
 function openRoomByCode(rawCode, flash = "") {
@@ -1561,7 +1919,7 @@ function ensureActiveCode() {
     return;
   }
 
-  const candidate = getOpenAuctions()[0] || state.auctions[0] || null;
+  const candidate = getPublicOpenAuctions()[0] || getPublicAuctions()[0] || null;
   state.activeCode = candidate ? candidate.code : "";
 
   if (state.activeCode) {
@@ -1620,7 +1978,7 @@ function getOpenAuctions() {
 }
 
 function getFeaturedAuctions(limit) {
-  return [...state.auctions]
+  return getPublicAuctions()
     .sort((left, right) => {
       if (left.status !== right.status) {
         return left.status === "open" ? -1 : 1;
@@ -2524,6 +2882,14 @@ function normalizeAuction(rawAuction) {
   const ceiling = toNumber(rawAuction.ceiling, 0);
   const minimumStep = Math.max(1, toNumber(rawAuction.minimumStep ?? rawAuction.dropAmount ?? rawAuction.step, 50));
   const dropIntervalMinutes = Math.max(0, toNumber(rawAuction.dropIntervalMinutes ?? rawAuction.dropEveryMinutes ?? rawAuction.dropInterval, 0));
+  const creatorEmail = normalizeEmail(rawAuction.creatorEmail || rawAuction.createdBy || rawAuction.ownerEmail || "");
+  const visibility = String(rawAuction.visibility || rawAuction.accessMode || "public").trim() === "code-only" ? "code-only" : "public";
+  const photos = Array.isArray(rawAuction.photos)
+    ? rawAuction.photos
+        .map(normalizePhoto)
+        .filter(Boolean)
+        .slice(0, 4)
+    : [];
   const bids = Array.isArray(rawAuction.bids)
     ? rawAuction.bids
         .map((bid) => normalizeBid(bid, createdAt, ceiling))
@@ -2537,15 +2903,47 @@ function normalizeAuction(rawAuction) {
     title: String(rawAuction.title || "Untitled auction").trim(),
     buyer: String(rawAuction.buyer || "Buyer").trim(),
     category: String(rawAuction.category || "General").trim(),
+    creatorEmail,
+    visibility,
     ceiling,
     minimumStep,
     dropIntervalMinutes,
     durationMinutes,
     createdAt,
     endAt,
+    closedAt: Number(rawAuction.closedAt) || 0,
     notes: String(rawAuction.notes || rawAuction.note || "").trim(),
+    photos,
+    winnerBidId: String(rawAuction.winnerBidId || "").trim() || null,
+    winnerSelectedAt: Number(rawAuction.winnerSelectedAt) || 0,
+    winnerSelectedBy: normalizeEmail(rawAuction.winnerSelectedBy || ""),
     bids,
     status: Date.now() >= endAt || rawAuction.status === "closed" ? "closed" : "open",
+  };
+}
+
+function normalizePhoto(photo) {
+  if (!photo) {
+    return null;
+  }
+
+  if (typeof photo === "string") {
+    const src = String(photo).trim();
+    return src ? { src, name: "" } : null;
+  }
+
+  if (typeof photo !== "object") {
+    return null;
+  }
+
+  const src = String(photo.src || photo.dataUrl || photo.url || "").trim();
+  if (!src) {
+    return null;
+  }
+
+  return {
+    src,
+    name: String(photo.name || photo.fileName || "").trim(),
   };
 }
 
@@ -2573,7 +2971,7 @@ function ensureActiveCode() {
     return;
   }
 
-  const candidate = getOpenAuctions()[0] || state.auctions[0] || null;
+  const candidate = getPublicOpenAuctions()[0] || getPublicAuctions()[0] || null;
   state.activeCode = candidate ? candidate.code : "";
 
   if (state.activeCode) {
@@ -2603,7 +3001,7 @@ function getOpenAuctions() {
 }
 
 function getFeaturedAuctions(limit) {
-  return [...state.auctions]
+  return getPublicAuctions()
     .sort((left, right) => {
       if (left.status !== right.status) {
         return left.status === "open" ? -1 : 1;
@@ -2634,12 +3032,65 @@ function resolveActiveAuction() {
 
   if (state.activeCode) {
     const stored = findAuctionByCode(state.activeCode);
-    if (stored) {
+    if (stored && isAuctionPublic(stored)) {
       return stored;
     }
   }
 
-  return getOpenAuctions()[0] || null;
+  return getPublicOpenAuctions()[0] || null;
+}
+
+function isAuctionPublic(auction) {
+  return (auction?.visibility || "public") !== "code-only";
+}
+
+function getPublicAuctions() {
+  return state.auctions.filter((auction) => isAuctionPublic(auction));
+}
+
+function getPublicOpenAuctions() {
+  return getPublicAuctions().filter((auction) => auction.status === "open");
+}
+
+function getDashboardCreatedAuctions() {
+  const creatorEmail = getSignedInEmail();
+  if (!creatorEmail) {
+    return [];
+  }
+
+  return [...state.auctions]
+    .filter((auction) => normalizeEmail(auction.creatorEmail) === creatorEmail)
+    .sort((left, right) => (Number(right.createdAt) || 0) - (Number(left.createdAt) || 0));
+}
+
+function getSignedInEmail() {
+  return normalizeEmail(state.profile.google?.email || state.adminEmail || "");
+}
+
+function getPreferredCreatorEmail() {
+  return getSignedInEmail() || normalizeEmail(localStorage.getItem(STORAGE_KEYS.creatorEmail) || "");
+}
+
+function isAuctionManager(auction) {
+  const signedInEmail = getSignedInEmail();
+  const rememberedCreatorEmail = normalizeEmail(localStorage.getItem(STORAGE_KEYS.creatorEmail) || "");
+  if (!signedInEmail) {
+    return normalizeEmail(auction?.creatorEmail) === rememberedCreatorEmail;
+  }
+
+  return normalizeEmail(auction?.creatorEmail) === signedInEmail || normalizeEmail(auction?.creatorEmail) === rememberedCreatorEmail || isAdminSignedIn();
+}
+
+function getWinningBid(auction) {
+  if (!auction) {
+    return null;
+  }
+
+  if (auction.winnerBidId) {
+    return auction.bids.find((bid) => bid.id === auction.winnerBidId) || null;
+  }
+
+  return null;
 }
 
 function formatCode(rawCode) {
