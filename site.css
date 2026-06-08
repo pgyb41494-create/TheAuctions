@@ -738,6 +738,27 @@ textarea:focus {
   grid-template-columns: 1fr;
 }
 
+.dashboard-page-grid .auction-grid,
+.auctions-page-grid .auction-grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.dashboard-page-grid .section-head,
+.auctions-page-grid .section-head {
+  align-items: start;
+}
+
+.dashboard-page-grid .section-head .section-note,
+.auctions-page-grid .section-head .section-note {
+  text-align: left;
+  max-width: none;
+}
+
+.dashboard-page-grid .auction-card,
+.auctions-page-grid .auction-card {
+  padding: 1.15rem 1.2rem;
+}
+
 .auction-card {
   display: grid;
   gap: 1rem;
