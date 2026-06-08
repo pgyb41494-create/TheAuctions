@@ -95,6 +95,10 @@ textarea {
   overflow: hidden;
 }
 
+.home-auth-locked .site-shell {
+  visibility: hidden;
+}
+
 .auth-modal-overlay {
   position: fixed;
   inset: 0;

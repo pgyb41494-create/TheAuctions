@@ -703,8 +703,16 @@ async function initialize() {
   bindLanguageToggle();
   bindPageEvents();
   applyLanguage();
+  if (state.page === "home" && !state.firebaseUser?.email) {
+    document.body.classList.add("home-auth-locked");
+  } else {
+    document.body.classList.remove("home-auth-locked");
+  }
   updateNavVisibility();
   renderCurrentPage();
+  if (state.page === "home" && !state.firebaseUser?.email) {
+    openHomeAuthModal();
+  }
   window.setInterval(() => {
     if (document.visibilityState === "visible") {
       renderCurrentPage();
@@ -2604,6 +2612,9 @@ function openHomeAuthModal() {
     trigger.setAttribute("aria-expanded", "true");
   }
   document.body.classList.add("auth-modal-open");
+  if (state.page === "home") {
+    document.body.classList.add("home-auth-locked");
+  }
   renderHomeAuthModal();
 
   window.requestAnimationFrame(() => {
@@ -2635,6 +2646,7 @@ function closeHomeAuthModal() {
   homeAuthBusy = false;
   homeAuthRedirectPending = false;
   document.body.classList.remove("auth-modal-open");
+  document.body.classList.remove("home-auth-locked");
 
   if (homeAuthModalLastFocus && typeof homeAuthModalLastFocus.focus === "function") {
     homeAuthModalLastFocus.focus();
@@ -3112,12 +3124,11 @@ function getPreferredCreatorEmail() {
 
 function isAuctionManager(auction) {
   const signedInEmail = getSignedInEmail();
-  const rememberedCreatorEmail = normalizeEmail(localStorage.getItem(STORAGE_KEYS.creatorEmail) || "");
   if (!signedInEmail) {
-    return normalizeEmail(auction?.creatorEmail) === rememberedCreatorEmail;
+    return false;
   }
 
-  return normalizeEmail(auction?.creatorEmail) === signedInEmail || normalizeEmail(auction?.creatorEmail) === rememberedCreatorEmail || isAdminSignedIn();
+  return normalizeEmail(auction?.creatorEmail) === signedInEmail || isAdminSignedIn();
 }
 
 function getWinningBid(auction) {
