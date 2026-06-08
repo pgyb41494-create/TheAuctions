@@ -1206,11 +1206,40 @@ th {
     padding-top: 0.75rem;
   }
 
+  .summary-grid.two-up,
   .summary-grid.four-up,
   .summary-grid.three-up,
   .summary-grid.six-up,
   .auction-grid {
     grid-template-columns: 1fr;
+  }
+
+  .panel,
+  .hero-panel,
+  .summary-panel,
+  .form-panel,
+  .stack-panel,
+  .info-box,
+  .room-empty,
+  .room-shell,
+  .filter-panel,
+  .room-stage {
+    padding: 1rem;
+  }
+
+  .stat-card,
+  .stat-box,
+  .step-card,
+  .rule-card,
+  .room-notes-box,
+  .card-stat {
+    padding: 0.9rem;
+  }
+
+  .auction-card,
+  .dashboard-page-grid .auction-card,
+  .auctions-page-grid .auction-card {
+    padding: 0.95rem;
   }
 
   .form-grid {
@@ -1225,6 +1254,14 @@ th {
   .room-hero,
   .site-header {
     gap: 0.9rem;
+  }
+
+  .card-head {
+    flex-direction: column;
+  }
+
+  .card-code {
+    text-align: left;
   }
 
   .site-header {
@@ -1249,6 +1286,11 @@ th {
   .form-actions {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .photo-gallery,
+  .winner-choice-grid {
+    grid-template-columns: 1fr;
   }
 
   .button {

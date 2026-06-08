@@ -239,6 +239,8 @@ const TRANSLATIONS = {
     "room.creatorNoBids": "No bids have been placed yet.",
     "room.closedNow": "The room is closed.",
     "room.winnerSelected": "{{bidder}} at {{amount}} has been selected.",
+    "room.confirmCloseRoom": "Close {{code}} now?",
+    "room.confirmAwardBid": "Select {{bidder}} at {{amount}} as the winner?",
     "room.rulesTitle": "Room rules",
     "room.rulesSubtitle": "Keep the room disciplined",
     "room.notesTitle": "Notes",
@@ -257,7 +259,10 @@ const TRANSLATIONS = {
     "dashboard.displayNameLabel": "Display name",
     "dashboard.displayNamePlaceholder": "Preferred bidder name",
     "dashboard.displayNameHelper": "This name fills the join and bid forms.",
-    "dashboard.saveDisplayName": "Save display name",
+    "dashboard.phoneLabel": "Phone number",
+    "dashboard.phonePlaceholder": "(555) 123-4567",
+    "dashboard.phoneHelper": "Required for your profile.",
+    "dashboard.saveDisplayName": "Save profile",
     "dashboard.statsTitle": "Account stats",
     "dashboard.statsSubtitle": "What this browser has joined.",
     "dashboard.joinedRooms": "Joined rooms",
@@ -298,6 +303,8 @@ const TRANSLATIONS = {
     "admin.closeRoom": "Close room",
     "admin.reopenRoom": "Reopen room",
     "admin.deleteAuction": "Delete room",
+    "admin.confirmClose": "Close {{code}}?",
+    "admin.confirmReopen": "Reopen {{code}}?",
     "admin.noRooms": "No rooms match this filter.",
     "admin.confirmDelete": "Delete {{code}}? This cannot be undone.",
     "admin.confirmClearAll": "Clear every room in this browser? This cannot be undone.",
@@ -323,6 +330,7 @@ const TRANSLATIONS = {
     "toast.emailSignInFailed": "Email sign-in failed. Please try again.",
     "toast.passwordResetSent": "Password reset email sent.",
     "toast.passwordResetFailed": "Could not send the reset email. Please try again.",
+    "toast.phoneRequired": "Enter your phone number.",
     "toast.bidAccepted": "{{bidder}} is leading at {{amount}}.",
     "toast.invalidCode": "Enter a valid room code.",
     "toast.roomNotFound": "No room matches that code.",
@@ -544,6 +552,8 @@ const TRANSLATIONS = {
     "room.creatorNoBids": "Aún no se ha enviado ninguna oferta.",
     "room.closedNow": "La sala está cerrada.",
     "room.winnerSelected": "Se ha seleccionado a {{bidder}} con {{amount}}.",
+    "room.confirmCloseRoom": "¿Cerrar {{code}} ahora?",
+    "room.confirmAwardBid": "¿Seleccionar a {{bidder}} con {{amount}} como ganador?",
     "room.rulesTitle": "Reglas de la sala",
     "room.rulesSubtitle": "Mantén la disciplina del tablero",
     "room.notesTitle": "Notas",
@@ -562,7 +572,10 @@ const TRANSLATIONS = {
     "dashboard.displayNameLabel": "Nombre visible",
     "dashboard.displayNamePlaceholder": "Nombre de postor preferido",
     "dashboard.displayNameHelper": "Este nombre se usa en los formularios de entrada y oferta.",
-    "dashboard.saveDisplayName": "Guardar nombre visible",
+    "dashboard.phoneLabel": "Número de teléfono",
+    "dashboard.phonePlaceholder": "(555) 123-4567",
+    "dashboard.phoneHelper": "Es obligatorio para tu perfil.",
+    "dashboard.saveDisplayName": "Guardar perfil",
     "dashboard.statsTitle": "Estadísticas de la cuenta",
     "dashboard.statsSubtitle": "Lo que este navegador ha unido.",
     "dashboard.joinedRooms": "Salas unidas",
@@ -603,6 +616,8 @@ const TRANSLATIONS = {
     "admin.closeRoom": "Cerrar sala",
     "admin.reopenRoom": "Reabrir sala",
     "admin.deleteAuction": "Eliminar sala",
+    "admin.confirmClose": "¿Cerrar {{code}}?",
+    "admin.confirmReopen": "¿Reabrir {{code}}?",
     "admin.noRooms": "No hay salas que coincidan con este filtro.",
     "admin.confirmDelete": "¿Eliminar {{code}}? Esto no se puede deshacer.",
     "admin.confirmClearAll": "¿Borrar todas las salas de este navegador? Esto no se puede deshacer.",
@@ -628,6 +643,7 @@ const TRANSLATIONS = {
     "toast.emailSignInFailed": "La sesión con correo falló. Inténtalo de nuevo.",
     "toast.passwordResetSent": "Se envió el correo para restablecer la contraseña.",
     "toast.passwordResetFailed": "No se pudo enviar el correo de restablecimiento. Inténtalo de nuevo.",
+    "toast.phoneRequired": "Escribe tu número de teléfono.",
     "toast.bidAccepted": "{{bidder}} va ganando con {{amount}}.",
     "toast.invalidCode": "Ingresa un código de sala válido.",
     "toast.roomNotFound": "No existe una sala con ese código.",
@@ -1543,6 +1559,9 @@ function handleAdminToggleAuction(rawCode) {
   }
 
   const wasOpen = auction.status === "open";
+  if (!window.confirm(t(wasOpen ? "admin.confirmClose" : "admin.confirmReopen", { code: auction.code }))) {
+    return;
+  }
   auction.status = wasOpen ? "closed" : "open";
 
   if (!wasOpen) {
@@ -1814,6 +1833,10 @@ function handleCloseRoom(rawCode) {
     return;
   }
 
+  if (!window.confirm(t("room.confirmCloseRoom", { code: auction.code }))) {
+    return;
+  }
+
   auction.status = "closed";
   auction.closedAt = Date.now();
   saveAuctions();
@@ -1830,6 +1853,10 @@ function handleAwardBid(rawCode, bidId) {
 
   const winningBid = auction.bids.find((bid) => bid.id === bidId);
   if (!winningBid) {
+    return;
+  }
+
+  if (!window.confirm(t("room.confirmAwardBid", { bidder: winningBid.bidder, amount: formatMoney(winningBid.amount) }))) {
     return;
   }
 
@@ -2107,6 +2134,7 @@ function loadProfile() {
   if (!stored) {
     return {
       displayName: legacyBidderName,
+      phoneNumber: "",
       google: null,
     };
   }
@@ -2115,11 +2143,13 @@ function loadProfile() {
     const parsed = JSON.parse(stored);
     return {
       displayName: typeof parsed.displayName === "string" ? parsed.displayName : typeof parsed.bidderName === "string" ? parsed.bidderName : legacyBidderName,
+      phoneNumber: typeof parsed.phoneNumber === "string" ? parsed.phoneNumber : typeof parsed.phone === "string" ? parsed.phone : "",
       google: null,
     };
   } catch {
     return {
       displayName: legacyBidderName,
+      phoneNumber: "",
       google: null,
     };
   }
@@ -2128,6 +2158,7 @@ function loadProfile() {
 function saveProfile(nextProfile = {}) {
   state.profile = {
     displayName: typeof nextProfile.displayName === "string" ? nextProfile.displayName.trim() : state.profile.displayName || "",
+    phoneNumber: typeof nextProfile.phoneNumber === "string" ? nextProfile.phoneNumber.trim() : state.profile.phoneNumber || "",
     google: nextProfile.google === null
       ? null
       : nextProfile.google && typeof nextProfile.google === "object"
@@ -2269,23 +2300,24 @@ function getPreferredDisplayName() {
 
 function applyPreferredNameDefaults() {
   const preferredName = getPreferredDisplayName();
-  if (!preferredName) {
-    return;
-  }
-
   const joinName = byId("joinName");
-  if (joinName && !joinName.value) {
+  if (preferredName && joinName && !joinName.value) {
     joinName.value = preferredName;
   }
 
   const roomBidBidder = byId("roomBidBidder");
-  if (roomBidBidder && !roomBidBidder.value) {
+  if (preferredName && roomBidBidder && !roomBidBidder.value) {
     roomBidBidder.value = preferredName;
   }
 
   const displayName = byId("dashboardDisplayName");
-  if (displayName && !displayName.value) {
+  if (preferredName && displayName && !displayName.value) {
     displayName.value = preferredName;
+  }
+
+  const phoneNumber = byId("dashboardPhoneNumber");
+  if (phoneNumber && !phoneNumber.value) {
+    phoneNumber.value = state.profile.phoneNumber || "";
   }
 }
 
@@ -2434,14 +2466,14 @@ function applyFirebaseUser(user) {
       state.profile.displayName = googleProfile.name || email.split("@")[0] || "";
     }
 
-    saveProfile({ displayName: state.profile.displayName, google: googleProfile });
+    saveProfile({ displayName: state.profile.displayName, phoneNumber: state.profile.phoneNumber, google: googleProfile });
     state.lastBidder = state.profile.displayName || state.lastBidder;
     if (state.lastBidder) {
       localStorage.setItem(STORAGE_KEYS.bidder, state.lastBidder);
     }
   } else if (state.profile.google) {
     state.profile.google = null;
-    saveProfile({ displayName: state.profile.displayName, google: null });
+    saveProfile({ displayName: state.profile.displayName, phoneNumber: state.profile.phoneNumber, google: null });
   }
 
   if (email && state.page === "home") {
@@ -2505,13 +2537,20 @@ function handleDashboardDisplayNameSubmit(event) {
   event.preventDefault();
 
   const displayName = valueOf("dashboardDisplayName");
+  const phoneNumber = normalizePhoneNumber(valueOf("dashboardPhoneNumber"));
   if (!displayName) {
     setToast(t("toast.formIncomplete"));
     return;
   }
 
+  if (!phoneNumber) {
+    setToast(t("toast.phoneRequired"));
+    return;
+  }
+
   state.profile.displayName = displayName;
-  saveProfile({ displayName, google: state.profile.google });
+  state.profile.phoneNumber = phoneNumber;
+  saveProfile({ displayName, phoneNumber, google: state.profile.google });
   state.lastBidder = displayName;
   localStorage.setItem(STORAGE_KEYS.bidder, displayName);
   applyPreferredNameDefaults();
@@ -3185,6 +3224,10 @@ function locale() {
 
 function normalizeEmail(value) {
   return String(value || "").trim().toLowerCase();
+}
+
+function normalizePhoneNumber(value) {
+  return String(value || "").trim().replace(/\s+/g, " ");
 }
 
 function valueOf(id) {
