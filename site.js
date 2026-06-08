@@ -308,6 +308,7 @@ const TRANSLATIONS = {
     "admin.manageSubtitle": "Search, close, reopen, or delete rooms.",
     "admin.export": "Export JSON",
     "admin.clearAll": "Clear all rooms",
+    "admin.closeAllOpen": "Close all open rooms",
     "admin.closeRoom": "Close room",
     "admin.reopenRoom": "Reopen room",
     "admin.deleteAuction": "Delete room",
@@ -316,11 +317,13 @@ const TRANSLATIONS = {
     "admin.noRooms": "No rooms match this filter.",
     "admin.confirmDelete": "Delete {{code}}? This cannot be undone.",
     "admin.confirmClearAll": "Clear every room in this browser? This cannot be undone.",
+    "admin.confirmCloseAllOpen": "Close all {{count}} open rooms?",
     "admin.exported": "Auction data exported.",
     "admin.deleted": "Deleted {{code}}.",
     "admin.closed": "Closed {{code}}.",
     "admin.reopened": "Reopened {{code}}.",
     "admin.cleared": "All rooms cleared.",
+    "admin.allClosed": "All open rooms closed.",
     "toast.roomCreated": "Room created: {{code}}",
     "toast.roomEntered": "Room opened: {{code}}",
     "toast.codeCopied": "Code copied.",
@@ -627,6 +630,7 @@ const TRANSLATIONS = {
     "admin.manageSubtitle": "Busca, cierra, reabre o elimina salas.",
     "admin.export": "Exportar JSON",
     "admin.clearAll": "Borrar todas las salas",
+    "admin.closeAllOpen": "Cerrar todas las salas abiertas",
     "admin.closeRoom": "Cerrar sala",
     "admin.reopenRoom": "Reabrir sala",
     "admin.deleteAuction": "Eliminar sala",
@@ -635,11 +639,13 @@ const TRANSLATIONS = {
     "admin.noRooms": "No hay salas que coincidan con este filtro.",
     "admin.confirmDelete": "¿Eliminar {{code}}? Esto no se puede deshacer.",
     "admin.confirmClearAll": "¿Borrar todas las salas de este navegador? Esto no se puede deshacer.",
+    "admin.confirmCloseAllOpen": "¿Cerrar las {{count}} salas abiertas?",
     "admin.exported": "Datos de subastas exportados.",
     "admin.deleted": "Sala eliminada: {{code}}.",
     "admin.closed": "Sala cerrada: {{code}}.",
     "admin.reopened": "Sala reabierta: {{code}}.",
     "admin.cleared": "Todas las salas se borraron.",
+    "admin.allClosed": "Todas las salas abiertas se cerraron.",
     "toast.roomCreated": "Sala creada: {{code}}",
     "toast.roomEntered": "Sala abierta: {{code}}",
     "toast.codeCopied": "Código copiado.",
@@ -998,6 +1004,11 @@ function handleHomeAuthButtonClick() {
   const adminClearAll = byId("adminClearAll");
   if (adminClearAll) {
     adminClearAll.addEventListener("click", handleAdminClearAll);
+  }
+
+  const adminCloseAllOpen = byId("adminCloseAllOpen");
+  if (adminCloseAllOpen) {
+    adminCloseAllOpen.addEventListener("click", handleAdminCloseAllOpen);
   }
 
   ["homeFeaturedAuctions", "auctionsList", "roomEmptyOpenList", "roomActiveOpenList", "dashboardCreatedList", "roomCreatorPanel", "adminAuctionList"].forEach((containerId) => {
@@ -1505,7 +1516,8 @@ function renderAuctionCard(auction, options = {}) {
       <div class="card-actions">
         <button class="button button-ghost button-small" type="button" data-action="copy-code" data-code="${escapeHtml(auction.code)}">${escapeHtml(t("common.copyCode"))}</button>
         <button class="button button-dark button-small" type="button" data-action="open-room" data-code="${escapeHtml(auction.code)}">${escapeHtml(t("common.openRoom"))}</button>
-        ${isAdminCard ? `<button class="button button-light button-small" type="button" data-action="admin-toggle-status" data-code="${escapeHtml(auction.code)}">${escapeHtml(auction.status === "open" ? t("admin.closeRoom") : t("admin.reopenRoom"))}</button>` : ""}
+        ${isAdminCard && auction.status === "open" ? `<button class="button button-dark button-small" type="button" data-action="admin-close-auction" data-code="${escapeHtml(auction.code)}">${escapeHtml(t("admin.closeRoom"))}</button>` : ""}
+        ${isAdminCard && auction.status === "closed" ? `<button class="button button-light button-small" type="button" data-action="admin-reopen-auction" data-code="${escapeHtml(auction.code)}">${escapeHtml(t("admin.reopenRoom"))}</button>` : ""}
         ${isAdminCard ? `<button class="button button-ghost button-small" type="button" data-action="admin-delete-auction" data-code="${escapeHtml(auction.code)}">${escapeHtml(t("admin.deleteAuction"))}</button>` : ""}
       </div>
     </article>
@@ -1698,30 +1710,94 @@ function handleAdminClearAll() {
   setToast(t("admin.cleared"));
 }
 
-function handleAdminToggleAuction(rawCode) {
+function closeAuctionNow(auction) {
+  auction.status = "closed";
+  auction.closedAt = Date.now();
+  auction.endAt = Math.min(Number(auction.endAt) || Date.now(), Date.now());
+}
+
+function reopenAuctionNow(auction) {
+  auction.status = "open";
+  auction.closedAt = 0;
+  auction.endAt = Date.now() + Math.max(15, Number(auction.durationMinutes) || 60) * 60000;
+}
+
+function handleAdminCloseAllOpen() {
+  if (!isAdminSignedIn()) {
+    setToast(t("toast.adminDenied"));
+    return;
+  }
+
+  const openAuctions = getOpenAuctions();
+  if (!openAuctions.length) {
+    setToast(t("admin.noRooms"));
+    return;
+  }
+
+  if (!window.confirm(t("admin.confirmCloseAllOpen", { count: openAuctions.length }))) {
+    return;
+  }
+
+  openAuctions.forEach(closeAuctionNow);
+  saveAuctions();
+  renderCurrentPage();
+  setToast(t("admin.allClosed"));
+}
+
+function handleAdminCloseAuction(rawCode) {
   if (!isAdminSignedIn()) {
     setToast(t("toast.adminDenied"));
     return;
   }
 
   const auction = findAuctionByCode(rawCode);
+  if (!auction || auction.status !== "open") {
+    return;
+  }
+
+  if (!window.confirm(t("admin.confirmClose", { code: auction.code }))) {
+    return;
+  }
+
+  closeAuctionNow(auction);
+  saveAuctions();
+  renderCurrentPage();
+  setToast(t("admin.closed", { code: auction.code }));
+}
+
+function handleAdminReopenAuction(rawCode) {
+  if (!isAdminSignedIn()) {
+    setToast(t("toast.adminDenied"));
+    return;
+  }
+
+  const auction = findAuctionByCode(rawCode);
+  if (!auction || auction.status !== "closed") {
+    return;
+  }
+
+  if (!window.confirm(t("admin.confirmReopen", { code: auction.code }))) {
+    return;
+  }
+
+  reopenAuctionNow(auction);
+  saveAuctions();
+  renderCurrentPage();
+  setToast(t("admin.reopened", { code: auction.code }));
+}
+
+function handleAdminToggleAuction(rawCode) {
+  const auction = findAuctionByCode(rawCode);
   if (!auction) {
     return;
   }
 
-  const wasOpen = auction.status === "open";
-  if (!window.confirm(t(wasOpen ? "admin.confirmClose" : "admin.confirmReopen", { code: auction.code }))) {
+  if (auction.status === "open") {
+    handleAdminCloseAuction(rawCode);
     return;
   }
-  auction.status = wasOpen ? "closed" : "open";
 
-  if (!wasOpen) {
-    auction.endAt = Date.now() + auction.durationMinutes * 60000;
-  }
-
-  saveAuctions();
-  renderCurrentPage();
-  setToast(wasOpen ? t("admin.closed", { code: auction.code }) : t("admin.reopened", { code: auction.code }));
+  handleAdminReopenAuction(rawCode);
 }
 
 function handleAdminDeleteAuction(rawCode) {
@@ -1785,6 +1861,16 @@ async function handleAuctionCardAction(event) {
 
   if (action === "award-bid") {
     handleAwardBid(code, actionButton.dataset.bidId || "");
+    return;
+  }
+
+  if (action === "admin-close-auction") {
+    handleAdminCloseAuction(code);
+    return;
+  }
+
+  if (action === "admin-reopen-auction") {
+    handleAdminReopenAuction(code);
     return;
   }
 
@@ -1988,8 +2074,7 @@ function handleCloseRoom(rawCode) {
     return;
   }
 
-  auction.status = "closed";
-  auction.closedAt = Date.now();
+  closeAuctionNow(auction);
   saveAuctions();
   renderCurrentPage();
   setToast(t("room.closedNow"));

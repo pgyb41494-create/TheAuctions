@@ -38,6 +38,7 @@
             <p class="eyebrow" data-i18n="admin.eyebrow">Admin console</p>
             <h1 data-i18n="admin.title">Manage rooms with maintenance tools.</h1>
             <p class="lede" data-i18n="admin.lede">Sign in with an approved email to delete, close, reopen, or export rooms.</p>
+            <p id="adminStatus" class="section-note">Locked</p>
             <div class="action-row">
               <button id="adminSignOut" class="button button-light" type="button" data-i18n="admin.signOut" hidden>Sign out</button>
             </div>
@@ -57,6 +58,38 @@
         </section>
 
         <section id="adminDashboard" class="page-grid" hidden>
+          <article class="summary-panel panel">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow" data-i18n="admin.statsTitle">Room summary</p>
+                <h2 data-i18n="admin.statsSubtitle">What the site is storing right now.</h2>
+              </div>
+            </div>
+
+            <div class="summary-grid four-up">
+              <article class="stat-card">
+                <span data-i18n="admin.totalRooms">Total rooms</span>
+                <strong id="adminTotalRooms">0</strong>
+                <p data-i18n="auctions.statusAll">All rooms</p>
+              </article>
+              <article class="stat-card">
+                <span data-i18n="admin.openRooms">Open rooms</span>
+                <strong id="adminOpenRooms">0</strong>
+                <p data-i18n="auctions.statusOpen">Open rooms</p>
+              </article>
+              <article class="stat-card">
+                <span data-i18n="admin.closedRooms">Closed rooms</span>
+                <strong id="adminClosedRooms">0</strong>
+                <p data-i18n="auctions.statusClosed">Closed rooms</p>
+              </article>
+              <article class="stat-card">
+                <span data-i18n="admin.totalBids">Total bids</span>
+                <strong id="adminTotalBids">0</strong>
+                <p data-i18n="common.offers">Offers</p>
+              </article>
+            </div>
+          </article>
+
           <article class="panel form-panel">
             <div class="section-head">
               <div>
@@ -64,6 +97,7 @@
                 <h2 data-i18n="admin.manageSubtitle">Search, close, reopen, or delete rooms.</h2>
               </div>
               <div class="action-row">
+                <button id="adminCloseAllOpen" class="button button-dark" type="button" data-i18n="admin.closeAllOpen">Close all open rooms</button>
                 <button id="adminExport" class="button button-light" type="button" data-i18n="admin.export">Export JSON</button>
                 <button id="adminClearAll" class="button button-ghost" type="button" data-i18n="admin.clearAll">Clear all rooms</button>
               </div>
