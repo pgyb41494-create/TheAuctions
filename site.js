@@ -2291,7 +2291,7 @@ function applyPreferredNameDefaults() {
 
 function updateNavVisibility() {
   document.querySelectorAll('a[data-nav="admin"]').forEach((link) => {
-    link.hidden = true;
+    link.hidden = !isAdminSignedIn();
   });
 }
 
