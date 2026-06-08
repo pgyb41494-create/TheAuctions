@@ -64,6 +64,11 @@
                 <input id="createCreatorEmail" name="creatorEmail" type="email" placeholder="creator@example.com" data-i18n-placeholder="create.placeholderCreatorEmail" required>
               </div>
 
+              <div class="field full-span">
+                <label for="createCreatorPhone" data-i18n="create.fieldCreatorPhone">Auction maker phone number</label>
+                <input id="createCreatorPhone" name="creatorPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="(555) 123-4567" data-i18n-placeholder="create.placeholderCreatorPhone" required>
+              </div>
+
               <div class="field">
                 <label for="createVisibility" data-i18n="create.fieldVisibility">Room visibility</label>
                 <select id="createVisibility" name="visibility">
@@ -73,7 +78,7 @@
               </div>
 
               <div class="field">
-                <label for="createCeiling" data-i18n="create.fieldCeiling">Ceiling price</label>
+                <label for="createCeiling" data-i18n="create.fieldCeiling">Price</label>
                 <input id="createCeiling" name="ceiling" type="number" min="1" step="1" placeholder="125000" data-i18n-placeholder="create.placeholderCeiling" required>
               </div>
 
@@ -102,7 +107,7 @@
               </div>
 
               <div class="field">
-                <label for="createDuration" data-i18n="create.fieldDuration">Auction length</label>
+                <label for="createDuration" data-i18n="create.fieldDuration">Auction length (hours)</label>
                 <input id="createDuration" name="duration" type="number" min="15" step="15" value="60" data-i18n-placeholder="create.placeholderDuration" required>
               </div>
 

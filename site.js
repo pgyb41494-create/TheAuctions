@@ -5,6 +5,7 @@ const STORAGE_KEYS = {
   theme: "apex-reverse-auctions.theme.v1",
   bidder: "apex-reverse-auctions.bidder.v3",
   creatorEmail: "apex-reverse-auctions.creator-email.v1",
+  creatorPhone: "apex-reverse-auctions.creator-phone.v1",
   adminEmail: "apex-reverse-auctions.admin-email.v1",
   profile: "apex-reverse-auctions.profile.v1",
   joinedAuctions: "apex-reverse-auctions.joined-auctions.v1",
@@ -130,16 +131,18 @@ const TRANSLATIONS = {
     "create.fieldBuyer": "Auction Maker",
     "create.fieldCategory": "Category",
     "create.fieldCreatorEmail": "Creator email",
+    "create.fieldCreatorPhone": "Auction maker phone number",
     "create.fieldVisibility": "Room visibility",
-    "create.fieldCeiling": "Ceiling price",
+    "create.fieldCeiling": "Price",
     "create.fieldStep": "Drop amount",
-    "create.fieldDuration": "Auction length",
+    "create.fieldDuration": "Auction length (hours)",
     "create.fieldNotes": "Notes",
     "create.fieldPhotos": "Room photos",
     "create.placeholderTitle": "Office cleaning contract",
     "create.placeholderBuyer": "Northstar",
     "create.placeholderCategory": "Facilities",
     "create.placeholderCreatorEmail": "creator@example.com",
+    "create.placeholderCreatorPhone": "(555) 123-4567",
     "create.placeholderCeiling": "125000",
     "create.placeholderStep": "500",
     "create.placeholderDuration": "60",
@@ -212,6 +215,7 @@ const TRANSLATIONS = {
     "room.scheduleClosed": "Closed",
     "room.manualOnly": "Manual bids only",
     "room.createdBy": "Created by {{email}}",
+    "room.createdByPhone": "Phone {{phone}}",
     "room.visibilityPublic": "Public room",
     "room.visibilityCodeOnly": "Code only",
     "room.summarySubtitle": "Room overview",
@@ -446,16 +450,18 @@ const TRANSLATIONS = {
     "create.fieldBuyer": "Creador de la subasta",
     "create.fieldCategory": "Categoría",
     "create.fieldCreatorEmail": "Correo del creador",
+    "create.fieldCreatorPhone": "Número de teléfono del creador de la subasta",
     "create.fieldVisibility": "Visibilidad de la sala",
-    "create.fieldCeiling": "Precio tope",
+    "create.fieldCeiling": "Precio",
     "create.fieldStep": "Monto de bajada",
-    "create.fieldDuration": "Duración de la sala",
+    "create.fieldDuration": "Duración de la subasta (horas)",
     "create.fieldNotes": "Notas",
     "create.fieldPhotos": "Fotos de la sala",
     "create.placeholderTitle": "Contrato de limpieza de oficinas",
     "create.placeholderBuyer": "Northstar",
     "create.placeholderCategory": "Instalaciones",
     "create.placeholderCreatorEmail": "creador@ejemplo.com",
+    "create.placeholderCreatorPhone": "(555) 123-4567",
     "create.placeholderCeiling": "125000",
     "create.placeholderStep": "500",
     "create.placeholderDuration": "60",
@@ -528,6 +534,7 @@ const TRANSLATIONS = {
     "room.scheduleClosed": "Cerrada",
     "room.manualOnly": "Solo pujas manuales",
     "room.createdBy": "Creada por {{email}}",
+    "room.createdByPhone": "Teléfono {{phone}}",
     "room.visibilityPublic": "Sala pública",
     "room.visibilityCodeOnly": "Solo con código",
     "room.summarySubtitle": "Resumen de la sala",
@@ -846,6 +853,13 @@ function bindPageEvents() {
     });
   }
 
+  const createCreatorPhone = byId("createCreatorPhone");
+  if (createCreatorPhone) {
+    createCreatorPhone.addEventListener("input", (event) => {
+      localStorage.setItem(STORAGE_KEYS.creatorPhone, normalizePhoneNumber(event.target.value));
+    });
+  }
+
   const createVisibility = byId("createVisibility");
   if (createVisibility) {
     createVisibility.addEventListener("change", (event) => {
@@ -1101,10 +1115,15 @@ function renderHomePage() {
 
 function renderCreatePage() {
   const creatorEmailField = byId("createCreatorEmail");
+  const creatorPhoneField = byId("createCreatorPhone");
   const visibilityField = byId("createVisibility");
 
   if (creatorEmailField && !creatorEmailField.value) {
     creatorEmailField.value = getPreferredCreatorEmail();
+  }
+
+  if (creatorPhoneField && !creatorPhoneField.value) {
+    creatorPhoneField.value = getPreferredCreatorPhone();
   }
 
   if (visibilityField && !visibilityField.value) {
@@ -1329,8 +1348,9 @@ function renderRoomPage() {
   setText("roomLede", `${auction.buyer} · ${auction.category}`);
   if (roomMeta) {
     const creatorEmail = auction.creatorEmail || t("common.noneYet");
+    const creatorPhone = auction.creatorPhone ? ` · ${t("room.createdByPhone", { phone: auction.creatorPhone })}` : "";
     const accessMode = auction.visibility === "code-only" ? t("room.visibilityCodeOnly") : t("room.visibilityPublic");
-    roomMeta.textContent = `${t("room.createdBy", { email: creatorEmail })} · ${accessMode}`;
+    roomMeta.textContent = `${t("room.createdBy", { email: creatorEmail })}${creatorPhone} · ${accessMode}`;
   }
   const scheduleNode = byId("roomSchedule");
   if (scheduleNode) {
@@ -1439,9 +1459,14 @@ function renderAuctionCard(auction, options = {}) {
   const accessBadge = showCreatorInfo || auction.visibility === "code-only"
     ? `<span class="badge ${auction.visibility === "code-only" ? "code-only" : "public"}">${escapeHtml(auction.visibility === "code-only" ? t("room.visibilityCodeOnly") : t("room.visibilityPublic"))}</span>`
     : "";
-  const creatorLine = showCreatorInfo && auction.creatorEmail
-    ? `<p>${escapeHtml(auction.creatorEmail)}</p>`
-    : "";
+  const creatorDetails = [];
+  if (showCreatorInfo && auction.creatorEmail) {
+    creatorDetails.push(escapeHtml(auction.creatorEmail));
+  }
+  if (showCreatorInfo && auction.creatorPhone) {
+    creatorDetails.push(escapeHtml(auction.creatorPhone));
+  }
+  const creatorLine = creatorDetails.length ? `<p>${creatorDetails.join(" · ")}</p>` : "";
 
   return `
     <article class="auction-card ${compactClass}" data-code="${escapeHtml(auction.code)}">
@@ -1450,7 +1475,7 @@ function renderAuctionCard(auction, options = {}) {
           <span class="badge ${auction.status === "open" ? "open" : "closed"}">${auction.status === "open" ? t("common.statusOpen") : t("common.statusClosed")}</span>
           ${accessBadge}
           <h3>${escapeHtml(auction.title)}</h3>
-          <p>${escapeHtml(auction.buyer)} · ${escapeHtml(auction.category)}${creatorLine ? ` · ${escapeHtml(auction.creatorEmail)}` : ""}</p>
+          <p>${escapeHtml(auction.buyer)} · ${escapeHtml(auction.category)}${creatorLine ? ` · ${creatorDetails.join(" · ")}` : ""}</p>
         </div>
         <div class="card-code">
           <span>${escapeHtml(t("common.roomCode"))}</span>
@@ -1496,6 +1521,7 @@ async function handleCreateSubmit(event) {
   const buyer = String(formData.get("buyer") || "").trim();
   const category = String(formData.get("category") || "").trim();
   const creatorEmail = normalizeEmail(String(formData.get("creatorEmail") || getPreferredCreatorEmail() || "").trim());
+  const creatorPhone = normalizePhoneNumber(String(formData.get("creatorPhone") || getPreferredCreatorPhone() || "").trim());
   const visibility = String(formData.get("visibility") || "public").trim() === "code-only" ? "code-only" : "public";
   const ceiling = Number(formData.get("ceiling"));
   const dropAmount = Number(formData.get("dropAmount"));
@@ -1517,6 +1543,11 @@ async function handleCreateSubmit(event) {
     return;
   }
 
+  if (!creatorPhone) {
+    setToast(t("toast.phoneRequired"));
+    return;
+  }
+
   if (!Number.isFinite(ceiling) || ceiling <= 0 || !Number.isFinite(dropAmount) || dropAmount <= 0 || !Number.isFinite(durationMinutes) || durationMinutes < 15) {
     setToast(t("toast.amountRequired"));
     return;
@@ -1535,6 +1566,7 @@ async function handleCreateSubmit(event) {
     buyer,
     category,
     creatorEmail,
+    creatorPhone,
     visibility,
     ceiling,
     minimumStep: dropAmount,
@@ -1552,7 +1584,10 @@ async function handleCreateSubmit(event) {
   state.activeCode = auction.code;
   localStorage.setItem(STORAGE_KEYS.activeCode, auction.code);
   localStorage.setItem(STORAGE_KEYS.creatorEmail, creatorEmail);
+  localStorage.setItem(STORAGE_KEYS.creatorPhone, creatorPhone);
   localStorage.setItem("apex-reverse-auctions.room-visibility.v1", visibility);
+  state.profile.phoneNumber = creatorPhone;
+  saveProfile({ displayName: state.profile.displayName, phoneNumber: creatorPhone, google: state.profile.google });
   saveAuctions();
   form.reset();
   createPhotoPreviews = [];
@@ -3063,6 +3098,7 @@ function normalizeAuction(rawAuction) {
   const minimumStep = Math.max(1, toNumber(rawAuction.minimumStep ?? rawAuction.dropAmount ?? rawAuction.step, 50));
   const dropIntervalMinutes = Math.max(0, toNumber(rawAuction.dropIntervalMinutes ?? rawAuction.dropEveryMinutes ?? rawAuction.dropInterval, 0));
   const creatorEmail = normalizeEmail(rawAuction.creatorEmail || rawAuction.createdBy || rawAuction.ownerEmail || "");
+  const creatorPhone = normalizePhoneNumber(rawAuction.creatorPhone || rawAuction.creatorPhoneNumber || "");
   const visibility = String(rawAuction.visibility || rawAuction.accessMode || "public").trim() === "code-only" ? "code-only" : "public";
   const photos = Array.isArray(rawAuction.photos)
     ? rawAuction.photos
@@ -3084,6 +3120,7 @@ function normalizeAuction(rawAuction) {
     buyer: String(rawAuction.buyer || "Buyer").trim(),
     category: String(rawAuction.category || "General").trim(),
     creatorEmail,
+    creatorPhone,
     visibility,
     ceiling,
     minimumStep,
@@ -3249,6 +3286,10 @@ function getSignedInEmail() {
 
 function getPreferredCreatorEmail() {
   return getSignedInEmail() || normalizeEmail(localStorage.getItem(STORAGE_KEYS.creatorEmail) || "");
+}
+
+function getPreferredCreatorPhone() {
+  return normalizePhoneNumber(state.profile.phoneNumber || localStorage.getItem(STORAGE_KEYS.creatorPhone) || "");
 }
 
 function isAuctionManager(auction) {
