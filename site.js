@@ -11,6 +11,13 @@ const STORAGE_KEYS = {
   joinedAuctions: "apex-reverse-auctions.joined-auctions.v1",
 };
 
+const LEGACY_AUCTION_KEYS = [
+  "apex-reverse-auctions.auctions.v2",
+  "apex-reverse-auctions.auctions.v1",
+  "apex-reverse-auctions:v1",
+  "reverse-auction-desk.auctions",
+];
+
 const FALLBACK_RUNTIME_ENV = {
   ADMIN_EMAILS: "pgyb41494@gmail.com",
   FIREBASE_API_KEY: "AIzaSyCVVomRm98h_B0gHmQ-Z8S8z9YY5eeiey4",
@@ -315,6 +322,10 @@ const TRANSLATIONS = {
     "admin.confirmClose": "Close {{code}}?",
     "admin.confirmReopen": "Reopen {{code}}?",
     "admin.noRooms": "No rooms match this filter.",
+    "admin.noRoomsStored": "No rooms are stored in this browser yet.",
+    "admin.noRoomsFiltered": "No rooms match this filter. Set status to All rooms or clear the search.",
+    "admin.openRoomsHidden": "{{count}} open room(s) exist but are hidden by the current filter.",
+    "admin.listHint": "Shows every room in this browser, including code-only rooms.",
     "admin.confirmDelete": "Delete {{code}}? This cannot be undone.",
     "admin.confirmClearAll": "Clear every room in this browser? This cannot be undone.",
     "admin.confirmCloseAllOpen": "Close all {{count}} open rooms?",
@@ -637,6 +648,10 @@ const TRANSLATIONS = {
     "admin.confirmClose": "¿Cerrar {{code}}?",
     "admin.confirmReopen": "¿Reabrir {{code}}?",
     "admin.noRooms": "No hay salas que coincidan con este filtro.",
+    "admin.noRoomsStored": "Aún no hay salas guardadas en este navegador.",
+    "admin.noRoomsFiltered": "No hay salas que coincidan con este filtro. Cambia el estado a Todas las salas o borra la búsqueda.",
+    "admin.openRoomsHidden": "Hay {{count}} sala(s) abierta(s) oculta(s) por el filtro actual.",
+    "admin.listHint": "Muestra todas las salas de este navegador, incluidas las de solo código.",
     "admin.confirmDelete": "¿Eliminar {{code}}? Esto no se puede deshacer.",
     "admin.confirmClearAll": "¿Borrar todas las salas de este navegador? Esto no se puede deshacer.",
     "admin.confirmCloseAllOpen": "¿Cerrar las {{count}} salas abiertas?",
@@ -693,6 +708,7 @@ const state = {
   firebaseUser: null,
   firebaseConfigured: false,
   filters: { query: "", status: "all" },
+  adminFilters: { query: "", status: "all" },
 };
 
 const THEME_ICONS = {
@@ -986,6 +1002,22 @@ function handleHomeAuthButtonClick() {
     });
   }
 
+  const adminSearch = byId("admin-search");
+  if (adminSearch) {
+    adminSearch.addEventListener("input", (event) => {
+      state.adminFilters.query = event.target.value.trim();
+      renderCurrentPage();
+    });
+  }
+
+  const adminStatus = byId("admin-status");
+  if (adminStatus) {
+    adminStatus.addEventListener("change", (event) => {
+      state.adminFilters.status = event.target.value;
+      renderCurrentPage();
+    });
+  }
+
   const adminSignOut = byId("adminSignOut");
   if (adminSignOut) {
     adminSignOut.addEventListener("click", handleFirebaseSignOut);
@@ -1149,6 +1181,8 @@ function renderJoinPage() {
 }
 
 function renderAuctionsPage() {
+  refreshAuctionsFromStorage();
+
   const search = byId("auctions-search");
   const status = byId("auctions-status");
 
@@ -1160,7 +1194,7 @@ function renderAuctionsPage() {
   }
 
   const query = state.filters.query.trim().toLowerCase();
-  const filtered = getPublicOpenAuctions().filter((auction) => {
+  const filtered = getPublicAuctions().filter((auction) => {
     const matchesStatus = state.filters.status === "all" ? true : auction.status === state.filters.status;
     const haystack = [auction.title, auction.buyer, auction.category, auction.code].join(" ").toLowerCase();
     const matchesQuery = !query || haystack.includes(query);
@@ -1171,10 +1205,12 @@ function renderAuctionsPage() {
 }
 
 function renderAdminPage() {
+  refreshAuctionsFromStorage();
+
   const signedIn = Boolean(state.adminEmail);
   const approved = isAdminSignedIn();
   const gate = byId("adminGate");
-  const dashboard = byId("adminDashboard");
+  const actionRow = byId("adminActionRow");
   const signOutButton = byId("adminSignOut");
   const statusNode = byId("adminStatus");
   const hint = byId("adminAccessHint");
@@ -1183,8 +1219,8 @@ function renderAdminPage() {
   if (gate) {
     gate.hidden = approved;
   }
-  if (dashboard) {
-    dashboard.hidden = !approved;
+  if (actionRow) {
+    actionRow.hidden = !approved;
   }
   if (signOutButton) {
     signOutButton.hidden = !signedIn;
@@ -1215,32 +1251,63 @@ function renderAdminPage() {
   setText("adminClosedRooms", String(state.auctions.length - getOpenAuctions().length));
   setText("adminTotalBids", String(state.auctions.reduce((total, auction) => total + auction.bids.length, 0)));
 
-  if (!approved) {
-    const list = byId("adminAuctionList");
-    if (list) {
-      list.innerHTML = "";
-    }
-    return;
+  const search = byId("admin-search");
+  const status = byId("admin-status");
+  if (search && search.value !== state.adminFilters.query) {
+    search.value = state.adminFilters.query;
+  }
+  if (status && status.value !== state.adminFilters.status) {
+    status.value = state.adminFilters.status;
   }
 
-  const search = byId("auctions-search");
-  const status = byId("auctions-status");
-  if (search && search.value !== state.filters.query) {
-    search.value = state.filters.query;
-  }
-  if (status && status.value !== state.filters.status) {
-    status.value = state.filters.status;
-  }
-
-  const query = state.filters.query.trim().toLowerCase();
+  const query = state.adminFilters.query.trim().toLowerCase();
   const filtered = state.auctions.filter((auction) => {
-    const matchesStatus = state.filters.status === "all" ? true : auction.status === state.filters.status;
-    const haystack = [auction.title, auction.buyer, auction.category, auction.code].join(" ").toLowerCase();
+    const matchesStatus = state.adminFilters.status === "all" ? true : auction.status === state.adminFilters.status;
+    const haystack = [auction.title, auction.buyer, auction.category, auction.code, auction.creatorEmail].join(" ").toLowerCase();
     const matchesQuery = !query || haystack.includes(query);
     return matchesStatus && matchesQuery;
   });
 
-  renderAuctionList("adminAuctionList", filtered, { compact: false, emptyKey: "admin.noRooms", admin: true });
+  if (!approved) {
+    renderAdminAuctionList(filtered, { readOnly: true, gateMessage: t("admin.gateSubtitle") });
+    return;
+  }
+
+  renderAdminAuctionList(filtered);
+}
+
+function renderAdminAuctionList(auctions, options = {}) {
+  const container = byId("adminAuctionList");
+  if (!container) {
+    return;
+  }
+
+  if (!state.auctions.length) {
+    container.innerHTML = `<div class="empty-list">${escapeHtml(t("admin.noRoomsStored"))}</div>`;
+    return;
+  }
+
+  if (!auctions.length) {
+    const openCount = getOpenAuctions().length;
+    const hiddenOpenHint = openCount && state.adminFilters.status === "closed"
+      ? `<p class="helper">${escapeHtml(t("admin.openRoomsHidden", { count: openCount }))}</p>`
+      : "";
+    const emptyMessage = state.adminFilters.query || state.adminFilters.status !== "all"
+      ? t("admin.noRoomsFiltered")
+      : t("admin.noRooms");
+
+    container.innerHTML = `<div class="empty-list">${escapeHtml(emptyMessage)}${hiddenOpenHint}</div>`;
+    return;
+  }
+
+  const gateBanner = options.readOnly && options.gateMessage
+    ? `<div class="empty-list">${escapeHtml(options.gateMessage)}</div>`
+    : "";
+
+  container.innerHTML = gateBanner + auctions.map((auction) => renderAuctionCard(auction, {
+    compact: false,
+    admin: !options.readOnly,
+  })).join("");
 }
 
 function renderDashboardPage() {
@@ -3158,17 +3225,46 @@ function renderFirebaseAuthButton(containerId, fallbackKey = "dashboard.gateHint
 }
 
 function loadAuctions() {
+  const merged = new Map();
+
+  LEGACY_AUCTION_KEYS.forEach((key) => {
+    readRawAuctions(key).forEach((item) => {
+      const normalized = normalizeAuction(item);
+      merged.set(normalizeCode(normalized.code), normalized);
+    });
+  });
+
+  readRawAuctions(STORAGE_KEYS.auctions).forEach((item) => {
+    const normalized = normalizeAuction(item);
+    merged.set(normalizeCode(normalized.code), normalized);
+  });
+
+  const auctions = [...merged.values()];
+
+  if (auctions.length) {
+    localStorage.setItem(STORAGE_KEYS.auctions, JSON.stringify(auctions));
+  }
+
+  return auctions;
+}
+
+function readRawAuctions(key) {
   try {
-    const raw = localStorage.getItem(STORAGE_KEYS.auctions);
+    const raw = localStorage.getItem(key);
     if (!raw) {
       return [];
     }
 
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed.map(normalizeAuction) : [];
+    return Array.isArray(parsed) ? parsed : [];
   } catch {
     return [];
   }
+}
+
+function refreshAuctionsFromStorage() {
+  state.auctions = loadAuctions();
+  normalizeExpiredAuctions();
 }
 
 function saveAuctions() {
