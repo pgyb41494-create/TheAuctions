@@ -2,6 +2,7 @@ const STORAGE_KEYS = {
   auctions: "apex-reverse-auctions.auctions.v3",
   activeCode: "apex-reverse-auctions.active-code.v3",
   language: "apex-reverse-auctions.language.v2",
+  theme: "apex-reverse-auctions.theme.v1",
   bidder: "apex-reverse-auctions.bidder.v3",
   creatorEmail: "apex-reverse-auctions.creator-email.v1",
   adminEmail: "apex-reverse-auctions.admin-email.v1",
@@ -88,6 +89,9 @@ const TRANSLATIONS = {
     "home.authDivider": "or",
     "home.authUseAnotherEmail": "Use another email",
     "home.authModalClose": "Close",
+    "home.authSignedIn": "Signed in",
+    "theme.toDark": "Switch to dark mode",
+    "theme.toLight": "Switch to light mode",
     "home.createCta": "Create room",
     "home.joinCta": "Enter room",
     "home.roomsCta": "Browse rooms",
@@ -401,6 +405,9 @@ const TRANSLATIONS = {
     "home.authDivider": "o",
     "home.authUseAnotherEmail": "Usar otro correo",
     "home.authModalClose": "Cerrar",
+    "home.authSignedIn": "Sesión iniciada",
+    "theme.toDark": "Cambiar a modo oscuro",
+    "theme.toLight": "Cambiar a modo claro",
     "home.createCta": "Crear sala",
     "home.joinCta": "Entrar a una sala",
     "home.roomsCta": "Ver salas",
@@ -661,6 +668,7 @@ const TRANSLATIONS = {
 const state = {
   page: document.body?.dataset.page || "home",
   language: loadLanguage(),
+  theme: loadTheme(),
   auctions: loadAuctions(),
   activeCode: localStorage.getItem(STORAGE_KEYS.activeCode) || "",
   lastBidder: localStorage.getItem(STORAGE_KEYS.bidder) || "",
@@ -673,6 +681,15 @@ const state = {
   firebaseConfigured: false,
   filters: { query: "", status: "all" },
 };
+
+const THEME_ICONS = {
+  dark: `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2.5v2M12 19.5v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2.5 12h2M19.5 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg>`,
+  light: `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor"><path d="M21.5 14.7A8.5 8.5 0 0 1 9.3 3.1 9 9 0 1 0 21.5 14.7Z"></path></svg>`,
+};
+
+applyTheme(state.theme);
+ensureThemeToggleButton();
+renderThemeToggle();
 
 document.addEventListener("DOMContentLoaded", initialize);
 
@@ -736,6 +753,86 @@ function bindLanguageToggle() {
   });
 }
 
+function loadTheme() {
+  try {
+    const storedTheme = localStorage.getItem(STORAGE_KEYS.theme);
+    if (storedTheme === "dark" || storedTheme === "light") {
+      return storedTheme;
+    }
+  } catch {
+    // Ignore storage access failures and fall back to the system preference.
+  }
+
+  return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
+
+function saveTheme(theme) {
+  try {
+    localStorage.setItem(STORAGE_KEYS.theme, theme);
+  } catch {
+    // Ignore storage failures; the active theme still applies for this session.
+  }
+}
+
+function applyTheme(theme) {
+  const normalizedTheme = theme === "dark" ? "dark" : "light";
+  state.theme = normalizedTheme;
+  document.documentElement.dataset.theme = normalizedTheme;
+  if (document.body) {
+    document.body.dataset.theme = normalizedTheme;
+  }
+  document.documentElement.style.colorScheme = normalizedTheme;
+  updateThemeColorMeta(normalizedTheme);
+}
+
+function updateThemeColorMeta(theme) {
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) {
+    meta.setAttribute("content", theme === "dark" ? "#0f1217" : "#f7f7f4");
+  }
+}
+
+function ensureThemeToggleButton() {
+  if (!document.body) {
+    return null;
+  }
+
+  let button = byId("themeToggleButton");
+  if (button) {
+    return button;
+  }
+
+  button = document.createElement("button");
+  button.id = "themeToggleButton";
+  button.type = "button";
+  button.className = "theme-toggle-button";
+  button.addEventListener("click", toggleTheme);
+  document.body.appendChild(button);
+  return button;
+}
+
+function renderThemeToggle() {
+  const button = ensureThemeToggleButton();
+  if (!button) {
+    return;
+  }
+
+  const isDarkTheme = state.theme === "dark";
+  const label = isDarkTheme ? t("theme.toLight") : t("theme.toDark");
+  button.innerHTML = isDarkTheme ? THEME_ICONS.dark : THEME_ICONS.light;
+  button.setAttribute("aria-label", label);
+  button.setAttribute("aria-pressed", String(isDarkTheme));
+  button.setAttribute("title", label);
+  button.dataset.theme = state.theme;
+}
+
+function toggleTheme() {
+  const nextTheme = state.theme === "dark" ? "light" : "dark";
+  saveTheme(nextTheme);
+  applyTheme(nextTheme);
+  renderThemeToggle();
+}
+
 function bindPageEvents() {
   const createForm = byId("createForm");
   if (createForm) {
@@ -783,9 +880,18 @@ function bindPageEvents() {
 
   const homeAuthButton = byId("homeAuthButton");
   if (homeAuthButton) {
-    homeAuthButton.addEventListener("click", openHomeAuthModal);
+    homeAuthButton.addEventListener("click", handleHomeAuthButtonClick);
   }
 
+
+function handleHomeAuthButtonClick() {
+  if (state.firebaseUser?.email) {
+    window.location.href = "dashboard.html";
+    return;
+  }
+
+  openHomeAuthModal();
+}
   const homeAuthModal = byId("homeAuthModal");
   if (homeAuthModal) {
     homeAuthModal.addEventListener("click", (event) => {
@@ -923,6 +1029,8 @@ function applyLanguage() {
   if (homeAuthModalClose) {
     homeAuthModalClose.setAttribute("aria-label", t("home.authModalClose"));
   }
+
+  renderThemeToggle();
 
   if (state.page === "home") {
     const homeAuthModal = byId("homeAuthModal");
@@ -2333,6 +2441,27 @@ function updateNavVisibility() {
   document.querySelectorAll('a[data-nav="admin"]').forEach((link) => {
     link.hidden = !isAdminSignedIn();
   });
+
+  const homeAuthButton = byId("homeAuthButton");
+  if (homeAuthButton) {
+    const signedInEmail = normalizeEmail(state.firebaseUser?.email || "");
+    const signedIn = Boolean(signedInEmail);
+
+    homeAuthButton.dataset.i18n = signedIn ? "home.authSignedIn" : "home.authPrimary";
+    homeAuthButton.textContent = t(homeAuthButton.dataset.i18n);
+    homeAuthButton.setAttribute("aria-label", signedIn ? t("admin.statusSignedIn", { email: signedInEmail }) : t("home.authPrimary"));
+    homeAuthButton.setAttribute("title", signedIn ? t("admin.statusSignedIn", { email: signedInEmail }) : t("home.authPrimary"));
+
+    if (signedIn) {
+      homeAuthButton.removeAttribute("aria-haspopup");
+      homeAuthButton.removeAttribute("aria-controls");
+      homeAuthButton.setAttribute("aria-expanded", "false");
+    } else {
+      homeAuthButton.setAttribute("aria-haspopup", "dialog");
+      homeAuthButton.setAttribute("aria-controls", "homeAuthModal");
+      homeAuthButton.setAttribute("aria-expanded", "false");
+    }
+  }
 }
 
 async function loadRuntimeEnv() {
