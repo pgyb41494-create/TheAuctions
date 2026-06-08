@@ -192,7 +192,7 @@ const TRANSLATIONS = {
     "auctions.statusClosed": "Closed rooms",
     "auctions.listTitle": "Auction rooms",
     "auctions.listSubtitle": "Find the room you want to inspect.",
-    "auctions.listHint": "Only public rooms appear here.",
+    "auctions.listHint": "Only open public rooms appear here.",
     "auctions.noResults": "No rooms match this filter.",
     "room.eyebrow": "Auction room",
     "room.emptyTitle": "No room selected.",
@@ -497,7 +497,7 @@ const TRANSLATIONS = {
     "auctions.statusClosed": "Salas cerradas",
     "auctions.listTitle": "Salas de subasta",
     "auctions.listSubtitle": "Encuentra la sala que quieres revisar.",
-    "auctions.listHint": "Aquí solo aparecen las salas públicas.",
+    "auctions.listHint": "Aquí solo aparecen las salas públicas abiertas.",
     "auctions.noResults": "No hay salas que coincidan con este filtro.",
     "room.eyebrow": "Sala de subasta",
     "room.emptyTitle": "No hay ninguna sala seleccionada.",
@@ -998,7 +998,7 @@ function renderAuctionsPage() {
   }
 
   const query = state.filters.query.trim().toLowerCase();
-  const filtered = getPublicAuctions().filter((auction) => {
+  const filtered = getPublicOpenAuctions().filter((auction) => {
     const matchesStatus = state.filters.status === "all" ? true : auction.status === state.filters.status;
     const haystack = [auction.title, auction.buyer, auction.category, auction.code].join(" ").toLowerCase();
     const matchesQuery = !query || haystack.includes(query);
