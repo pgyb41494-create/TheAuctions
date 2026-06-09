@@ -1275,6 +1275,9 @@ function applyLanguage() {
   }
 
   updateDocumentTitle();
+
+  document.documentElement.classList.remove("i18n-pending");
+  document.documentElement.classList.add("i18n-ready");
 }
 
 function renderCurrentPage() {
@@ -3923,3 +3926,5 @@ function downloadText(fileName, text) {
   anchor.remove();
   window.setTimeout(() => URL.revokeObjectURL(url), 0);
 }
+
+applyLanguage();

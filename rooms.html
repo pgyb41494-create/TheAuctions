@@ -4,6 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#111111">
+    <style id="i18n-boot-style">
+      html.i18n-pending [data-i18n],
+      html.i18n-pending [data-i18n-placeholder],
+      html.i18n-pending #languageToggle,
+      html.i18n-pending .header-sign-out {
+        visibility: hidden;
+      }
+    </style>
+    <script src="i18n-boot.js"></script>
     <title>Rooms | Yoselins Auctions</title>
     <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script defer src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
