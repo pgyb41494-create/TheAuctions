@@ -2012,25 +2012,23 @@ async function collectCreatePhotos(fileList) {
 async function shrinkImageFile(file) {
   const dataUrl = await readFileAsDataUrl(file);
   const image = await loadImageFromDataUrl(dataUrl);
-  const maxSize = 1280;
+  const maxSize = 960;
   const scale = Math.min(1, maxSize / Math.max(image.width || 1, image.height || 1));
-
-  if (scale >= 1) {
-    return dataUrl;
-  }
+  const width = Math.max(1, Math.round((image.width || 1) * scale));
+  const height = Math.max(1, Math.round((image.height || 1) * scale));
 
   const canvas = document.createElement("canvas");
-  canvas.width = Math.max(1, Math.round(image.width * scale));
-  canvas.height = Math.max(1, Math.round(image.height * scale));
+  canvas.width = width;
+  canvas.height = height;
   const context = canvas.getContext("2d");
   if (!context) {
     return dataUrl;
   }
 
-  context.drawImage(image, 0, 0, canvas.width, canvas.height);
+  context.drawImage(image, 0, 0, width, height);
 
   try {
-    return canvas.toDataURL("image/jpeg", 0.84);
+    return canvas.toDataURL("image/jpeg", 0.82);
   } catch {
     return dataUrl;
   }

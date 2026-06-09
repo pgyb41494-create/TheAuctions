@@ -976,6 +976,7 @@ th {
 .room-stage .room-notes-box {
   border-color: rgba(255, 255, 255, 0.12);
   background: rgba(255, 255, 255, 0.05);
+}
 
 .room-meta {
   margin: 0.3rem 0 0;
@@ -1052,10 +1053,15 @@ th {
 .photo-tile img {
   display: block;
   width: 100%;
+  max-height: 240px;
   aspect-ratio: 4 / 3;
   object-fit: cover;
   border-radius: calc(var(--radius-md) - 6px);
   background: var(--surface-muted);
+}
+
+.room-stage .photo-tile img {
+  max-height: 200px;
 }
 
 .photo-tile figcaption {
@@ -1103,7 +1109,6 @@ th {
 .winner-choice.selected {
   border-color: rgba(255, 255, 255, 0.42);
   background: rgba(255, 255, 255, 0.12);
-}
 }
 
 .room-stage .room-notes-box .eyebrow,
@@ -1196,7 +1201,7 @@ th {
   .auction-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-    padding: 1.12rem;
+
   .step-grid,
   .card-grid {
     grid-template-columns: 1fr;
@@ -1301,7 +1306,86 @@ th {
 
   .photo-gallery,
   .winner-choice-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.6rem;
+  }
+
+  .photo-tile {
+    padding: 0.5rem;
+  }
+
+  .photo-tile img {
+    max-height: 140px;
+    aspect-ratio: 1 / 1;
+  }
+
+  .room-stage .photo-tile img {
+    max-height: 120px;
+  }
+
+  .photo-tile figcaption {
+    margin-top: 0.35rem;
+    font-size: 0.75rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .room-stage {
+    padding: 0.85rem;
+    gap: 0.75rem;
+  }
+
+  .room-stage-banner {
+    padding: 0.9rem;
+  }
+
+  .room-stage-banner h1,
+  .room-hero h1 {
+    font-size: 1.55rem;
+    line-height: 1.15;
+    margin-top: 0.25rem;
+  }
+
+  .room-stage-banner .lede,
+  .room-stage-banner .helper,
+  .room-meta {
+    font-size: 0.88rem;
+  }
+
+  .room-stage-price {
+    padding: 0.85rem 0.95rem;
+  }
+
+  .room-stage-price strong {
+    font-size: 1.85rem;
+  }
+
+  .room-stage-stats.summary-grid.four-up {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.55rem;
+  }
+
+  .room-stage-stats .stat-card {
+    padding: 0.65rem 0.75rem;
+  }
+
+  .room-stage-stats .stat-card span {
+    font-size: 0.72rem;
+  }
+
+  .room-stage-stats .stat-card strong {
+    margin-top: 0.2rem;
+    font-size: 1rem;
+  }
+
+  .room-stage-stats .stat-card p {
+    display: none;
+  }
+
+  .room-media-panel,
+  .room-creator-panel {
+    padding: 0.85rem;
   }
 
   .button {
