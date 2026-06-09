@@ -33,18 +33,6 @@
       </header>
 
       <main class="page-grid admin-page-grid">
-        <section class="hero-grid">
-          <article class="panel hero-panel">
-            <p class="eyebrow" data-i18n="admin.eyebrow">Admin console</p>
-            <h1 data-i18n="admin.title">Manage rooms with maintenance tools.</h1>
-            <p class="lede" data-i18n="admin.lede">Sign in with an approved email to delete, close, reopen, or export rooms.</p>
-            <p id="adminStatus" class="section-note">Locked</p>
-            <div class="action-row">
-              <button id="adminSignOut" class="button button-light" type="button" data-i18n="admin.signOut" hidden>Sign out</button>
-            </div>
-          </article>
-        </section>
-
         <section id="adminGate" class="panel form-panel">
           <div class="section-head">
             <div>
@@ -100,6 +88,10 @@
               <button id="adminExport" class="button button-light" type="button" data-i18n="admin.export">Export JSON</button>
               <button id="adminClearAll" class="button button-ghost" type="button" data-i18n="admin.clearAll">Clear all rooms</button>
             </div>
+          </div>
+          <div class="action-row">
+            <p id="adminStatus" class="section-note">Locked</p>
+            <button id="adminSignOut" class="button button-light button-small" type="button" data-i18n="admin.signOut" hidden>Sign out</button>
           </div>
 
           <div class="form-grid">
