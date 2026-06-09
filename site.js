@@ -49,6 +49,8 @@ const TRANSLATIONS = {
     "nav.room": "Room",
     "nav.dashboard": "Dashboard",
     "nav.admin": "Admin",
+    "nav.openMenu": "Open menu",
+    "nav.closeMenu": "Close menu",
     "lang.toEnglish": "Switch to English",
     "lang.toSpanish": "Cambiar a español",
     "common.openRooms": "Open rooms",
@@ -382,6 +384,8 @@ const TRANSLATIONS = {
     "nav.room": "Sala",
     "nav.dashboard": "Panel",
     "nav.admin": "Administración",
+    "nav.openMenu": "Abrir menú",
+    "nav.closeMenu": "Cerrar menú",
     "lang.toEnglish": "Switch to English",
     "lang.toSpanish": "Cambiar a español",
     "common.openRooms": "Salas abiertas",
@@ -761,6 +765,7 @@ async function initialize() {
   normalizeExpiredAuctions();
   ensureActiveCode();
   bindLanguageToggle();
+  setupSiteHeader();
   bindPageEvents();
   applyLanguage();
   if (state.page === "home" && !state.firebaseUser?.email) {
@@ -794,6 +799,157 @@ function bindLanguageToggle() {
     applyLanguage();
     renderCurrentPage();
   });
+}
+
+function setupSiteHeader() {
+  const header = document.querySelector(".site-header");
+  if (!header) {
+    return;
+  }
+
+  let actions = header.querySelector(".header-actions");
+  if (!actions) {
+    actions = document.createElement("div");
+    actions.className = "header-actions";
+    header.appendChild(actions);
+  }
+
+  const languageToggle = byId("languageToggle");
+  if (languageToggle && languageToggle.parentElement !== actions) {
+    actions.appendChild(languageToggle);
+  }
+
+  if (!byId("headerSignOut")) {
+    const signOutButton = document.createElement("button");
+    signOutButton.id = "headerSignOut";
+    signOutButton.type = "button";
+    signOutButton.className = "button button-light button-small header-sign-out";
+    signOutButton.dataset.i18n = "dashboard.signOut";
+    signOutButton.textContent = t("dashboard.signOut");
+    signOutButton.hidden = true;
+    actions.insertBefore(signOutButton, languageToggle || actions.firstChild);
+  }
+
+  if (!byId("siteNavToggle")) {
+    const navToggle = document.createElement("button");
+    navToggle.id = "siteNavToggle";
+    navToggle.type = "button";
+    navToggle.className = "site-nav-toggle";
+    navToggle.setAttribute("aria-expanded", "false");
+    navToggle.setAttribute("aria-controls", "siteNavDrawer");
+    navToggle.setAttribute("aria-label", t("nav.openMenu"));
+    navToggle.innerHTML = "<span></span><span></span><span></span>";
+    actions.appendChild(navToggle);
+  }
+
+  ensureSiteNavDrawer();
+  syncSiteNavDrawer();
+  updateHeaderAuth();
+}
+
+function ensureSiteNavDrawer() {
+  if (byId("siteNavDrawer")) {
+    return;
+  }
+
+  const drawer = document.createElement("div");
+  drawer.id = "siteNavDrawer";
+  drawer.className = "site-nav-drawer";
+  drawer.innerHTML = `
+    <button class="site-nav-drawer-backdrop" type="button" aria-label="${escapeHtml(t("nav.closeMenu"))}"></button>
+    <aside class="site-nav-drawer-panel" aria-label="Primary">
+      <div class="site-nav-drawer-head">
+        <strong>${escapeHtml(t("brand.name"))}</strong>
+        <button class="site-nav-drawer-close" type="button" aria-label="${escapeHtml(t("nav.closeMenu"))}">&times;</button>
+      </div>
+      <nav id="siteNavDrawerLinks" class="site-nav-drawer-links"></nav>
+    </aside>
+  `;
+  document.body.appendChild(drawer);
+
+  drawer.querySelector(".site-nav-drawer-backdrop")?.addEventListener("click", closeSiteNavDrawer);
+  drawer.querySelector(".site-nav-drawer-close")?.addEventListener("click", closeSiteNavDrawer);
+
+  if (!setupSiteHeader.navEscapeBound) {
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        closeSiteNavDrawer();
+      }
+    });
+    setupSiteHeader.navEscapeBound = true;
+  }
+}
+
+function syncSiteNavDrawer() {
+  const sourceNav = document.querySelector(".site-header .site-nav");
+  const drawerLinks = byId("siteNavDrawerLinks");
+  if (!sourceNav || !drawerLinks) {
+    return;
+  }
+
+  drawerLinks.innerHTML = "";
+  sourceNav.querySelectorAll("a").forEach((link) => {
+    const clone = link.cloneNode(true);
+    clone.hidden = link.hidden;
+    clone.addEventListener("click", closeSiteNavDrawer);
+    drawerLinks.appendChild(clone);
+  });
+}
+
+function toggleSiteNavDrawer() {
+  const drawer = byId("siteNavDrawer");
+  if (!drawer) {
+    return;
+  }
+
+  if (drawer.classList.contains("is-open")) {
+    closeSiteNavDrawer();
+    return;
+  }
+
+  openSiteNavDrawer();
+}
+
+function openSiteNavDrawer() {
+  const drawer = byId("siteNavDrawer");
+  const toggle = byId("siteNavToggle");
+  if (!drawer) {
+    return;
+  }
+
+  syncSiteNavDrawer();
+  drawer.classList.add("is-open");
+  document.body.classList.add("site-nav-open");
+  if (toggle) {
+    toggle.setAttribute("aria-expanded", "true");
+    toggle.setAttribute("aria-label", t("nav.closeMenu"));
+  }
+}
+
+function closeSiteNavDrawer() {
+  const drawer = byId("siteNavDrawer");
+  const toggle = byId("siteNavToggle");
+  if (!drawer) {
+    return;
+  }
+
+  drawer.classList.remove("is-open");
+  document.body.classList.remove("site-nav-open");
+  if (toggle) {
+    toggle.setAttribute("aria-expanded", "false");
+    toggle.setAttribute("aria-label", t("nav.openMenu"));
+  }
+}
+
+function updateHeaderAuth() {
+  const signedInEmail = normalizeEmail(state.firebaseUser?.email || "");
+  const signedIn = Boolean(signedInEmail);
+  const headerSignOut = byId("headerSignOut");
+
+  if (headerSignOut) {
+    headerSignOut.hidden = !signedIn;
+    headerSignOut.textContent = t("dashboard.signOut");
+  }
 }
 
 function loadTheme() {
@@ -1032,14 +1188,14 @@ function handleHomeAuthButtonClick() {
     });
   }
 
-  const adminSignOut = byId("adminSignOut");
-  if (adminSignOut) {
-    adminSignOut.addEventListener("click", handleFirebaseSignOut);
+  const headerSignOut = byId("headerSignOut");
+  if (headerSignOut) {
+    headerSignOut.addEventListener("click", handleFirebaseSignOut);
   }
 
-  const dashboardSignOut = byId("dashboardSignOut");
-  if (dashboardSignOut) {
-    dashboardSignOut.addEventListener("click", handleFirebaseSignOut);
+  const siteNavToggle = byId("siteNavToggle");
+  if (siteNavToggle) {
+    siteNavToggle.addEventListener("click", toggleSiteNavDrawer);
   }
 
   const adminExport = byId("adminExport");
@@ -1107,6 +1263,9 @@ function applyLanguage() {
   }
 
   renderThemeToggle();
+
+  updateHeaderAuth();
+  syncSiteNavDrawer();
 
   if (state.page === "home") {
     const homeAuthModal = byId("homeAuthModal");
@@ -1230,7 +1389,6 @@ function renderAdminPage() {
   const approved = isAdminSignedIn();
   const gate = byId("adminGate");
   const actionRow = byId("adminActionRow");
-  const signOutButton = byId("adminSignOut");
   const statusNode = byId("adminStatus");
   const hint = byId("adminAccessHint");
   const googleButton = byId("adminGoogleButton");
@@ -1240,9 +1398,6 @@ function renderAdminPage() {
   }
   if (actionRow) {
     actionRow.hidden = !approved;
-  }
-  if (signOutButton) {
-    signOutButton.hidden = !signedIn;
   }
   if (statusNode) {
     if (approved) {
@@ -1333,7 +1488,6 @@ function renderDashboardPage() {
   const signedIn = Boolean(state.profile.google?.email);
   const gate = byId("dashboardGate");
   const shell = byId("dashboardShell");
-  const signOutButton = byId("dashboardSignOut");
   const emailNode = byId("dashboardEmailValue");
   const nameNode = byId("dashboardNameValue");
   const displayNameField = byId("dashboardDisplayName");
@@ -1345,9 +1499,6 @@ function renderDashboardPage() {
   }
   if (shell) {
     shell.hidden = !signedIn;
-  }
-  if (signOutButton) {
-    signOutButton.hidden = !signedIn;
   }
 
   if (!signedIn) {
@@ -2707,11 +2858,15 @@ function updateNavVisibility() {
     link.hidden = !isAdminSignedIn();
   });
 
+  syncSiteNavDrawer();
+  updateHeaderAuth();
+
   const homeAuthButton = byId("homeAuthButton");
   if (homeAuthButton) {
     const signedInEmail = normalizeEmail(state.firebaseUser?.email || "");
     const signedIn = Boolean(signedInEmail);
 
+    homeAuthButton.hidden = signedIn;
     homeAuthButton.dataset.i18n = signedIn ? "home.authSignedIn" : "home.authPrimary";
     homeAuthButton.textContent = t(homeAuthButton.dataset.i18n);
     homeAuthButton.setAttribute("aria-label", signedIn ? t("admin.statusSignedIn", { email: signedInEmail }) : t("home.authPrimary"));
@@ -3263,6 +3418,8 @@ function redirectSignedInUser(email) {
 }
 
 async function handleFirebaseSignOut() {
+  closeSiteNavDrawer();
+
   if (!firebaseAuthInstance || !state.firebaseConfigured) {
     applyFirebaseUser(null);
     setToast(t("toast.googleSignedOut"));
