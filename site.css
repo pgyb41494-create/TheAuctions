@@ -1111,6 +1111,15 @@ th {
   background: rgba(255, 255, 255, 0.12);
 }
 
+.winner-sms-actions {
+  margin-top: 0.35rem;
+}
+
+.winner-sms-actions .button {
+  text-decoration: none;
+  text-align: center;
+}
+
 .room-stage .room-notes-box .eyebrow,
 .room-stage .room-notes-box p {
   color: rgba(255, 255, 255, 0.82);

@@ -256,6 +256,10 @@ const TRANSLATIONS = {
     "room.creatorNoBids": "No bids have been placed yet.",
     "room.closedNow": "The room is closed.",
     "room.winnerSelected": "{{bidder}} at {{amount}} has been selected.",
+    "room.textWinner": "Text winner",
+    "room.textWinnerHint": "Opens your phone's messaging app with their number ready.",
+    "room.winnerNoPhone": "No phone on file for this bidder. They must save a phone number on the Dashboard before bidding.",
+    "room.winnerSmsBody": "Hi {{bidder}}, you won \"{{title}}\" at {{amount}}. Let's finalize the details.",
     "room.confirmCloseRoom": "Close {{code}} now?",
     "room.confirmAwardBid": "Select {{bidder}} at {{amount}} as the winner?",
     "room.rulesTitle": "Room rules",
@@ -585,6 +589,10 @@ const TRANSLATIONS = {
     "room.creatorNoBids": "Aún no se ha enviado ninguna oferta.",
     "room.closedNow": "La sala está cerrada.",
     "room.winnerSelected": "Se ha seleccionado a {{bidder}} con {{amount}}.",
+    "room.textWinner": "Enviar SMS al ganador",
+    "room.textWinnerHint": "Abre la app de mensajes de tu teléfono con su número listo.",
+    "room.winnerNoPhone": "Este postor no tiene teléfono guardado. Debe agregarlo en el Panel antes de ofertar.",
+    "room.winnerSmsBody": "Hola {{bidder}}, ganaste \"{{title}}\" con {{amount}}. Coordinemos los detalles.",
     "room.confirmCloseRoom": "¿Cerrar {{code}} ahora?",
     "room.confirmAwardBid": "¿Seleccionar a {{bidder}} con {{amount}} como ganador?",
     "room.rulesTitle": "Reglas de la sala",
@@ -2160,7 +2168,44 @@ function renderRoomCreatorPanel(auction) {
         </button>`;
       }).join("")}
     </div>
+    ${renderWinnerSmsAction(auction, winningBid)}
   `;
+}
+
+function renderWinnerSmsAction(auction, winningBid) {
+  if (!winningBid) {
+    return "";
+  }
+
+  const smsUrl = buildSmsUrl(
+    winningBid.phone,
+    t("room.winnerSmsBody", {
+      bidder: winningBid.bidder,
+      title: auction.title,
+      amount: formatMoney(winningBid.amount),
+    }),
+  );
+
+  if (!smsUrl) {
+    return `<p class="helper">${escapeHtml(t("room.winnerNoPhone"))}</p>`;
+  }
+
+  return `
+    <div class="form-actions winner-sms-actions">
+      <a class="button button-dark" href="${escapeHtml(smsUrl)}">${escapeHtml(t("room.textWinner"))}</a>
+      <p class="helper">${escapeHtml(t("room.textWinnerHint"))}</p>
+    </div>
+  `;
+}
+
+function buildSmsUrl(phone, body = "") {
+  const digits = String(phone || "").replace(/[^\d+]/g, "");
+  if (!digits.replace(/\D/g, "").length) {
+    return "";
+  }
+
+  const message = String(body || "").trim();
+  return message ? `sms:${digits}?body=${encodeURIComponent(message)}` : `sms:${digits}`;
 }
 
 function handleCloseRoom(rawCode) {
