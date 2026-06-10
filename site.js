@@ -373,6 +373,9 @@ const TRANSLATIONS = {
     "toast.formIncomplete": "Fill in all required fields.",
     "toast.googleSignInFailed": "Google sign-in failed. Please try again.",
     "toast.googleSignOutFailed": "Could not sign out. Please try again.",
+    "toast.cloudSyncFailed": "Could not save to the shared room. Try again.",
+    "toast.cloudBidFailed": "Bid could not reach the room. Check your connection and try again.",
+    "toast.signInToCreate": "Sign in first so your room is shared online.",
   },
   es: {
     "brand.kicker": "Espacio de subastas",
@@ -708,6 +711,9 @@ const TRANSLATIONS = {
     "toast.formIncomplete": "Completa todos los campos obligatorios.",
     "toast.googleSignInFailed": "La sesión de Google falló. Inténtalo de nuevo.",
     "toast.googleSignOutFailed": "No se pudo cerrar la sesión. Inténtalo de nuevo.",
+    "toast.cloudSyncFailed": "No se pudo guardar en la sala compartida. Inténtalo de nuevo.",
+    "toast.cloudBidFailed": "La oferta no llegó a la sala. Revisa tu conexión e inténtalo de nuevo.",
+    "toast.signInToCreate": "Inicia sesión primero para compartir la sala en línea.",
   },
 };
 
@@ -725,6 +731,7 @@ const state = {
   firebaseConfig: null,
   firebaseUser: null,
   firebaseConfigured: false,
+  cloudSyncReady: false,
   filters: { query: "", status: "all" },
   adminFilters: { query: "", status: "all" },
 };
@@ -754,12 +761,19 @@ let homeAuthErrorKey = "";
 let homeAuthBusy = false;
 let createPhotoPreviews = [];
 let createPhotoPreviewToken = 0;
+let firestoreDb = null;
+let auctionsUnsubscribe = null;
+let cloudWriteDepth = 0;
+let cloudSyncTimer = null;
+
+const FIRESTORE_COLLECTION = "rooms";
 
 async function initialize() {
   const [adminEmails, firebaseConfig] = await Promise.all([loadAdminEmails(), loadFirebaseConfig()]);
   state.adminEmails = adminEmails;
   state.firebaseConfig = firebaseConfig;
   await initializeFirebaseAuth();
+  await initializeFirestore();
   syncAdminSession();
 
   normalizeExpiredAuctions();
@@ -1778,6 +1792,11 @@ function renderAuctionCard(auction, options = {}) {
 async function handleCreateSubmit(event) {
   event.preventDefault();
 
+  if (state.cloudSyncReady && !getSignedInEmail()) {
+    setToast(t("toast.signInToCreate"));
+    return;
+  }
+
   const form = event.currentTarget;
   const formData = new FormData(form);
   const title = String(formData.get("title") || "").trim();
@@ -1852,6 +1871,16 @@ async function handleCreateSubmit(event) {
   state.profile.phoneNumber = creatorPhone;
   saveProfile({ displayName: state.profile.displayName, phoneNumber: creatorPhone, google: state.profile.google });
   saveAuctions();
+
+  if (state.cloudSyncReady) {
+    await ensureCloudAuth();
+    try {
+      await persistAuctionToCloud(auction);
+    } catch {
+      setToast(t("toast.cloudSyncFailed"));
+    }
+  }
+
   form.reset();
   createPhotoPreviews = [];
   renderCreatePhotoPreview();
@@ -1886,7 +1915,10 @@ function handleRoomLookupSubmit(event) {
 
 function handleBidSubmit(event) {
   event.preventDefault();
+  void submitBid(event);
+}
 
+async function submitBid(event) {
   const auction = resolveActiveAuction();
   if (!auction) {
     setToast(t("toast.noRoomSelected"));
@@ -1918,21 +1950,48 @@ function handleBidSubmit(event) {
     return;
   }
 
-  const nextAllowed = getNextAllowedOffer(auction);
-  if (amount > nextAllowed) {
-    setToast(t("toast.bidTooHigh", { amount: formatMoney(nextAllowed) }));
-    return;
-  }
-
-  auction.bids.push({
+  const bid = {
     id: makeId(),
     bidder,
     phone,
     amount,
     note,
     time: Date.now(),
-  });
+  };
 
+  if (state.cloudSyncReady && firestoreDb) {
+    await ensureCloudAuth();
+
+    try {
+      await submitBidViaCloud(auction.code, bid, amount);
+      state.lastBidder = bidder;
+      localStorage.setItem(STORAGE_KEYS.bidder, bidder);
+      setToast(t("toast.bidAccepted", { bidder, amount: formatMoney(amount) }));
+      return;
+    } catch (error) {
+      if (error?.message === "bidTooHigh") {
+        const nextAllowed = getNextAllowedOffer(auction);
+        setToast(t("toast.bidTooHigh", { amount: formatMoney(nextAllowed) }));
+        return;
+      }
+
+      if (error?.message === "roomClosed") {
+        setToast(t("toast.roomClosed"));
+        return;
+      }
+
+      setToast(t("toast.cloudBidFailed"));
+      return;
+    }
+  }
+
+  const nextAllowed = getNextAllowedOffer(auction);
+  if (amount > nextAllowed) {
+    setToast(t("toast.bidTooHigh", { amount: formatMoney(nextAllowed) }));
+    return;
+  }
+
+  auction.bids.push(bid);
   state.lastBidder = bidder;
   localStorage.setItem(STORAGE_KEYS.bidder, bidder);
   saveAuctions();
@@ -1960,12 +2019,26 @@ function handleAdminClearAll() {
     return;
   }
 
-  state.auctions = [];
-  state.activeCode = "";
-  localStorage.removeItem(STORAGE_KEYS.activeCode);
-  saveAuctions();
-  renderCurrentPage();
-  setToast(t("admin.cleared"));
+  void (async () => {
+    const codes = state.auctions.map((auction) => auction.code);
+
+    state.auctions = [];
+    state.activeCode = "";
+    localStorage.removeItem(STORAGE_KEYS.activeCode);
+    saveAuctions();
+
+    if (state.cloudSyncReady) {
+      await ensureCloudAuth();
+      try {
+        await clearAllAuctionsFromCloud(codes);
+      } catch {
+        setToast(t("toast.cloudSyncFailed"));
+      }
+    }
+
+    renderCurrentPage();
+    setToast(t("admin.cleared"));
+  })();
 }
 
 function closeAuctionNow(auction) {
@@ -2086,6 +2159,13 @@ function handleAdminDeleteAuction(rawCode) {
   }
 
   saveAuctions();
+
+  if (state.cloudSyncReady) {
+    void ensureCloudAuth().then(() => removeAuctionFromCloud(auction.code)).catch(() => {
+      setToast(t("toast.cloudSyncFailed"));
+    });
+  }
+
   renderCurrentPage();
   setToast(t("admin.deleted", { code: auction.code }));
 }
@@ -2174,7 +2254,7 @@ async function collectCreatePhotos(fileList) {
 async function shrinkImageFile(file) {
   const dataUrl = await readFileAsDataUrl(file);
   const image = await loadImageFromDataUrl(dataUrl);
-  const maxSize = 960;
+  const maxSize = 720;
   const scale = Math.min(1, maxSize / Math.max(image.width || 1, image.height || 1));
   const width = Math.max(1, Math.round((image.width || 1) * scale));
   const height = Math.max(1, Math.round((image.height || 1) * scale));
@@ -2190,7 +2270,7 @@ async function shrinkImageFile(file) {
   context.drawImage(image, 0, 0, width, height);
 
   try {
-    return canvas.toDataURL("image/jpeg", 0.82);
+    return canvas.toDataURL("image/jpeg", 0.75);
   } catch {
     return dataUrl;
   }
@@ -3001,7 +3081,14 @@ function isAdminSignedIn() {
 }
 
 function applyFirebaseUser(user) {
+  const isAnonymous = Boolean(user?.isAnonymous);
   const email = normalizeEmail(user?.email);
+
+  if (isAnonymous) {
+    state.firebaseUser = user;
+    return;
+  }
+
   const googleProfile = email
     ? {
         email,
@@ -3501,12 +3588,286 @@ function readRawAuctions(key) {
 }
 
 function refreshAuctionsFromStorage() {
+  if (state.cloudSyncReady) {
+    normalizeExpiredAuctions();
+    return;
+  }
+
   state.auctions = loadAuctions();
   normalizeExpiredAuctions();
 }
 
 function saveAuctions() {
   localStorage.setItem(STORAGE_KEYS.auctions, JSON.stringify(state.auctions));
+
+  if (!state.cloudSyncReady || !firestoreDb) {
+    return;
+  }
+
+  if (cloudSyncTimer) {
+    clearTimeout(cloudSyncTimer);
+  }
+
+  cloudSyncTimer = setTimeout(() => {
+    cloudSyncTimer = null;
+    void syncAllAuctionsToCloud();
+  }, 400);
+}
+
+async function initializeFirestore() {
+  state.cloudSyncReady = false;
+
+  if (!state.firebaseConfig || !window.firebase?.firestore) {
+    return;
+  }
+
+  if (!window.firebase.apps.length) {
+    window.firebase.initializeApp(state.firebaseConfig);
+  }
+
+  firestoreDb = window.firebase.firestore();
+
+  try {
+    await waitForInitialCloudSnapshot();
+    await uploadNewerLocalAuctions();
+    state.cloudSyncReady = true;
+  } catch (error) {
+    console.warn("Firestore sync unavailable.", error);
+    stopAuctionsListener();
+    firestoreDb = null;
+  }
+}
+
+function waitForInitialCloudSnapshot() {
+  return new Promise((resolve, reject) => {
+    let settled = false;
+
+    stopAuctionsListener();
+    auctionsUnsubscribe = firestoreDb.collection(FIRESTORE_COLLECTION).onSnapshot(
+      (snapshot) => {
+        applyCloudAuctionSnapshot(snapshot);
+
+        if (!settled) {
+          settled = true;
+          resolve();
+        }
+      },
+      (error) => {
+        if (!settled) {
+          settled = true;
+          reject(error);
+        }
+      },
+    );
+  });
+}
+
+function stopAuctionsListener() {
+  if (auctionsUnsubscribe) {
+    auctionsUnsubscribe();
+    auctionsUnsubscribe = null;
+  }
+}
+
+function applyCloudAuctionSnapshot(snapshot) {
+  if (cloudWriteDepth > 0) {
+    return;
+  }
+
+  const remoteMap = new Map();
+
+  snapshot.forEach((doc) => {
+    const data = doc.data() || {};
+    const normalized = normalizeAuction({
+      ...data,
+      code: data.code || doc.id,
+    });
+    remoteMap.set(normalizeCode(normalized.code), normalized);
+  });
+
+  mergeAuctionsFromCloud(remoteMap);
+  normalizeExpiredAuctions();
+  ensureActiveCode();
+  renderCurrentPage();
+}
+
+function mergeAuctionsFromCloud(remoteMap) {
+  const localMap = new Map(state.auctions.map((auction) => [normalizeCode(auction.code), auction]));
+  const codes = new Set([...localMap.keys(), ...remoteMap.keys()]);
+  const merged = [];
+
+  codes.forEach((code) => {
+    const local = localMap.get(code);
+    const remote = remoteMap.get(code);
+
+    if (!remote) {
+      if (local) {
+        merged.push(local);
+      }
+      return;
+    }
+
+    if (!local) {
+      merged.push(remote);
+      return;
+    }
+
+    const localStamp = Number(local.updatedAt) || Number(local.createdAt) || 0;
+    const remoteStamp = Number(remote.updatedAt) || Number(remote.createdAt) || 0;
+    merged.push(remoteStamp >= localStamp ? remote : local);
+  });
+
+  state.auctions = merged.sort((left, right) => (Number(right.createdAt) || 0) - (Number(left.createdAt) || 0));
+  localStorage.setItem(STORAGE_KEYS.auctions, JSON.stringify(state.auctions));
+}
+
+async function uploadNewerLocalAuctions() {
+  const localAuctions = loadAuctions();
+  const remoteMap = new Map(state.auctions.map((auction) => [normalizeCode(auction.code), auction]));
+
+  for (const local of localAuctions) {
+    const code = normalizeCode(local.code);
+    const remote = remoteMap.get(code);
+    const localStamp = Number(local.updatedAt) || Number(local.createdAt) || 0;
+    const remoteStamp = remote ? Number(remote.updatedAt) || Number(remote.createdAt) || 0 : 0;
+
+    if (!remote || localStamp > remoteStamp) {
+      await persistAuctionToCloud(local);
+    }
+  }
+}
+
+function getRoomRef(code) {
+  return firestoreDb.collection(FIRESTORE_COLLECTION).doc(normalizeCode(code));
+}
+
+function serializeAuctionForFirestore(auction) {
+  const normalized = normalizeAuction(auction);
+  return {
+    ...normalized,
+    code: normalized.code,
+    updatedAt: Date.now(),
+  };
+}
+
+async function ensureCloudAuth() {
+  if (!firebaseAuthInstance || !state.firebaseConfigured) {
+    throw new Error("authUnavailable");
+  }
+
+  if (firebaseAuthInstance.currentUser) {
+    return firebaseAuthInstance.currentUser;
+  }
+
+  return firebaseAuthInstance.signInAnonymously().then((result) => result.user);
+}
+
+async function persistAuctionToCloud(auction) {
+  if (!firestoreDb || !auction) {
+    return;
+  }
+
+  cloudWriteDepth += 1;
+
+  try {
+    await getRoomRef(auction.code).set(serializeAuctionForFirestore(auction));
+  } finally {
+    cloudWriteDepth = Math.max(0, cloudWriteDepth - 1);
+  }
+}
+
+async function removeAuctionFromCloud(code) {
+  if (!firestoreDb || !code) {
+    return;
+  }
+
+  cloudWriteDepth += 1;
+
+  try {
+    await getRoomRef(code).delete();
+  } finally {
+    cloudWriteDepth = Math.max(0, cloudWriteDepth - 1);
+  }
+}
+
+async function clearAllAuctionsFromCloud(codes) {
+  if (!firestoreDb) {
+    return;
+  }
+
+  cloudWriteDepth += 1;
+
+  try {
+    const batch = firestoreDb.batch();
+    let writes = 0;
+
+    codes.forEach((code) => {
+      batch.delete(getRoomRef(code));
+      writes += 1;
+    });
+
+    if (writes) {
+      await batch.commit();
+    }
+  } finally {
+    cloudWriteDepth = Math.max(0, cloudWriteDepth - 1);
+  }
+}
+
+async function syncAllAuctionsToCloud() {
+  if (!firestoreDb || cloudWriteDepth > 0) {
+    return;
+  }
+
+  await ensureCloudAuth().catch(() => null);
+
+  if (!firebaseAuthInstance?.currentUser) {
+    return;
+  }
+
+  cloudWriteDepth += 1;
+
+  try {
+    await Promise.all(state.auctions.map((auction) => getRoomRef(auction.code).set(serializeAuctionForFirestore(auction))));
+  } catch (error) {
+    console.warn("Cloud sync failed.", error);
+  } finally {
+    cloudWriteDepth = Math.max(0, cloudWriteDepth - 1);
+  }
+}
+
+async function submitBidViaCloud(code, bid, amount) {
+  if (!firestoreDb) {
+    throw new Error("cloudUnavailable");
+  }
+
+  const ref = getRoomRef(code);
+  cloudWriteDepth += 1;
+
+  try {
+    await firestoreDb.runTransaction(async (transaction) => {
+      const snapshot = await transaction.get(ref);
+
+      if (!snapshot.exists) {
+        throw new Error("notFound");
+      }
+
+      const auction = normalizeAuction(snapshot.data());
+      if (auction.status !== "open") {
+        throw new Error("roomClosed");
+      }
+
+      const nextAllowed = getNextAllowedOffer(auction);
+      if (amount > nextAllowed) {
+        throw new Error("bidTooHigh");
+      }
+
+      auction.bids.push(bid);
+      transaction.set(ref, serializeAuctionForFirestore(auction));
+    });
+  } finally {
+    cloudWriteDepth = Math.max(0, cloudWriteDepth - 1);
+  }
 }
 
 function normalizeAuction(rawAuction) {
@@ -3553,6 +3914,7 @@ function normalizeAuction(rawAuction) {
     winnerBidId: String(rawAuction.winnerBidId || "").trim() || null,
     winnerSelectedAt: Number(rawAuction.winnerSelectedAt) || 0,
     winnerSelectedBy: normalizeEmail(rawAuction.winnerSelectedBy || ""),
+    updatedAt: Number(rawAuction.updatedAt) || createdAt,
     bids,
     status: Date.now() >= endAt || rawAuction.status === "closed" ? "closed" : "open",
   };
